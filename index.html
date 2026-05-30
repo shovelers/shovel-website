@@ -378,6 +378,15 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   border-top: 0;
 }
 
+/* Make the inner container fill the hero so the headline (flex:1) centers
+   and the foot anchors to the bottom — removes the dead gap before the
+   next section. */
+.cover > .container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .cover__head {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1841,15 +1850,21 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 <main>
 
 <!-- ══════════════════ EDIT 2 of 8 · HERO (THE BIG OPENING) ══════════════════
-     You can change: the giant headline "WE MAKE / TOOLS.", the sentence
-     under it, and the "Shovel Labs LLP / Bangalore, IN /
-     connect@shovel.company" block.
+     You can change: the "Vol. 1 · Issue 01 · 2026" line, the giant headline
+     "WE MAKE / TOOLS.", the sentence under it, and the "Shovel Labs LLP /
+     Bangalore, IN / connect@shovel.company" block.
      RULE: only change words BETWEEN  >  and  <  symbols.
      ═══════════════════════════════════════════════════════════════════════ -->
 <section class="section cover" id="top">
   <div class="container">
     <div class="cover__head reveal">
-      <div class="cover__head-left" aria-hidden="true"></div>
+      <div class="cover__head-left">
+        <span><strong>Vol. 1</strong></span>
+        <span>·</span>
+        <span><strong>Issue 01</strong></span>
+        <span>·</span>
+        <span class="red">2026</span>
+      </div>
       <div class="cover__head-right" aria-hidden="true"></div>
     </div>
 
