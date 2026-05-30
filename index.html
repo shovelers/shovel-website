@@ -1,0 +1,1978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>Shovel Company — Issue 01: Tools.</title>
+<meta name="description" content="Shovel Company. Infrastructure, personal agents, and applied knowledge. Issue 01.">
+
+<meta property="og:title" content="Shovel Company — Issue 01">
+<meta property="og:description" content="Infrastructure. Agents. Knowledge applied.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shovel.company/">
+
+<!-- Inter Tight (display, extreme weight) + Inter (body) + JetBrains Mono (marks) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   SHOVEL COMPANY — v4.0 / Editorial Brutalist
+   Pure white ground, true black ink, signal red accent.
+   Hard grid. Visible rules. Oversized numerals. Footnotes.
+   Type does the work. Motion is restrained.
+   ===================================================================== */
+
+:root {
+  /* Base palette — no warmth, deliberate */
+  --white:     #FFFFFF;
+  --black:     #000000;
+  --ink:       #0A0A0A;
+  --rule:      #000000;   /* rules are always full black, not grey */
+  --mute:      #6B6B6B;
+  --faint:     #B8B8B8;
+  --surface-1: #F5F5F5;   /* off-white for grouped panels, never warm */
+
+  /* Accent — signal red, used sparingly */
+  --acc:       #FF2D2D;
+  --acc-deep:  #D40D0D;
+
+  /* Type */
+  --f-display: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --f-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --f-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Layout — wide page margins, structured grid */
+  --container-max: 1440px;
+  --gutter:        80px;
+  --gutter-mid:    48px;
+  --gutter-sm:     20px;
+
+  /* Motion */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ───── Reset + base ───── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  font-feature-settings: "kern" 1, "ss01" 1, "tnum" 1;
+}
+
+img, svg { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; border: 0; background: 0; cursor: pointer; color: inherit; padding: 0; }
+
+::selection { background: var(--acc); color: var(--white); }
+
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@media (max-width: 1024px) {
+  .container { padding-inline: var(--gutter-mid); }
+  :root { --gutter: 48px; }
+}
+@media (max-width: 640px) {
+  .container { padding-inline: var(--gutter-sm); }
+  :root { --gutter: 20px; }
+}
+
+/* =====================================================================
+   MASTHEAD — fixed top, looks like a magazine masthead
+   ===================================================================== */
+.masthead {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--black);
+  height: 56px;
+  display: flex;
+  align-items: stretch;
+}
+
+.masthead__inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  gap: 0;
+}
+
+.masthead__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 24px;
+  border-right: 1px solid var(--black);
+  margin-right: 24px;
+}
+
+.masthead__logo {
+  width: 28px;
+  height: 28px;
+  background: var(--black);
+  color: var(--white);
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.masthead__logo::after { content: "S"; }
+
+.masthead__name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.masthead__issue {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.masthead__issue strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.masthead__issue .sep {
+  width: 1px;
+  height: 12px;
+  background: var(--faint);
+  display: inline-block;
+}
+
+.masthead__links {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--black);
+  margin-left: 24px;
+}
+
+.masthead__link {
+  font-family: var(--f-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: background 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+.masthead__link:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+.masthead__link--acc:hover {
+  background: var(--acc);
+  color: var(--white);
+}
+
+/* Mobile masthead */
+.masthead__toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--black);
+  margin-left: 16px;
+}
+
+.masthead__toggle span {
+  display: block;
+  position: absolute;
+  left: 10px; right: 10px;
+  height: 2px;
+  background: var(--black);
+  transition: transform 250ms var(--ease-out), opacity 200ms var(--ease-out);
+}
+.masthead__toggle span:nth-child(1) { top: 13px; }
+.masthead__toggle span:nth-child(2) { top: 19px; }
+.masthead__toggle span:nth-child(3) { top: 25px; }
+.masthead__toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.masthead__toggle.open span:nth-child(2) { opacity: 0; }
+.masthead__toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .masthead__issue { display: none; }
+  .masthead__links {
+    position: fixed;
+    top: 56px;
+    left: 0; right: 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--black);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    border-left: 0;
+    margin-left: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 220ms var(--ease-out),
+                visibility 0ms linear 220ms,
+                transform 250ms var(--ease-out);
+    z-index: 95;
+  }
+  .masthead__links.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 220ms var(--ease-out),
+                visibility 0ms linear 0ms,
+                transform 250ms var(--ease-out);
+  }
+  .masthead__link {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--black);
+    font-size: 16px;
+    justify-content: space-between;
+  }
+  .masthead__link::after {
+    content: "→";
+    color: var(--mute);
+  }
+  .masthead__link:last-child { border-bottom: 0; }
+  .masthead__toggle { display: block; }
+  .masthead__brand { padding-right: 0; border-right: 0; margin-right: 0; }
+}
+
+/* =====================================================================
+   SECTION SCAFFOLDING — each section is an "article"
+   ===================================================================== */
+.section {
+  position: relative;
+  border-top: 1px solid var(--black);
+  padding-block: 96px 120px;
+}
+
+.section:first-of-type { border-top: 0; }
+
+.section__meta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 56px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--black);
+}
+
+.section__meta-left {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.section__num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+}
+
+.section__num .acc { color: var(--acc); }
+
+.section__kicker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mute);
+}
+
+.section__kicker strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.section__date {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+/* Reveal on scroll — minimal, type only */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in { opacity: 1; transform: none; }
+.reveal.delay-1 { transition-delay: 60ms; }
+.reveal.delay-2 { transition-delay: 120ms; }
+.reveal.delay-3 { transition-delay: 180ms; }
+.reveal.delay-4 { transition-delay: 240ms; }
+
+/* =====================================================================
+   SECTION 01 — COVER
+   ===================================================================== */
+.cover {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 128px;
+  padding-bottom: 56px;
+  position: relative;
+  border-top: 0;
+}
+
+.cover__head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--black);
+  margin-bottom: 48px;
+}
+
+.cover__head-left,
+.cover__head-right {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--mute);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cover__head-right { justify-content: flex-end; }
+
+.cover__head strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.cover__head .red {
+  color: var(--acc);
+  font-weight: 700;
+}
+
+.cover__headline {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(80px, 18vw, 280px);
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+  margin: 0;
+  color: var(--ink);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.cover__headline .acc {
+  color: var(--acc);
+  display: inline-block;
+}
+
+.cover__foot {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--black);
+}
+
+.cover__lede {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 540px;
+  margin: 0;
+}
+
+.cover__foot-meta {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--mute);
+  text-align: right;
+  line-height: 1.6;
+}
+
+.cover__foot-meta strong { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 700px) {
+  .cover__head { grid-template-columns: 1fr; gap: 8px; }
+  .cover__head-right { justify-content: flex-start; }
+  .cover__foot { grid-template-columns: 1fr; gap: 24px; }
+  .cover__foot-meta { text-align: left; }
+}
+
+/* =====================================================================
+   SECTION 02 — PHILOSOPHY
+   ===================================================================== */
+.philosophy__layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.philosophy__lede {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.0;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 32px;
+}
+
+.philosophy__lede .acc { color: var(--acc); }
+
+.philosophy__body {
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 520px;
+}
+
+.philosophy__body p { margin: 0 0 20px; }
+
+.philosophy__body em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--acc);
+}
+
+.philosophy__pullquote {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 48px 0 0;
+  padding-left: 24px;
+  border-left: 4px solid var(--acc);
+}
+
+.philosophy__footnote {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--mute);
+  margin: 32px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--ink);
+  display: flex;
+  gap: 12px;
+}
+
+.philosophy__footnote-num {
+  color: var(--acc);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Right column — tool index */
+.tool-index {
+  background: var(--surface-1);
+  border: 1px solid var(--black);
+  padding: 32px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  position: relative;
+}
+
+.tool-index__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--black);
+}
+
+.tool-index__title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.tool-index__meta {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.tool-index__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tool-index__item {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--faint);
+}
+
+.tool-index__item:last-child { border-bottom: 0; }
+
+.tool-index__num {
+  color: var(--mute);
+  font-size: 10px;
+}
+
+.tool-index__name {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.tool-index__year {
+  color: var(--mute);
+  font-size: 10px;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .philosophy__layout { grid-template-columns: 1fr; gap: 48px; }
+}
+
+/* =====================================================================
+   SECTION 03 — STEVENS
+   ===================================================================== */
+.stevens__layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.stevens__headline {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(64px, 9vw, 144px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  margin: 0 0 32px;
+}
+
+.stevens__headline .acc { color: var(--acc); }
+
+.stevens__lede {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  max-width: 580px;
+  padding-top: 16px;
+  border-top: 1px solid var(--black);
+}
+
+.stevens__body {
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 520px;
+}
+
+.stevens__body p { margin: 0 0 18px; }
+
+.stevens__spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin-top: 40px;
+  border-top: 1px solid var(--black);
+  border-bottom: 1px solid var(--black);
+}
+
+.stevens__spec {
+  padding: 16px 16px 16px 0;
+  border-right: 1px solid var(--black);
+}
+
+.stevens__spec:last-child { border-right: 0; padding-right: 0; }
+
+.stevens__spec-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--mute);
+  letter-spacing: 0.05em;
+  margin: 0 0 6px;
+}
+
+.stevens__spec-value {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.stevens__quote {
+  margin: 40px 0 0;
+  padding: 24px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+.stevens__quote p { margin: 0 0 12px; }
+
+.stevens__signature {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--acc);
+  display: block;
+}
+
+/* ─── Stevens as printed-page diagram (NOT a phone) ─── */
+
+.specimen {
+  position: sticky;
+  top: 88px;
+  background: var(--white);
+  border: 1px solid var(--black);
+  padding: 32px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+}
+
+.specimen__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--black);
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.specimen__title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.specimen__title .acc { color: var(--acc); }
+
+.specimen__fig {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.specimen__diagram {
+  background: var(--surface-1);
+  border: 1px solid var(--black);
+  height: 380px;
+  position: relative;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+/* The Stevens "figure" — abstract, geometric, labeled */
+.specimen__figure {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 160px;
+}
+
+.specimen__figure-head {
+  width: 80px;
+  height: 80px;
+  background: var(--ink);
+  border-radius: 50%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.specimen__figure-head::before,
+.specimen__figure-head::after {
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  border: 1.5px solid var(--white);
+  border-radius: 50%;
+  top: 30px;
+}
+.specimen__figure-head::before { left: 18px; }
+.specimen__figure-head::after  { right: 18px; }
+
+.specimen__figure-bridge {
+  position: absolute;
+  top: 37px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 1.5px;
+  background: var(--white);
+}
+
+.specimen__figure-body {
+  width: 120px;
+  height: 76px;
+  background: var(--ink);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  margin: 4px auto 0;
+  position: relative;
+}
+
+/* Pointer labels around the figure */
+.specimen__label {
+  position: absolute;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  color: var(--ink);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.specimen__label::before {
+  content: "";
+  height: 1px;
+  background: var(--acc);
+}
+
+.specimen__label--tl { top: 16%; left: 4%; }
+.specimen__label--tl::before { width: 28px; }
+
+.specimen__label--tr { top: 16%; right: 4%; flex-direction: row-reverse; text-align: right; }
+.specimen__label--tr::before { width: 28px; }
+
+.specimen__label--bl { bottom: 22%; left: 4%; }
+.specimen__label--bl::before { width: 24px; }
+
+.specimen__label--br { bottom: 22%; right: 4%; flex-direction: row-reverse; text-align: right; }
+.specimen__label--br::before { width: 24px; }
+
+.specimen__label--cb { bottom: 4%; left: 50%; transform: translateX(-50%); flex-direction: column; gap: 4px; }
+.specimen__label--cb::before { width: 1px; height: 16px; }
+
+.specimen__label .num {
+  color: var(--acc);
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+.specimen__caption {
+  font-size: 10px;
+  color: var(--mute);
+  line-height: 1.6;
+  border-top: 1px solid var(--faint);
+  padding-top: 12px;
+}
+
+.specimen__caption strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .stevens__layout { grid-template-columns: 1fr; gap: 56px; }
+  .specimen { position: static; }
+}
+
+@media (max-width: 500px) {
+  .stevens__spec-grid { grid-template-columns: 1fr; }
+  .stevens__spec { border-right: 0; border-bottom: 1px solid var(--black); padding: 12px 0; }
+  .stevens__spec:last-child { border-bottom: 0; }
+}
+
+/* =====================================================================
+   SECTION 04 — CREOLE
+   ===================================================================== */
+.creole__top {
+  margin-bottom: 56px;
+}
+
+.creole__headline {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(64px, 9vw, 140px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.creole__headline .acc { color: var(--acc); }
+
+.creole__lede {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(20px, 1.8vw, 22px);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+  max-width: 640px;
+}
+
+.creole__layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  border-top: 2px solid var(--black);
+  padding-top: 32px;
+}
+
+.primitives {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.primitive {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--black);
+  align-items: start;
+  transition: background 200ms var(--ease-out);
+}
+
+.primitive:last-child { border-bottom: 0; }
+
+.primitive:hover { background: var(--surface-1); }
+
+.primitive__num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+}
+
+.primitive__num .acc { color: var(--acc); }
+
+.primitive__name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.primitive__desc {
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 12px;
+  max-width: 440px;
+}
+
+.primitive__tag {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--mute);
+  padding: 2px 8px;
+  border: 1px solid var(--black);
+}
+
+/* Architecture diagram — printed schematic, not a UI mockup */
+.schematic {
+  border: 1px solid var(--black);
+  padding: 0;
+  background: var(--white);
+}
+
+.schematic__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+}
+
+.schematic__title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.schematic__num {
+  font-family: var(--f-mono);
+  font-size: 10px;
+}
+
+.schematic__body { padding: 24px; }
+
+.schematic__layer {
+  padding: 20px;
+  border: 1px solid var(--black);
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition: background 200ms var(--ease-out);
+}
+
+.schematic__layer:last-child { margin-bottom: 0; }
+
+.schematic__layer:hover { background: var(--surface-1); }
+
+.schematic__layer--active {
+  background: var(--acc);
+  color: var(--white);
+  border-color: var(--acc);
+}
+
+.schematic__layer--active:hover { background: var(--acc-deep); }
+
+.schematic__layer-tag {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  background: var(--ink);
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+.schematic__layer--active .schematic__layer-tag {
+  background: var(--white);
+  color: var(--acc);
+}
+
+.schematic__layer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schematic__layer-name {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.schematic__layer-desc {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  margin: 0;
+  opacity: 0.75;
+}
+
+.schematic__layer--active .schematic__layer-desc { opacity: 0.9; }
+
+.schematic__layer-arrow {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 24px;
+}
+
+.schematic__foot {
+  border-top: 1px solid var(--black);
+  padding: 12px 20px;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--mute);
+  display: flex;
+  justify-content: space-between;
+}
+
+.creole__action {
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 200ms var(--ease-out);
+}
+
+.creole__action::after {
+  content: "→";
+  font-weight: 800;
+}
+
+.creole__action:hover { background: var(--acc); }
+
+@media (max-width: 1024px) {
+  .creole__layout { grid-template-columns: 1fr; gap: 56px; }
+}
+
+@media (max-width: 500px) {
+  .primitive { grid-template-columns: 1fr; gap: 12px; }
+  .primitive__num { font-size: 40px; }
+}
+
+/* =====================================================================
+   SECTION 05 — CONSULTING
+   ===================================================================== */
+.consulting__layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.consulting__headline {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(56px, 7.5vw, 112px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+
+.consulting__headline .acc { color: var(--acc); }
+
+.consulting__body {
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 480px;
+}
+
+.consulting__body p { margin: 0 0 18px; }
+
+.consulting__pullquote {
+  margin-top: 40px;
+  padding: 32px;
+  background: var(--acc);
+  color: var(--white);
+}
+
+.consulting__pullquote-text {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(30px, 3vw, 44px);
+  line-height: 1.0;
+  letter-spacing: -0.035em;
+  margin: 0 0 16px;
+}
+
+.consulting__pullquote-attr {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.consulting__sidebar {
+  background: var(--surface-1);
+  border: 1px solid var(--black);
+  padding: 32px;
+}
+
+.consulting__sidebar-head {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--black);
+}
+
+.consulting__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: workitem;
+}
+
+.consulting__list li {
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--faint);
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  counter-increment: workitem;
+}
+
+.consulting__list li:last-child { border-bottom: 0; }
+
+.consulting__list li::before {
+  content: counter(workitem, decimal-leading-zero);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--acc);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .consulting__layout { grid-template-columns: 1fr; gap: 48px; }
+}
+
+/* =====================================================================
+   SECTION 06 — PEOPLE
+   ===================================================================== */
+.people__headline {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(56px, 7vw, 96px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  margin: 0 0 48px;
+}
+
+.people__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 900px;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid var(--black);
+  padding-top: 24px;
+}
+
+.person__portrait {
+  aspect-ratio: 4/5;
+  background: var(--surface-1);
+  border: 1px solid var(--black);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.person__portrait::after {
+  content: "";
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  border: 1px dashed var(--faint);
+  pointer-events: none;
+}
+
+.person__portrait-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--mute);
+  text-align: center;
+  line-height: 1.8;
+  padding: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.person__portrait-label strong {
+  display: block;
+  color: var(--acc);
+  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.person__role-meta {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--mute);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.person__name {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.person__role {
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .people__grid { grid-template-columns: 1fr; gap: 56px; }
+}
+
+/* =====================================================================
+   SECTION 07 — COLOPHON (contact)
+   ===================================================================== */
+.colophon {
+  background: var(--black);
+  color: var(--white);
+  padding-block: 120px 64px;
+  border-top: 1px solid var(--black);
+}
+
+.colophon__meta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  margin-bottom: 56px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--white);
+}
+
+.colophon__meta-left {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.colophon__num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--white);
+}
+
+.colophon__num .acc { color: var(--acc); }
+
+.colophon__kicker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.colophon__kicker strong { color: var(--white); font-weight: 700; }
+
+.colophon__date {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.colophon__email {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(40px, 9vw, 128px);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  color: var(--white);
+  margin: 0 0 32px;
+  display: inline-block;
+  transition: color 250ms var(--ease-out);
+}
+
+.colophon__email:hover { color: var(--acc); }
+
+.colophon__sub {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 580px;
+  margin: 0 0 80px;
+}
+
+.colophon__footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.colophon__col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colophon__col-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.colophon__name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+}
+
+.colophon__tag {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.colophon__links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colophon__link {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: color 180ms var(--ease-out);
+}
+
+.colophon__link::after {
+  content: "↗";
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  transition: color 180ms var(--ease-out);
+}
+
+.colophon__link:hover { color: var(--acc); }
+.colophon__link:hover::after { color: var(--acc); }
+
+@media (max-width: 700px) {
+  .colophon__footer { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* ───── Utilities ───── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ EDIT 1 of 8 · TOP BAR (MASTHEAD) ══════════════════
+     You can change: the brand name "Shovel Co.", the "Issue 01 · Bangalore
+     · Established 2022 · shovel.company" line, and the menu words
+     (Stevens / Creole / Consulting / Writing / Contact).
+     RULE: only change words that sit BETWEEN  >  and  <  symbols.
+     Never change anything inside < angle brackets >.
+     ═══════════════════════════════════════════════════════════════════ -->
+<header class="masthead">
+  <div class="masthead__inner">
+    <a href="#" class="masthead__brand" aria-label="Shovel Company">
+      <span class="masthead__logo" aria-hidden="true"></span>
+      <span class="masthead__name">Shovel Co.</span>
+    </a>
+    <div class="masthead__issue">
+      <span><strong>Issue 01</strong></span>
+      <span class="sep"></span>
+      <span>Bangalore <strong>·</strong> Established 2022</span>
+      <span class="sep"></span>
+      <span>shovel.company</span>
+    </div>
+    <button class="masthead__toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="masthead__links" id="navLinks" aria-label="Primary">
+      <a class="masthead__link" href="#stevens">Stevens</a>
+      <a class="masthead__link" href="#creole">Creole</a>
+      <a class="masthead__link" href="#consulting">Consulting</a>
+      <a class="masthead__link" href="#writing">Writing</a>
+      <a class="masthead__link masthead__link--acc" href="#colophon">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════ EDIT 2 of 8 · HERO (THE BIG OPENING) ══════════════════
+     You can change: the "Vol. 1 · Issue 01 · 2026" line, the giant
+     headline "WE MAKE / TOOLS.", the sentence under it, and the
+     "Shovel Labs LLP / Bangalore, IN / connect@shovel.company" block.
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="section cover" id="top">
+  <div class="container">
+    <div class="cover__head reveal">
+      <div class="cover__head-left">
+        <span><strong>Vol. 1</strong></span>
+        <span>·</span>
+        <span><strong>Issue 01</strong></span>
+        <span>·</span>
+        <span class="red">2026</span>
+      </div>
+      <div class="cover__head-right">
+        <span>Three streams: <strong>Infrastructure / Agents / Knowledge</strong></span>
+      </div>
+    </div>
+
+    <h1 class="cover__headline reveal delay-1">
+      <span>WE MAKE</span>
+      <span class="acc">TOOLS.</span>
+    </h1>
+
+    <div class="cover__foot">
+      <p class="cover__lede reveal delay-2">
+        Infrastructure that holds the new internet up. Personal agents that hold a household together. Knowledge applied where it matters most.
+      </p>
+      <div class="cover__foot-meta reveal delay-3">
+        <div><strong>Shovel Labs LLP</strong></div>
+        <div>Bangalore, IN</div>
+        <div>connect@shovel.company</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ EDIT 3 of 8 · PHILOSOPHY ══════════════════
+     You can change: the heading "A tool is leverage.", the two
+     paragraphs, the quote, the footnote, and the "Tool Index" list
+     on the right (each row: name and year).
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═════════════════════════════════════════════════════════════ -->
+<section class="section" id="philosophy">
+  <div class="container">
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">02<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>Philosophy</strong> · What a tool is</span>
+      </div>
+      <span class="section__date">Essay · 4 min read</span>
+    </div>
+
+    <div class="philosophy__layout">
+      <div class="reveal delay-1">
+        <h2 class="philosophy__lede">A tool is <span class="acc">leverage.</span></h2>
+        <div class="philosophy__body">
+          <p>A spear, a shovel, a language, a protocol, an agent. The tool extends what a person can do — and the person decides what to do with it.</p>
+          <p>We don't pretend the tool decides. <em>We equip the human. The human decides.</em></p>
+        </div>
+        <blockquote class="philosophy__pullquote">
+          "Tools are neutral. Agency belongs to the person holding them."
+        </blockquote>
+        <p class="philosophy__footnote">
+          <span class="philosophy__footnote-num">¹</span>
+          This line runs under everything we build. It is also why we name our products after their purpose, not their cleverness.
+        </p>
+      </div>
+
+      <aside class="tool-index reveal delay-2" aria-label="Tool index">
+        <div class="tool-index__head">
+          <span class="tool-index__title">Tool Index</span>
+          <span class="tool-index__meta">Fig. 2.1</span>
+        </div>
+        <ol class="tool-index__list">
+          <li class="tool-index__item">
+            <span class="tool-index__num">01</span>
+            <span class="tool-index__name">The spear · range</span>
+            <span class="tool-index__year">~70k BCE</span>
+          </li>
+          <li class="tool-index__item">
+            <span class="tool-index__num">02</span>
+            <span class="tool-index__name">The shovel · earth</span>
+            <span class="tool-index__year">~6k BCE</span>
+          </li>
+          <li class="tool-index__item">
+            <span class="tool-index__num">03</span>
+            <span class="tool-index__name">Writing · memory</span>
+            <span class="tool-index__year">~3k BCE</span>
+          </li>
+          <li class="tool-index__item">
+            <span class="tool-index__num">04</span>
+            <span class="tool-index__name">The printing press · scale</span>
+            <span class="tool-index__year">1440</span>
+          </li>
+          <li class="tool-index__item">
+            <span class="tool-index__num">05</span>
+            <span class="tool-index__name">The protocol · trust</span>
+            <span class="tool-index__year">1969–</span>
+          </li>
+          <li class="tool-index__item">
+            <span class="tool-index__num">06</span>
+            <span class="tool-index__name">The agent · attention</span>
+            <span class="tool-index__year">2022–</span>
+          </li>
+        </ol>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ EDIT 4 of 8 · STEVENS ══════════════════
+     You can change: the heading "Meet Stevens.", the lede sentence,
+     the two paragraphs, the three pillars (Health / Wealth /
+     Relationships), and the black quote box with "— STEVENS".
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ══════════════════════════════════════════════════════════ -->
+<section class="section" id="stevens">
+  <div class="container">
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">03<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>Stevens</strong> · Voice-first personal agent</span>
+      </div>
+      <span class="section__date">Product · in development</span>
+    </div>
+
+    <div class="stevens__layout">
+      <div>
+        <h2 class="stevens__headline reveal delay-1">
+          Meet<br>
+          <span class="acc">Stevens.</span>
+        </h2>
+        <p class="stevens__lede reveal delay-2">
+          The brain of the family. Voice-first. Always listening for what matters, never for what doesn't.
+        </p>
+        <div class="stevens__body reveal delay-3">
+          <p>No typing. No tapping through menus. You speak, Stevens responds — in voice, with the small visual prompts you need to confirm an action.</p>
+          <p>In between calls, Stevens hibernates. Watching the household quietly. Surfacing what's overdue, what's coming, what you'd want to know.</p>
+        </div>
+
+        <dl class="stevens__spec-grid reveal delay-4">
+          <div class="stevens__spec">
+            <dt class="stevens__spec-label">Pillar 01</dt>
+            <dd class="stevens__spec-value">Health</dd>
+          </div>
+          <div class="stevens__spec">
+            <dt class="stevens__spec-label">Pillar 02</dt>
+            <dd class="stevens__spec-value">Wealth</dd>
+          </div>
+          <div class="stevens__spec">
+            <dt class="stevens__spec-label">Pillar 03</dt>
+            <dd class="stevens__spec-value">Relationships</dd>
+          </div>
+        </dl>
+
+        <blockquote class="stevens__quote reveal delay-4">
+          <p>"Your home runs on a thousand small things. I watch for them."</p>
+          <span class="stevens__signature">— STEVENS</span>
+        </blockquote>
+      </div>
+
+      <aside class="specimen reveal delay-2" aria-label="Stevens product specimen">
+        <div class="specimen__head">
+          <span class="specimen__title">Specimen <span class="acc">/</span> Stevens v0.1</span>
+          <span class="specimen__fig">Fig. 3.1</span>
+        </div>
+
+        <div class="specimen__diagram" aria-hidden="true">
+          <div class="specimen__figure">
+            <div class="specimen__figure-head"></div>
+            <div class="specimen__figure-bridge"></div>
+            <div class="specimen__figure-body"></div>
+          </div>
+
+          <div class="specimen__label specimen__label--tl">
+            <span><span class="num">A.</span>Halo</span>
+          </div>
+          <div class="specimen__label specimen__label--tr">
+            <span><span class="num">B.</span>Spectacles</span>
+          </div>
+          <div class="specimen__label specimen__label--bl">
+            <span><span class="num">C.</span>Shoulders</span>
+          </div>
+          <div class="specimen__label specimen__label--br">
+            <span><span class="num">D.</span>Body</span>
+          </div>
+          <div class="specimen__label specimen__label--cb">
+            <span><span class="num">E.</span>Voice cue</span>
+          </div>
+        </div>
+
+        <p class="specimen__caption">
+          <strong>Fig. 3.1</strong> — Stevens, hibernation state. The agent waits. Shards drift around the figure surfacing pending household items. Voice cue at base (E) indicates listening readiness.
+        </p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ EDIT 5 of 8 · CREOLE ══════════════════
+     You can change: the heading "The substrate.", the sentence under
+     it, the three numbered items (Account-fs / Handshakes / Hubs,
+     each with a name and description), the architecture box labels,
+     and the "Read the whitepaper" button text.
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═════════════════════════════════════════════════════════ -->
+<section class="section" id="creole">
+  <div class="container">
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">04<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>Creole Network</strong> · The substrate</span>
+      </div>
+      <span class="section__date">Infrastructure · whitepaper available</span>
+    </div>
+
+    <div class="creole__top reveal delay-1">
+      <h2 class="creole__headline">
+        The<br>
+        <span class="acc">substrate.</span>
+      </h2>
+      <p class="creole__lede">
+        What Stevens runs on. What the next generation of private apps will run on. We are building it.
+      </p>
+    </div>
+
+    <div class="creole__layout">
+      <ul class="primitives reveal delay-2">
+        <li class="primitive">
+          <div class="primitive__num">01<span class="acc">.</span></div>
+          <div>
+            <h3 class="primitive__name">Account-fs</h3>
+            <p class="primitive__desc">Local-first encrypted file system. Synced across your devices. The user holds the keys.</p>
+            <span class="primitive__tag">L1 / DATA</span>
+          </div>
+        </li>
+        <li class="primitive">
+          <div class="primitive__num">02<span class="acc">.</span></div>
+          <div>
+            <h3 class="primitive__name">Handshakes</h3>
+            <p class="primitive__desc">How accounts and agents form relationships — Join, Relate, Invite, Link.</p>
+            <span class="primitive__tag">L2 / RELATIONS</span>
+          </div>
+        </li>
+        <li class="primitive">
+          <div class="primitive__num">03<span class="acc">.</span></div>
+          <div>
+            <h3 class="primitive__name">Hubs</h3>
+            <p class="primitive__desc">Decentralized sync nodes. The plumbing that holds the network up.</p>
+            <span class="primitive__tag">L0 / TRANSPORT</span>
+          </div>
+        </li>
+      </ul>
+
+      <aside class="schematic reveal delay-3" aria-label="Architecture schematic">
+        <div class="schematic__head">
+          <span class="schematic__title">Architecture</span>
+          <span class="schematic__num">Fig. 4.1</span>
+        </div>
+        <div class="schematic__body">
+          <div class="schematic__layer">
+            <span class="schematic__layer-tag">L3</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Apps</p>
+              <p class="schematic__layer-desc">Stevens. Rolodex. New private apps.</p>
+            </div>
+            <span class="schematic__layer-arrow">↓</span>
+          </div>
+          <div class="schematic__layer schematic__layer--active">
+            <span class="schematic__layer-tag">L2</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Handshakes</p>
+              <p class="schematic__layer-desc">Join. Relate. Invite. Link.</p>
+            </div>
+            <span class="schematic__layer-arrow">↓</span>
+          </div>
+          <div class="schematic__layer">
+            <span class="schematic__layer-tag">L1</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Account-fs</p>
+              <p class="schematic__layer-desc">User-controlled private data store.</p>
+            </div>
+            <span class="schematic__layer-arrow">↓</span>
+          </div>
+        </div>
+        <div class="schematic__foot">
+          <span>Three layers. Each user-controlled.</span>
+          <span>v0.1</span>
+        </div>
+      </aside>
+    </div>
+
+    <a href="#" class="creole__action reveal delay-4">Read the whitepaper</a>
+  </div>
+</section>
+
+<!-- ══════════════════ EDIT 6 of 8 · CONSULTING ══════════════════
+     You can change: the heading "Knowledge is a tool, too.", the two
+     paragraphs, the red "Focus is a currency." quote, and the five
+     "What we work on" list items on the right.
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═════════════════════════════════════════════════════════════ -->
+<section class="section" id="consulting">
+  <div class="container">
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">05<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>Consulting</strong> · Knowledge applied</span>
+      </div>
+      <span class="section__date">Service · accepting briefs</span>
+    </div>
+
+    <div class="consulting__layout">
+      <div class="reveal delay-1">
+        <h2 class="consulting__headline">
+          Knowledge<br>
+          is a <span class="acc">tool</span>, too.
+        </h2>
+        <div class="consulting__body">
+          <p>Not every tool is software. Some are knowledge applied — the right question at the right moment, by someone who has seen the pattern before.</p>
+          <p>Our consulting practice helps organizations move faster, hire better, and make the structural changes they keep postponing.</p>
+        </div>
+        <div class="consulting__pullquote">
+          <p class="consulting__pullquote-text">"Focus is a currency."</p>
+          <span class="consulting__pullquote-attr">— FROM A 2021 ESSAY</span>
+        </div>
+      </div>
+
+      <aside class="consulting__sidebar reveal delay-2" aria-label="What we work on">
+        <h3 class="consulting__sidebar-head">What we work on</h3>
+        <ol class="consulting__list">
+          <li>Hiring senior technical leaders, end-to-end.</li>
+          <li>Operating model redesigns. Org structure surgery.</li>
+          <li>Speed audits. Why your team has slowed.</li>
+          <li>Pricing and positioning for technical products.</li>
+          <li>The hard conversations no one else will have.</li>
+        </ol>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ EDIT 7 of 8 · THE PEOPLE ══════════════════
+     You can change: the heading "The people behind this.", and the
+     two founder cards — each has a role line, a name (Shobhit
+     Srivastava / Smriti), and a one-line description.
+     (Photos get added later — the dashed boxes are placeholders.)
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═════════════════════════════════════════════════════════════ -->
+<section class="section" id="people">
+  <div class="container">
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">06<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>The people</strong> · Behind this</span>
+      </div>
+      <span class="section__date">Two founders</span>
+    </div>
+
+    <h2 class="people__headline reveal delay-1">The people behind this.</h2>
+
+    <div class="people__grid">
+      <article class="person reveal delay-2">
+        <span class="person__role-meta">Co-founder · Infrastructure & Operators</span>
+        <div class="person__portrait">
+          <div class="person__portrait-label">
+            <strong>PORTRAIT</strong>
+            Shobhit Srivastava<br>
+            Replace with photograph.
+          </div>
+        </div>
+        <h3 class="person__name">Shobhit Srivastava</h3>
+        <p class="person__role">Holds the infrastructure and operator streams. Shovel since 2022.</p>
+      </article>
+
+      <article class="person reveal delay-3">
+        <span class="person__role-meta">Co-founder · Personal Tools</span>
+        <div class="person__portrait">
+          <div class="person__portrait-label">
+            <strong>PORTRAIT</strong>
+            Smriti<br>
+            Replace with photograph.
+          </div>
+        </div>
+        <h3 class="person__name">Smriti</h3>
+        <p class="person__role">Holds the personal-tools stream. Building Stevens.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════ EDIT 8 of 8 · CONTACT (FOOTER) ══════════════════
+     You can change: the big "connect@shovel.company" email, the
+     sentence under it, the imprint block (Shovel Company / Shovel
+     Labs LLP · Bangalore, IN / Established 2022), and the list of
+     links (Discord / GitHub / Blog / X / LinkedIn).
+     NOTE: if you change the email words, also change it in the
+     href="mailto:..." part so the link still works.
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="colophon" id="colophon">
+  <div class="container">
+    <div class="colophon__meta">
+      <div class="colophon__meta-left">
+        <span class="colophon__num">07<span class="acc">.</span></span>
+        <span class="colophon__kicker"><strong>Colophon</strong> · Get in touch</span>
+      </div>
+      <span class="colophon__date">Always open</span>
+    </div>
+
+    <a href="mailto:connect@shovel.company" class="colophon__email reveal delay-1">connect@<br>shovel.company</a>
+    <p class="colophon__sub reveal delay-2">
+      An email. That's it. No demos to book, no waitlists to join. Write if any of this resonates.
+    </p>
+
+    <div class="colophon__footer">
+      <div class="colophon__col">
+        <p class="colophon__col-label">Imprint</p>
+        <span class="colophon__name">Shovel Company</span>
+        <span class="colophon__tag">Shovel Labs LLP · Bangalore, IN</span>
+        <span class="colophon__tag">Established 2022</span>
+      </div>
+      <div class="colophon__col">
+        <p class="colophon__col-label">Elsewhere</p>
+        <div class="colophon__links">
+          <a class="colophon__link" href="https://discord.gg/PmzsJeembE"><span>Discord</span></a>
+          <a class="colophon__link" href="https://github.com/shovelers"><span>GitHub</span></a>
+          <a class="colophon__link" href="https://blog.shovel.company"><span>Blog</span></a>
+          <a class="colophon__link" href="#"><span>X</span></a>
+          <a class="colophon__link" href="#"><span>LinkedIn</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+
+  // Mobile menu toggle
+  const toggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    toggle.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '-8% 0px -8% 0px', threshold: 0.05 });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('in'));
+  }
+})();
+</script>
+
+</body>
+</html>
