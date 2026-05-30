@@ -1296,6 +1296,360 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 }
 
 /* =====================================================================
+   SECTION 06 — HISTORY
+   Five-phase chronology. Brutalist 3D = hard offset shadows
+   (black + signal red), no perspective, no gradients.
+   ===================================================================== */
+.history {
+  background: var(--white);
+  padding-block: 120px 100px;
+  overflow: hidden;
+}
+
+.history__lede {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(20px, 2.2vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 64px;
+  max-width: 920px;
+}
+
+.history__lede strong {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* ─── Timeline rail with anchor markers ─── */
+.history__rail {
+  position: relative;
+  margin: 0 0 80px;
+  padding-top: 56px;
+  height: 80px;
+}
+
+.history__rail-line {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--black);
+}
+
+.history__rail-anchors {
+  position: relative;
+  height: 100%;
+}
+
+.history__anchor {
+  position: absolute;
+  left: var(--at);
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  color: var(--mute);
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.history__anchor-label {
+  margin-top: 12px;
+  display: block;
+}
+
+.history__anchor-label strong {
+  color: var(--ink);
+  font-weight: 700;
+  display: inline-block;
+}
+
+.history__anchor-tick {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 14px;
+  background: var(--black);
+}
+
+/* Event anchors (founding + Smriti) — red tick, slightly larger label */
+.history__anchor--event .history__anchor-tick {
+  width: 3px;
+  height: 18px;
+  background: var(--acc);
+  top: 47px;
+}
+
+.history__anchor--event .history__anchor-label {
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.history__anchor--event .history__anchor-label strong {
+  color: var(--acc);
+}
+
+/* ─── Phase cards row ─── */
+.history__phases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  counter-reset: phase;
+}
+
+.history__phase {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--black);
+  padding: 28px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  /* Brutalist "3D" — hard offset shadows, no blur, layered red + black */
+  box-shadow:
+    6px 6px 0 0 var(--ink),
+    12px 12px 0 0 var(--acc);
+
+  transition:
+    transform 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
+  cursor: default;
+}
+
+.history__phase:hover {
+  transform: translate(-4px, -4px);
+  box-shadow:
+    10px 10px 0 0 var(--ink),
+    20px 20px 0 0 var(--acc);
+}
+
+/* Current phase — flipped scheme (filled, not outlined) */
+.history__phase--current {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
+  box-shadow:
+    6px 6px 0 0 var(--acc),
+    12px 12px 0 0 var(--ink);
+}
+
+.history__phase--current:hover {
+  box-shadow:
+    10px 10px 0 0 var(--acc),
+    20px 20px 0 0 var(--ink);
+}
+
+.history__phase-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--black);
+}
+
+.history__phase--current .history__phase-meta {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.history__phase-num {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.history__phase--current .history__phase-num {
+  color: var(--white);
+}
+
+.history__phase-num .acc { color: var(--acc); }
+
+.history__phase-dates {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mute);
+  text-align: right;
+}
+
+.history__phase--current .history__phase-dates {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* The phase title — modelled on .colophon__email */
+.history__phase-title {
+  font-family: var(--f-display);
+  font-weight: 900;
+  font-size: clamp(28px, 2.8vw, 44px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+  transition: color 220ms var(--ease-out);
+}
+
+.history__phase--current .history__phase-title {
+  color: var(--white);
+}
+
+.history__phase-title .acc { color: var(--acc); }
+
+.history__phase:hover .history__phase-title {
+  color: var(--acc);
+}
+
+.history__phase--current:hover .history__phase-title {
+  color: var(--acc);
+}
+
+.history__phase-summary {
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+}
+
+.history__phase--current .history__phase-summary {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.history__phase-summary strong {
+  font-weight: 700;
+}
+
+.history__phase-summary em {
+  font-style: italic;
+  color: var(--acc);
+  font-weight: 600;
+}
+
+.history__phase--current .history__phase-summary em {
+  color: var(--acc);
+}
+
+.history__phase-outcome {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--mute);
+  margin: auto 0 0;
+  padding-top: 16px;
+  border-top: 1px dashed var(--faint);
+}
+
+.history__phase--current .history__phase-outcome {
+  color: rgba(255, 255, 255, 0.72);
+  border-top-color: rgba(255, 255, 255, 0.25);
+}
+
+.history__phase-outcome-label {
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--acc);
+  margin-bottom: 4px;
+}
+
+/* ─── Footnote ─── */
+.history__footnote {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  margin: 64px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--black);
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  max-width: 920px;
+}
+
+.history__footnote-num {
+  color: var(--acc);
+  font-family: var(--f-mono);
+  font-weight: 700;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .history__phases { grid-template-columns: repeat(2, 1fr); }
+  .history__phases .history__phase:last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 700px) {
+  .history__phases {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .history__phases .history__phase:last-child {
+    grid-column: auto;
+  }
+  .history__phase {
+    box-shadow:
+      4px 4px 0 0 var(--ink),
+      8px 8px 0 0 var(--acc);
+  }
+  .history__phase:hover {
+    transform: translate(-2px, -2px);
+    box-shadow:
+      6px 6px 0 0 var(--ink),
+      12px 12px 0 0 var(--acc);
+  }
+  .history__phase--current {
+    box-shadow:
+      4px 4px 0 0 var(--acc),
+      8px 8px 0 0 var(--ink);
+  }
+  .history__phase--current:hover {
+    box-shadow:
+      6px 6px 0 0 var(--acc),
+      12px 12px 0 0 var(--ink);
+  }
+
+  /* Rail: hide individual date labels on mobile (too crowded), keep only events */
+  .history__rail { margin-bottom: 56px; }
+  .history__anchor:not(.history__anchor--event) .history__anchor-label {
+    display: none;
+  }
+  .history__anchor-label { font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .history__phase,
+  .history__phase-title {
+    transition: none;
+  }
+  .history__phase:hover {
+    transform: none;
+  }
+}
+
+/* =====================================================================
    SECTION 07 — COLOPHON (contact)
    ===================================================================== */
 .colophon {
@@ -1477,6 +1831,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
       <a class="masthead__link" href="#creole">Creole</a>
       <a class="masthead__link" href="#consulting">Consulting</a>
       <a class="masthead__link" href="https://blog.shovel.company/" target="_blank" rel="noopener">Writing</a>
+      <a class="masthead__link" href="#history">History</a>
       <a class="masthead__link masthead__link--acc" href="#colophon">Contact</a>
     </nav>
   </div>
@@ -1860,12 +2215,144 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 </section>
 -->
 
+<!-- ══════════════════ EDIT · SECTION 06 · HISTORY ══════════════════
+     Search "EDIT" to jump here. You can change: the intro sentence (lede),
+     the five phase cards (each has dates, a title, a summary, an outcome),
+     the timeline rail labels, and the closing footnote.
+     RULE: only change words BETWEEN  >  and  <  symbols.
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="section history" id="history">
+  <div class="container">
+
+    <div class="section__meta reveal">
+      <div class="section__meta-left">
+        <span class="section__num">06<span class="acc">.</span></span>
+        <span class="section__kicker"><strong>History</strong> · How we got here</span>
+      </div>
+      <span class="section__date">Sep 2020 — present</span>
+    </div>
+
+    <p class="history__lede reveal">
+      Five phases. One sequence. We committed to a hunting order in 2020 —
+      <strong>find the technology, then build the product, then identify the
+      business model</strong> — and never broke discipline.
+    </p>
+
+    <!-- Timeline rail with anchor markers -->
+    <div class="history__rail reveal" aria-hidden="true">
+      <div class="history__rail-line"></div>
+      <div class="history__rail-anchors">
+        <span class="history__anchor" style="--at: 0%;"><span class="history__anchor-tick"></span><span class="history__anchor-label">Sep 2020</span></span>
+        <span class="history__anchor history__anchor--event" style="--at: 28%;"><span class="history__anchor-tick"></span><span class="history__anchor-label"><strong>Shovel founded</strong><br>Dec 2021</span></span>
+        <span class="history__anchor" style="--at: 56%;"><span class="history__anchor-tick"></span><span class="history__anchor-label">Oct 2024</span></span>
+        <span class="history__anchor history__anchor--event" style="--at: 88%;"><span class="history__anchor-tick"></span><span class="history__anchor-label"><strong>Smriti joins</strong><br>Jul 2026 (incoming)</span></span>
+        <span class="history__anchor" style="--at: 100%;"><span class="history__anchor-tick"></span><span class="history__anchor-label">Now</span></span>
+      </div>
+    </div>
+
+    <!-- Phase cards row -->
+    <ol class="history__phases reveal">
+      <li class="history__phase" data-phase="1">
+        <div class="history__phase-meta">
+          <span class="history__phase-num">01<span class="acc">.</span></span>
+          <span class="history__phase-dates">Sep 2020 — 2021</span>
+        </div>
+        <h3 class="history__phase-title">The<br>Purpose<span class="acc">.</span></h3>
+        <p class="history__phase-summary">
+          Shobhit leaves Gojek. Two years on <em>Odet</em>, an alert-fatigue
+          developer tool. The work is the search.
+        </p>
+        <p class="history__phase-outcome">
+          <span class="history__phase-outcome-label">Outcome</span>
+          The framework is set: technology → product → business model.
+        </p>
+      </li>
+
+      <li class="history__phase" data-phase="2">
+        <div class="history__phase-meta">
+          <span class="history__phase-num">02<span class="acc">.</span></span>
+          <span class="history__phase-dates">Dec 2021 — 2023</span>
+        </div>
+        <h3 class="history__phase-title">The<br>Thesis<span class="acc">.</span></h3>
+        <p class="history__phase-summary">
+          <strong>Shobhit founds Shovel in Dec 2021.</strong> The technology
+          question gets answered: digital identity is the substrate.
+        </p>
+        <p class="history__phase-outcome">
+          <span class="history__phase-outcome-label">Outcome</span>
+          Technology = digital identity. First box ticked.
+        </p>
+      </li>
+
+      <li class="history__phase" data-phase="3">
+        <div class="history__phase-meta">
+          <span class="history__phase-num">03<span class="acc">.</span></span>
+          <span class="history__phase-dates">2023 — Oct 2024</span>
+        </div>
+        <h3 class="history__phase-title">The<br>Prototype<span class="acc">.</span></h3>
+        <p class="history__phase-summary">
+          Creole Network founded. Social graph built. Rolodex shipped to
+          test the thesis. <em>The thesis breaks.</em>
+        </p>
+        <p class="history__phase-outcome">
+          <span class="history__phase-outcome-label">Outcome</span>
+          Applications are a dead end. The end-user paradigm is agents.
+        </p>
+      </li>
+
+      <li class="history__phase" data-phase="4">
+        <div class="history__phase-meta">
+          <span class="history__phase-num">04<span class="acc">.</span></span>
+          <span class="history__phase-dates">Oct 2024 — Jan 2026</span>
+        </div>
+        <h3 class="history__phase-title">The<br>Agents<span class="acc">.</span></h3>
+        <p class="history__phase-summary">
+          Malleable software thesis emerges. Butler is figured out — concept,
+          backend, frontend, then the GAnet Architecture lands.
+        </p>
+        <p class="history__phase-outcome">
+          <span class="history__phase-outcome-label">Outcome</span>
+          The product is known. The architecture beneath it is named.
+        </p>
+      </li>
+
+      <li class="history__phase history__phase--current" data-phase="5">
+        <div class="history__phase-meta">
+          <span class="history__phase-num">05<span class="acc">.</span></span>
+          <span class="history__phase-dates">Jan 2026 — present</span>
+        </div>
+        <h3 class="history__phase-title">"The"<br>Phase<span class="acc">.</span></h3>
+        <p class="history__phase-summary">
+          <strong>Stevens</strong> is the summation. Health, wealth,
+          relationships. Technology, product, business model — all resolved.
+          <strong>Smriti joins as Head of Design in July 2026</strong>,
+          opening the expression hunt.
+        </p>
+        <p class="history__phase-outcome">
+          <span class="history__phase-outcome-label">Outcome</span>
+          The hunt that began at Gojek's exit door lands here.
+        </p>
+      </li>
+    </ol>
+
+    <p class="history__footnote reveal">
+      <span class="history__footnote-num">→</span>
+      <span>
+        For almost six years, Shovel has been Shobhit alone. From July 2026,
+        a two-person workshop. The substance was hunted first. The surface
+        follows. Most companies do the opposite.
+      </span>
+    </p>
+
+  </div>
+</section>
+
 </main>
 
 <!-- ══════════════════ EDIT 8 of 8 · CONTACT (FOOTER) ══════════════════
      You can change: the big "connect@shovel.company" email, the
      sentence under it, the imprint block (Shovel Company / Shovel
-     Labs LLP · Bangalore, IN / Established 2022), and the list of
+     Labs LLP · Bangalore, IN / Established 2021), and the list of
      links (Discord / GitHub / Blog / X / LinkedIn).
      NOTE: if you change the email words, also change it in the
      href="mailto:..." part so the link still works.
@@ -1875,7 +2362,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   <div class="container">
     <div class="colophon__meta">
       <div class="colophon__meta-left">
-        <span class="colophon__num">06<span class="acc">.</span></span>
+        <span class="colophon__num">07<span class="acc">.</span></span>
         <span class="colophon__kicker"><strong>Colophon</strong> · Get in touch</span>
       </div>
     </div>
@@ -1890,7 +2377,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
         <p class="colophon__col-label">Imprint</p>
         <span class="colophon__name">Shovel Company</span>
         <span class="colophon__tag">Shovel Labs LLP · Bangalore, IN</span>
-        <span class="colophon__tag">Established 2022</span>
+        <span class="colophon__tag">Established 2021</span>
       </div>
       <div class="colophon__col">
         <p class="colophon__col-label">Elsewhere</p>
