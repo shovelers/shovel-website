@@ -2173,8 +2173,40 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
         </div>
       </div>
 
-      <aside class="consulting__sidebar reveal delay-2">
-        <p class="consulting__sidebar-statement">The only path is structural, bottom-up, layer by layer.</p>
+      <aside class="schematic reveal delay-2" aria-label="Knowledge layers">
+        <div class="schematic__head">
+          <span class="schematic__title">The brain, layered</span>
+        </div>
+        <div class="schematic__body">
+          <div class="schematic__layer">
+            <span class="schematic__layer-tag">L3</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Operations</p>
+              <p class="schematic__layer-desc">How the business actually runs.</p>
+            </div>
+            <span class="schematic__layer-arrow">↑</span>
+          </div>
+          <div class="schematic__layer">
+            <span class="schematic__layer-tag">L2</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Technology</p>
+              <p class="schematic__layer-desc">Systems, stack, integrations.</p>
+            </div>
+            <span class="schematic__layer-arrow">↑</span>
+          </div>
+          <div class="schematic__layer schematic__layer--active">
+            <span class="schematic__layer-tag">L1</span>
+            <div class="schematic__layer-body">
+              <p class="schematic__layer-name">Data &amp; APIs</p>
+              <p class="schematic__layer-desc">What the company actually knows.</p>
+            </div>
+            <span class="schematic__layer-arrow">↑</span>
+          </div>
+        </div>
+        <div class="schematic__foot">
+          <span>Three layers. Mapped bottom to top.</span>
+          <span>AI-native</span>
+        </div>
       </aside>
     </div>
   </div>
