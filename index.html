@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
 <title>Shovel Company — Issue 01: Tools.</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="description" content="Shovel Company. Infrastructure, personal agents, and applied knowledge. Issue 01.">
 
 <meta property="og:title" content="Shovel Company — Issue 01">
@@ -146,20 +147,21 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   margin-right: 24px;
 }
 
+/* Shovel keycap logo (inherits currentColor) */
 .masthead__logo {
   width: 28px;
-  height: 28px;
-  background: var(--black);
-  color: var(--white);
-  display: grid;
-  place-items: center;
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: -0.02em;
+  height: 30px;
+  display: block;
+  color: var(--black);   /* black keycap on the white top bar */
 }
 
-.masthead__logo::after { content: "S"; }
+.colophon__logo {
+  display: inline-block;
+  width: 17px;
+  height: 18px;
+  vertical-align: -3px;
+  margin-right: 8px;       /* white keycap on the black contact section */
+}
 
 .masthead__name {
   font-family: var(--f-display);
@@ -1834,6 +1836,22 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 </head>
 <body>
 
+<!-- Shovel keycap logo — defined once, reused via <use href="#logo-key">. Recolours via CSS currentColor. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="logo-key" viewBox="0 0 294.91 310.44">
+    <g fill="currentColor">
+      <polygon points="223.77 241.69 205.65 241.69 153.47 295.56 171.6 295.56 223.77 241.69"/>
+      <polygon points="187.64 241.69 169.52 241.69 117.34 295.56 135.47 295.56 187.64 241.69"/>
+      <path d="M253.32,237.51a24.52,24.52,0,0,1-11.42,4.06l-52.29,54h18.12l48-49.6Z"/>
+      <polygon points="133.39 241.69 81.21 295.56 99.34 295.56 151.51 241.69 133.39 241.69"/>
+      <polygon points="264.1 274.67 259.92 260.27 225.74 295.56 243.86 295.56 264.1 274.67"/>
+      <path d="M31.5,272.28,25,294.55a15.59,15.59,0,0,0,2.36.68l51.86-53.54H61.12Z"/>
+      <polygon points="45.08 295.56 63.2 295.56 115.38 241.69 97.25 241.69 45.08 295.56"/>
+      <path d="M291.48,53.3,272.36,16.46A30.48,30.48,0,0,0,245.3,0H49.6A30.5,30.5,0,0,0,22.54,16.46L3.42,53.3A30.59,30.59,0,0,0,0,67.35V280a30.49,30.49,0,0,0,30.48,30.49H264.42A30.5,30.5,0,0,0,294.91,280V67.35A30.6,30.6,0,0,0,291.48,53.3ZM174.39,142.71q-6.6-5.33-21.55-8.85L132.28,129q-21.87-5-32.48-15.71T89.19,85.6q0-21,16.49-34.08t42.54-13.08q26.16,0,42.16,12.92t16.55,33.91H179.88a23.19,23.19,0,0,0-9.56-17.42q-8.58-6.33-22.32-6.32-13.41,0-21.71,6T118,83.51a15.46,15.46,0,0,0,6.43,12.86q6.44,4.95,21,8.47L163.72,109q24.08,5.49,35,16t10.88,28.25q0,22.53-16.87,35.78T147,202.35q-27.48,0-44.13-12.7T85.34,155.08h27.48Q114.14,166,124,172.61t24.51,6.65q14.3,0,23.36-6.37T181,156.62A17.06,17.06,0,0,0,174.39,142.71ZM14.88,280V67.35a15.7,15.7,0,0,1,1.75-7.18L30.69,33.05v184a25.16,25.16,0,0,0,1.13,7.4L15.06,282.18A14.7,14.7,0,0,1,14.88,280Zm249.54,15.61H30.48a15.46,15.46,0,0,1-5.45-1l16.56-57a24.56,24.56,0,0,0,13.76,4.18H239.56a24.61,24.61,0,0,0,13.76-4.18l16.55,57A15.38,15.38,0,0,1,264.42,295.56ZM280,280a14.68,14.68,0,0,1-.19,2.23l-16.76-57.73a24.84,24.84,0,0,0,1.14-7.4v-184l14.06,27.12A15.82,15.82,0,0,1,280,67.35Z"/>
+    </g>
+  </symbol>
+</svg>
+
 <!-- ══════════════════ EDIT 1 of 8 · TOP BAR (MASTHEAD) ══════════════════
      You can change: the brand name "Shovel Company" and the menu words
      (Stevens / Creole / Enterprise / Writing / History / Contact).
@@ -1843,7 +1861,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 <header class="masthead">
   <div class="masthead__inner">
     <div class="masthead__brand" aria-label="Shovel Company">
-      <span class="masthead__logo" aria-hidden="true"></span>
+      <svg class="masthead__logo" viewBox="0 0 294.91 310.44" aria-hidden="true" focusable="false"><use href="#logo-key"/></svg>
       <span class="masthead__name">Shovel Company</span>
     </div>
     <div class="masthead__issue" aria-hidden="true"></div>
@@ -2408,7 +2426,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
     <div class="colophon__footer">
       <div class="colophon__col">
         <p class="colophon__col-label">Imprint</p>
-        <span class="colophon__name">Shovel Company</span>
+        <span class="colophon__name"><svg class="colophon__logo" viewBox="0 0 294.91 310.44" aria-hidden="true" focusable="false"><use href="#logo-key"/></svg>Shovel Company</span>
         <span class="colophon__tag">Shovel Labs LLP · Bangalore, IN</span>
         <span class="colophon__tag">Established 2021</span>
       </div>
