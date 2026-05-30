@@ -251,6 +251,10 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
 @media (max-width: 900px) {
   .masthead__issue { display: none; }
+  /* On mobile only the brand + hamburger are in flow — collapse to a
+     2-column grid so the hamburger hugs the right edge instead of
+     landing in the now-empty middle column. */
+  .masthead__inner { grid-template-columns: 1fr auto; }
   .masthead__links {
     position: fixed;
     top: 56px;
