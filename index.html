@@ -785,6 +785,19 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 .stevens-stage__frame.is-ready .stevens-stage__hint { opacity: 1; }
 .stevens-stage__frame.is-engaged .stevens-stage__hint { opacity: 0; }
 
+/* Mobile: drop the box chrome entirely (no border, fill, or caption) and let the
+   phone fill the width, taking a taller space so the simulation reads large. */
+@media (max-width: 640px) {
+  .stevens-stage__cap { display: none; }        /* remove "Stevens · live prototype" label */
+  .stevens-stage__frame {
+    aspect-ratio: 393 / 852;   /* the phone's own portrait ratio */
+    width: 100%;               /* fill width → phone large & readable */
+    height: auto;              /* derived → tall; occupies more vertical space */
+    border: 0;                 /* box removed */
+    background: transparent;   /* fill removed — phone floats on the page */
+  }
+}
+
 /* ─── Stevens as printed-page diagram (NOT a phone) ─── */
 
 .specimen {
@@ -2541,8 +2554,8 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
   // Fit the 393×852 phone inside the square — uniform scale, no distortion.
   function fit(){
-    var h = frame.clientHeight;            // square: height === width
-    var s = (h * 0.94) / 852;              // small margin so the phone floats inside the square
+    var w = frame.clientWidth, h = frame.clientHeight;
+    var s = Math.min(w / 393, h / 852) * 0.94;   // fit by the limiting dimension (square or portrait, never crops)
     scaler.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
   fit();
