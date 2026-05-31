@@ -788,11 +788,15 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 /* Mobile: drop the box chrome entirely (no border, fill, or caption) and let the
    phone fill the width, taking a taller space so the simulation reads large. */
 @media (max-width: 640px) {
-  .stevens-stage__cap { display: none; }        /* remove "Stevens · live prototype" label */
+  /* Maximize the prototype within the mobile fold: tighten the surrounding white
+     and let the phone fill the space between the fixed header and the browser toolbar. */
+  #stevens { padding-block: 48px 40px; }            /* was 96/120 — reclaim vertical space */
+  #stevens .stevens__layout { gap: 28px; }          /* was 56 — tighten copy ↔ prototype */
+  .stevens-stage__cap { display: none; }            /* remove "Stevens · live prototype" label */
   .stevens-stage__frame {
     aspect-ratio: 393 / 852;          /* the phone's own portrait ratio */
-    height: calc(100vh - 104px);      /* fallback */
-    height: calc(100svh - 104px);     /* fit between the fixed 56px header and the browser toolbar (svh excludes the toolbar); leaves breathing room */
+    height: calc(100vh - 64px);       /* fallback */
+    height: calc(100svh - 64px);      /* fill the fold: clear the fixed 56px header; svh keeps the bottom above the browser toolbar */
     width: auto;                      /* derived from height + aspect */
     max-width: 100%;
     margin: 0 auto;                   /* centered */
@@ -1994,7 +1998,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
     <div class="cover__foot">
       <p class="cover__lede reveal delay-2">
-        Infrastructure that holds the new internet up. Personal agents that hold a household together. The brain an enterprise runs on.
+        Infrastructure that holds the new internet up. Personal agents that hold a household together. The brain that an enterprise runs on.
       </p>
       <div class="cover__foot-meta reveal delay-3">
         <div><strong>Shovel Labs LLP</strong></div>
@@ -2558,7 +2562,8 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   // Fit the 393×852 phone inside the square — uniform scale, no distortion.
   function fit(){
     var w = frame.clientWidth, h = frame.clientHeight;
-    var s = Math.min(w / 393, h / 852) * 0.94;   // fit by the limiting dimension (square or portrait, never crops)
+    var pad = (window.innerWidth <= 640) ? 1.0 : 0.94;   // mobile: fill the frame; desktop: float in the square
+    var s = Math.min(w / 393, h / 852) * pad;            // fit by the limiting dimension (never crops)
     scaler.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
   fit();
