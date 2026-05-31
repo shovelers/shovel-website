@@ -633,7 +633,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
    ===================================================================== */
 .stevens__layout {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.1fr 1fr;   /* text left · live-prototype figure box right */
   gap: 64px;
   align-items: start;
 }
@@ -722,6 +722,68 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   color: var(--acc);
   display: block;
 }
+
+/* ─── Stevens — live-prototype stage (square frame; portrait phone scaled to fit, no distortion) ─── */
+.stevens-stage {
+  width: 100%;
+  margin: 0;
+}
+.stevens-stage__cap {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mute);
+  margin: 0 0 12px;
+}
+.stevens-stage__cap .acc { color: var(--acc); }
+.stevens-stage__frame {
+  position: relative;
+  aspect-ratio: 1 / 1;                 /* the square boundary */
+  border: 1px solid var(--black);
+  background: var(--surface-1);        /* light base shade from the site palette */
+  overflow: hidden;
+  cursor: pointer;
+}
+.stevens-stage__scaler {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 393px;
+  height: 852px;                       /* the phone's native footprint */
+  transform-origin: center center;     /* JS sets: translate(-50%,-50%) scale(S) — keeps it centered + uncropped */
+}
+#stevens-app-frame {
+  width: 393px;
+  height: 852px;
+  border: 0;
+  display: block;
+  background: transparent;
+  pointer-events: none;                /* clicks are handled by the frame (tap-to-preview) */
+  opacity: 0;                          /* revealed once the prototype signals it is styled */
+  transition: opacity 0.5s ease-out;
+}
+.stevens-stage__frame.is-ready #stevens-app-frame { opacity: 1; }
+.stevens-stage__hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.62);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(184, 148, 95, 0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+.stevens-stage__frame.is-ready .stevens-stage__hint { opacity: 1; }
+.stevens-stage__frame.is-engaged .stevens-stage__hint { opacity: 0; }
 
 /* ─── Stevens as printed-page diagram (NOT a phone) ─── */
 
@@ -2041,39 +2103,15 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
         </dl>
       </div>
 
-      <aside class="specimen reveal delay-2" aria-label="Stevens product specimen">
-        <div class="specimen__head">
-          <span class="specimen__title">Specimen <span class="acc">/</span> Stevens v0.1</span>
-        </div>
-
-        <div class="specimen__diagram" aria-hidden="true">
-          <div class="specimen__figure">
-            <div class="specimen__figure-head"></div>
-            <div class="specimen__figure-bridge"></div>
-            <div class="specimen__figure-body"></div>
-          </div>
-
-          <div class="specimen__label specimen__label--tl">
-            <span><span class="num">A.</span>Halo</span>
-          </div>
-          <div class="specimen__label specimen__label--tr">
-            <span><span class="num">B.</span>Spectacles</span>
-          </div>
-          <div class="specimen__label specimen__label--bl">
-            <span><span class="num">C.</span>Shoulders</span>
-          </div>
-          <div class="specimen__label specimen__label--br">
-            <span><span class="num">D.</span>Body</span>
-          </div>
-          <div class="specimen__label specimen__label--cb">
-            <span><span class="num">E.</span>Voice cue</span>
+      <!-- Stevens — live prototype, isolated in an iframe (self-contained; cannot affect the rest of the page). Square stage; portrait phone scaled to fit with no distortion. -->
+      <figure class="stevens-stage reveal delay-2">
+        <figcaption class="stevens-stage__cap">Stevens <span class="acc">·</span> live prototype</figcaption>
+        <div class="stevens-stage__frame" id="stevens-stage-frame">
+          <div class="stevens-stage__scaler" id="stevens-stage-scaler">
+            <iframe id="stevens-app-frame" src="stevens-app.html" title="Stevens — live prototype" scrolling="no"></iframe>
           </div>
         </div>
-
-        <p class="specimen__caption">
-          Stevens, hibernation state. The agent waits. Shards drift around the figure surfacing pending household items. Voice cue at base (E) indicates listening readiness.
-        </p>
-      </aside>
+      </figure>
     </div>
   </div>
 </section>
@@ -2487,6 +2525,53 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
     reveals.forEach(el => io.observe(el));
   } else {
     reveals.forEach(el => el.classList.add('in'));
+  }
+})();
+</script>
+
+<!-- Stevens live-prototype stage: scale the portrait phone to fit the square, reveal on ready (no flash), tap-to-preview, and pause when off-screen. -->
+<script id="stevens-stage-ctl">
+(function(){
+  var frame  = document.getElementById('stevens-stage-frame');
+  var scaler = document.getElementById('stevens-stage-scaler');
+  var iframe = document.getElementById('stevens-app-frame');
+  if(!frame || !scaler || !iframe) return;
+
+  function msg(m){ try { iframe.contentWindow.postMessage(m, '*'); } catch(e){} }
+
+  // Fit the 393×852 phone inside the square — uniform scale, no distortion.
+  function fit(){
+    var h = frame.clientHeight;            // square: height === width
+    var s = (h * 0.94) / 852;              // small margin so the phone floats inside the square
+    scaler.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+  }
+  fit();
+  if(window.ResizeObserver){ new ResizeObserver(fit).observe(frame); }
+  window.addEventListener('resize', fit);
+
+  // Reveal once the prototype reports it is styled (kills the unstyled flash); fallback timeout.
+  var lastVisible = true, revealed = false;
+  function reveal(){ if(revealed) return; revealed = true; frame.classList.add('is-ready'); }
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'stevens:ready'){ reveal(); msg({ type:'stevens:setPlaying', playing: lastVisible }); }
+  });
+  iframe.addEventListener('load', reveal);   // belt-and-suspenders: reveal even if the ready message is blocked (e.g. file://)
+  setTimeout(reveal, 1500);
+
+  // Tap-to-preview → jump straight to the responding stage.
+  frame.addEventListener('click', function(){
+    frame.classList.add('is-engaged');
+    msg({ type:'stevens:jump', to:'speaking' });
+  });
+
+  // Pause animation + autoplay when the stage is off-screen (saves CPU / battery).
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        lastVisible = en.isIntersecting;
+        msg({ type:'stevens:setPlaying', playing: lastVisible });
+      });
+    }, { threshold: 0.15 }).observe(frame);
   }
 })();
 </script>
