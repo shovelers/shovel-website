@@ -790,11 +790,14 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 @media (max-width: 640px) {
   .stevens-stage__cap { display: none; }        /* remove "Stevens · live prototype" label */
   .stevens-stage__frame {
-    aspect-ratio: 393 / 852;   /* the phone's own portrait ratio */
-    width: 100%;               /* fill width → phone large & readable */
-    height: auto;              /* derived → tall; occupies more vertical space */
-    border: 0;                 /* box removed */
-    background: transparent;   /* fill removed — phone floats on the page */
+    aspect-ratio: 393 / 852;          /* the phone's own portrait ratio */
+    height: calc(100vh - 104px);      /* fallback */
+    height: calc(100svh - 104px);     /* fit between the fixed 56px header and the browser toolbar (svh excludes the toolbar); leaves breathing room */
+    width: auto;                      /* derived from height + aspect */
+    max-width: 100%;
+    margin: 0 auto;                   /* centered */
+    border: 0;                        /* box removed */
+    background: transparent;          /* fill removed — phone floats on the page */
   }
 }
 
