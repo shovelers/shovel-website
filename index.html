@@ -677,30 +677,41 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
-  margin-top: 40px;
+  margin-top: 48px;
+  border-top: 2px solid var(--black);      /* spec band — hard top + bottom rules */
+  border-bottom: 2px solid var(--black);
 }
 
 .stevens__spec {
-  padding: 16px 16px 16px 0;
+  padding: 22px 24px;
+  border-right: 1px solid var(--black);    /* hairline dividers between pillars */
 }
 
+.stevens__spec:first-child { padding-left: 0; }
 .stevens__spec:last-child { border-right: 0; padding-right: 0; }
 
 .stevens__spec-label {
   font-family: var(--f-mono);
-  font-size: 11px;
-  color: var(--mute);
-  letter-spacing: 0.05em;
-  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;               /* PILLAR 01 — promoted, higher contrast */
+  color: var(--ink);
+  letter-spacing: 0.14em;
+  margin: 0 0 10px;
 }
 
 .stevens__spec-value {
   font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  font-size: clamp(30px, 4vw, 46px);       /* big — real presence next to the headline */
+  line-height: 0.95;
+  letter-spacing: -0.03em;
   color: var(--ink);
+  margin: 0;
 }
+
+/* Relationships — the core pillar, accented in red */
+.stevens__spec:last-child .stevens__spec-value { color: var(--acc); }
 
 .stevens__quote {
   margin: 40px 0 0;
@@ -960,8 +971,9 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
 @media (max-width: 500px) {
   .stevens__spec-grid { grid-template-columns: 1fr; }
-  .stevens__spec { border-right: 0; border-bottom: 1px solid var(--black); padding: 12px 0; }
-  .stevens__spec:last-child { border-bottom: 0; }
+  .stevens__spec { border-right: 0; border-bottom: 1px solid var(--black); padding: 18px 0; }
+  .stevens__spec:first-child { padding-top: 4px; }
+  .stevens__spec:last-child { border-bottom: 0; padding-bottom: 4px; }
 }
 
 /* =====================================================================
