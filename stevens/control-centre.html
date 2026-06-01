@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stevens — Full App (Hibernation · Listening · Responding · Carousel · Control Centre)</title>
+
+<!-- Fonts (from the source specimen) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+
+<!-- Tailwind + Lucide via CDN (self-contained; isolated to this file). -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', '"Courier New"', 'monospace'],
+          serif: ['Lora', 'Georgia', 'serif'],
+        },
+        colors: {
+          paper: '#F5F1EA',
+          'slate-black': '#1A1A1A',
+          'signal-red': '#E2382F',
+          'canvas-dusk': '#2A1E1A',
+          'brass-glow': '#B8945F',
+          'saffron-mist': '#E8B888',
+        },
+        animation: { 'soft-swing': 'soft-swing 6s ease-in-out infinite' },
+        keyframes: {
+          'soft-swing': {
+            '0%,100%': { transform: 'rotate(-1.5deg)' },
+            '50%': { transform: 'rotate(1.5deg)' },
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  body {
+    background-color: #F5F1EA;
+    color: #1A1A1A;
+    font-family: 'Inter', sans-serif;
+  }
+  ::selection { background-color: #E2382F; color: #F5F1EA; }
+
+  /* ---- Touch devices (iPhone/iPad): scale the 393×852 frame to fit the screen ----
+     Desktop (fine pointer) is untouched; only coarse-pointer devices fit-to-viewport. */
+  @media (pointer: coarse) {
+    body {
+      padding: 0 !important; margin: 0;
+      min-height: 0; height: var(--vph, 100dvh); overflow: hidden;
+      justify-content: center !important;   /* centre the frame vertically */
+    }
+    #phone {
+      transform: scale(var(--fit, 0.92)) !important;
+      transform-origin: center center !important;   /* scale from the middle, fills the height */
+    }
+  }
+
+  /* ---- Soundwave bar keyframes (ported from PhoneViewport injected styles) ---- */
+  @keyframes sound-bounce-0 { 0% { height: 6px; } 100% { height: 28px; } }
+  @keyframes sound-bounce-1 { 0% { height: 8px; } 100% { height: 55px; } }
+  @keyframes sound-bounce-2 { 0% { height: 6px; } 100% { height: 38px; } }
+  @keyframes sound-bounce-3 { 0% { height: 10px; } 100% { height: 62px; } }
+  @keyframes sound-bounce-4 { 0% { height: 8px; } 100% { height: 75px; } }
+  @keyframes sound-bounce-5 { 0% { height: 5px; } 100% { height: 42px; } }
+  @keyframes sound-bounce-6 { 0% { height: 6px; } 100% { height: 48px; } }
+  @keyframes sound-bounce-7 { 0% { height: 4px; } 100% { height: 26px; } }
+
+  /* =====================================================================
+     SHARD PRIMITIVES — per Stevens design system (Shard Specification)
+     Token: shard-suggestion / shard-pending · Size 260×56 · Radius 28 (pill)
+     Palette: Ivory Glass #FAF4EC · Whisper White #FFFEFB · Brass Glow #B8945F
+              Canvas Dusk #2A1E1A · Saffron Mist #E8B888 · Burgundy Shadow #3A1F1A
+     ===================================================================== */
+  .shard {
+    position: absolute;
+    left: 0; top: 0;
+    width: 260px;
+    height: 56px;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 22px;
+    opacity: 0;                       /* tick controls live opacity */
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-out;
+  }
+  .shard .shard-dot {
+    width: 7px; height: 7px; border-radius: 9999px; flex: none;
+  }
+  .shard .shard-text {
+    font-size: 14px;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Suggestion — cool light glass (calm, atmospheric) */
+  .shard-suggestion {
+    background: rgba(250, 244, 236, 0.22);                 /* Ivory Glass @ 22% */
+    border: 1px solid rgba(250, 244, 236, 0.50);           /* Ivory Glass @ 50% */
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);                           /* Background Blur 16 */
+    box-shadow:
+      inset 0 1px 0 rgba(255, 254, 251, 0.60),             /* wet edge — Whisper White @ 60% */
+      inset 0 0 20px rgba(250, 244, 236, 0.30);            /* inner glow — Ivory Glass @ 30% */
+  }
+  .shard-suggestion .shard-dot { background: rgba(184, 148, 95, 0.60); }  /* Brass Glow @ 60% */
+  .shard-suggestion .shard-text {
+    color: rgba(255, 254, 251, 0.85);                      /* Whisper White — text on dark canvas */
+    font-weight: 400;                                      /* Inter Regular */
+  }
+
+  /* Pending — lantern material (NOT glass); halo is the edge */
+  .shard-pending {
+    background:
+      radial-gradient(130% 160% at 50% 50%, rgba(232, 184, 136, 0.20), rgba(232, 184, 136, 0) 70%), /* bloom overlay — Saffron Mist 25→0 */
+      rgba(42, 30, 26, 0.94);                              /* Canvas Dusk @ 94% */
+    border: 0;                                             /* no stroke */
+    box-shadow:
+      0 0 56px rgba(232, 184, 136, 0.15),                  /* halo far bloom @ 15% r56 */
+      0 0 32px rgba(232, 184, 136, 0.30),                  /* halo mid spread @ 30% r32 */
+      0 0 16px rgba(232, 184, 136, 0.50),                  /* halo near @ 50% r16 */
+      0 8px 20px rgba(58, 31, 26, 0.35),                   /* depth — Burgundy Shadow @ 35% 0/8/20 */
+      inset 0 0 16px rgba(232, 184, 136, 0.20);            /* interior glow — Saffron Mist @ 20% */
+  }
+  .shard-pending .shard-dot { background: #E8B888; }       /* Saffron Mist @ 100% */
+  .shard-pending .shard-text {
+    color: #E8B888;                                        /* Saffron Mist */
+    font-weight: 500;                                      /* Inter Medium */
+    flex: 1;
+  }
+  .shard-pending .shard-flame {                            /* flame-tip — 10px cream core + saffron glow */
+    width: 10px; height: 10px; border-radius: 9999px; flex: none;
+    background: #FFF7E8;
+    box-shadow:
+      0 0 6px 1px rgba(232, 184, 136, 0.95),
+      0 0 12px 3px rgba(232, 184, 136, 0.50);
+  }
+
+  /* =====================================================================
+     STATE MACHINE — driven by #phone[data-state="hibernation|listening|speaking"]
+     (Replaces React's conditional rendering with declarative CSS toggles.)
+     ===================================================================== */
+
+  /* Header status pills */
+  #pill-listening, #pill-responding { display: none; }
+  #phone[data-state="listening"] #pill-listening { display: flex; }
+  #phone[data-state="speaking"]  #pill-responding { display: flex; }
+
+  /* Control Centre button (hibernation only) */
+  #btn-control { display: none; }
+  #phone[data-state="hibernation"] #btn-control { display: flex; }
+
+  /* "Tap to close" nudge (listening & responding) */
+  #nudge-close { display: none; }
+  #phone[data-state="listening"] #nudge-close,
+  #phone[data-state="speaking"]  #nudge-close { display: flex; }
+
+  /* Footer: 3-family-members + Stevens-version show only in hibernation;
+     Token Utilization + Powered on Creole Network persist in all states. */
+  #phone[data-state="listening"] .footer-hib-only,
+  #phone[data-state="speaking"]  .footer-hib-only { display: none; }
+
+  /* =====================================================================
+     CONTROL CENTRE — glass top-drawer (iOS Control Center metaphor)
+     ===================================================================== */
+
+  /* ↓↓↓ SWAP BLOCK — overlay open animation + layover boundary.
+     Top-drawer drop: the sheet falls -14px and scales 0.98→1 while fading in,
+     so the open gesture (pull-DOWN) and the motion agree directionally.
+     Boundary uses the reference recipe (brass stroke + inner dark vignette) on
+     the sheet's inline style; outer glow kept faint so the flush top edge reads. ↓↓↓ */
+  @keyframes control-slide-down {
+    0%   { transform: translateY(-14px) scale(0.98); opacity: 0; }
+    100% { transform: translateY(0)     scale(1);    opacity: 1; }
+  }
+  @keyframes cc-backdrop-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+  /* ↑↑↑ END SWAP BLOCK ↑↑↑ */
+
+  #cc-layer { display: none; }
+  #cc-layer.cc-open { display: block; }
+  #cc-layer.cc-open #cc-backdrop      { animation: cc-backdrop-in .3s ease forwards; }
+  #cc-layer.cc-open #control-centre   { animation: control-slide-down .3s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+  .scrollbar-thin::-webkit-scrollbar { width: 3px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(184,148,95,0.25); border-radius: 9px; }
+
+  .cc-section-label {
+    font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(184,148,95,0.72); font-weight: 700;
+    padding: 0 2px; margin: 15px 0 7px;
+  }
+
+  .cc-tile {
+    width: 100%; background: rgba(12,8,7,0.6); border: 1px solid rgba(184,148,95,0.15);
+    border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 12px;
+    text-align: left; cursor: pointer; transition: background .2s, border-color .2s, transform .08s;
+  }
+  .cc-tile + .cc-tile { margin-top: 8px; }
+  .cc-tile:hover { background: rgba(22,14,11,0.72); border-color: rgba(184,148,95,0.32); }
+  .cc-tile:active { transform: scale(0.985); }
+  .cc-tile-ic {
+    width: 30px; height: 30px; border-radius: 9px; background: rgba(184,148,95,0.12);
+    border: 1px solid rgba(184,148,95,0.22); display: flex; align-items: center; justify-content: center;
+    color: #E8B888; flex: none;
+  }
+  .cc-tile-ic svg { width: 15px; height: 15px; }
+  .cc-tile > .flex-1 { min-width: 0; }   /* let the text column shrink so it can truncate inside the row */
+  .cc-tile-title {
+    display: block; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600;
+    color: #FFFEFB; line-height: 1.2;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .cc-tile-sub {
+    display: block; font-family: 'Inter', sans-serif; font-size: 10px;
+    color: rgba(255,254,251,0.5); margin-top: 2px; line-height: 1.25;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .cc-chev { color: rgba(184,148,95,0.5); flex: none; width: 15px; height: 15px; }
+  .cc-dot  { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+
+  .cc-tile.cc-danger { background: rgba(58,31,26,0.35); border-color: rgba(214,96,84,0.3); }
+  .cc-tile.cc-danger:hover { background: rgba(72,34,28,0.5); border-color: rgba(214,96,84,0.45); }
+  .cc-tile.cc-danger .cc-tile-ic { background: rgba(58,31,26,0.55); border-color: rgba(214,96,84,0.38); color: #F6B8A7; }
+  .cc-tile.cc-danger .cc-tile-title { color: #F6B8A7; }
+
+  /* Connector "Connect" pill (right side of an unlinked connector row) */
+  .cc-pill-connect {
+    flex: none; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 700; color: #Eebd8d;
+    background: rgba(184,148,95,0.15); border: 1px solid rgba(184,148,95,0.3);
+    padding: 4px 9px; border-radius: 7px;
+  }
+
+  /* Token "battery" gauge (Subscription & tokens) */
+  .cc-batt {
+    position: relative; width: 42px; height: 19px; flex: none; box-sizing: border-box;
+    border: 1.5px solid rgba(184,148,95,0.55); border-radius: 4px; padding: 2px;
+  }
+  .cc-batt::after {
+    content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+    width: 2.5px; height: 8px; border-radius: 0 2px 2px 0; background: rgba(184,148,95,0.55);
+  }
+  .cc-batt-fill { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg,#B8945F,#E8B888); }
+
+  /* Quick-controls toggle tile (legacy — Share with partner, now removed from markup) */
+  .cc-quick {
+    width: 100%; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 13px;
+    text-align: left; cursor: pointer; background: rgba(12,8,7,0.6); border: 1px solid rgba(184,148,95,0.15);
+    transition: background .25s, border-color .25s, box-shadow .25s;
+  }
+  .cc-quick[data-on="true"] {
+    background: linear-gradient(135deg, rgba(184,148,95,0.22), rgba(232,184,136,0.10));
+    border-color: rgba(232,184,136,0.5);
+    box-shadow: 0 0 22px rgba(184,148,95,0.18), inset 0 1px 0 rgba(255,254,251,0.08);
+  }
+  .cc-quick-ic {
+    width: 38px; height: 38px; border-radius: 11px; background: rgba(194,138,122,0.16);
+    border: 1px solid rgba(194,138,122,0.3); display: flex; align-items: center; justify-content: center;
+    color: #C28A7A; flex: none; transition: all .25s;
+  }
+  .cc-quick-ic svg { width: 18px; height: 18px; }
+  .cc-quick[data-on="true"] .cc-quick-ic { background: rgba(232,184,136,0.2); border-color: rgba(232,184,136,0.45); color: #Eebd8d; }
+  .cc-toggle {
+    width: 46px; height: 27px; border-radius: 999px; position: relative; flex: none;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(184,148,95,0.25);
+    transition: background .25s, border-color .25s;
+  }
+  .cc-quick[data-on="true"] .cc-toggle { background: linear-gradient(180deg,#E8B888,#B8945F); border-color: transparent; }
+  .cc-toggle .knob {
+    position: absolute; top: 2.5px; left: 2.5px; width: 21px; height: 21px; border-radius: 50%;
+    background: #FFFEFB; box-shadow: 0 1px 3px rgba(0,0,0,0.45);
+    transition: transform .25s cubic-bezier(0.16,1,0.3,1);
+  }
+  .cc-quick[data-on="true"] .cc-toggle .knob { transform: translateX(19px); }
+
+  /* Gold status dot */
+  #status-dot { background: rgba(184,148,95,0.3); box-shadow: none; }
+  #phone[data-state="listening"] #status-dot { background: #E8B888; }
+  #phone[data-state="speaking"]  #status-dot { background: #Eebd8d; box-shadow: 0 0 6px rgba(238,189,141,0.4); }
+
+  /* Concentric ambient rings (listening / speaking only) */
+  #rings {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.75);
+    transition: opacity .7s, transform .7s;
+  }
+  #phone[data-state="listening"] #rings,
+  #phone[data-state="speaking"]  #rings {
+    opacity: 0.25;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* Soundwave visualizer */
+  #soundwave {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+    transition: opacity .5s, transform .5s;
+  }
+  #phone[data-state="listening"] #soundwave,
+  #phone[data-state="speaking"]  #soundwave {
+    opacity: 1;
+    transform: scale(1);
+  }
+  #soundwave .bar { background: rgba(232,184,136,0.8); }
+  #phone[data-state="speaking"] #soundwave .bar { background: rgba(254,237,188,0.95); }
+
+  /* "Tap Spectacles" nudge (hibernation only) */
+  #nudge { display: none; }
+  #phone[data-state="hibernation"] #nudge { display: flex; }
+
+  /* Bottom panels — slide-up reveal (listening / speaking) */
+  #panel-listening, #panel-speaking {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    opacity: 0; transform: translateY(32px);
+    pointer-events: none;
+    transition: opacity .5s, transform .5s;
+  }
+  #phone[data-state="listening"] #panel-listening,
+  #phone[data-state="speaking"]  #panel-speaking {
+    position: relative;
+    opacity: 1; transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* =====================================================================
+     CAROUSEL (Screen C) — last-24h value-card deck (iOS app-switcher).
+     Five formal card types per the design-system board, on Canvas Dusk.
+     ===================================================================== */
+  #phone { touch-action: none; }            /* capture swipes instead of scrolling */
+  #carousel { display: none; }
+  #phone[data-state="carousel"] #carousel { display: flex; }
+  #deck-track { position: absolute; inset: 0; will-change: transform; }
+
+  /* cancel (✕) button */
+  .deck-cancel {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(184,148,95,0.35);
+    color: rgba(255,254,251,0.82); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .2s, border-color .2s, transform .1s;
+  }
+  .deck-cancel:hover { background: rgba(255,255,255,0.1); border-color: rgba(184,148,95,0.55); }
+  .deck-cancel:active { transform: scale(0.92); }
+
+  /* paging dots */
+  .deck-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(184,148,95,0.3); transition: background .3s, width .3s; }
+  .deck-dot.active { background: #E8B888; width: 18px; border-radius: 99px; }
+
+  /* Value card — warm glass (positioned on a ring by JS) */
+  .vcard {
+    position: absolute; left: 50%; top: 200px; width: 288px; box-sizing: border-box;   /* centred in the deck area (matches reference top:200); cards grow downward, tops aligned */
+    border-radius: 24px; padding: 20px 20px 16px;
+    display: flex; flex-direction: column; gap: 12px;
+    background: linear-gradient(180deg, rgba(74,55,45,0.96) 0%, rgba(53,40,33,0.97) 100%);  /* near-opaque so side peeks sit behind, not bleeding through */
+    border: 1px solid rgba(184,148,95,0.20);
+    box-shadow: 0 22px 50px -14px rgba(58,31,26,0.65), inset 0 1px 0 rgba(255,254,251,0.06);
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    transform-origin: 50% 0; user-select: none;   /* top-aligned: scale shrinks toward the top edge */
+  }
+  .vcard__badge {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, #CBA66B, #9C7C4B);
+    color: #2A1810; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(58,31,26,0.5);
+  }
+  .vcard__eyebrow {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em; color: #B8945F;
+  }
+  .vcard__title {
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.25;
+    color: #FFFEFB; letter-spacing: -0.01em;
+  }
+  .vcard__sub {
+    font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.45; color: rgba(255,254,251,0.58);
+  }
+  .vcard__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .vcard__list li {
+    font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.35;
+    color: rgba(255,254,251,0.72); display: flex; align-items: flex-start; gap: 9px;
+  }
+  .vcard__list .dot { width: 5px; height: 5px; border-radius: 50%; background: #B8945F; margin-top: 6px; flex: none; }
+  .vcard__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2px; }
+  .vcard__pill {
+    font-family: 'Inter', sans-serif; font-size: 14px; color: rgba(255,254,251,0.92);
+    background: rgba(255,255,255,0.045); border: 1px solid rgba(184,148,95,0.22);
+    border-radius: 12px; padding: 11px 8px; text-align: center; cursor: pointer;
+  }
+  .vcard__row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2px; }
+  .vcard__btn-secondary {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: rgba(255,254,251,0.92);
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(184,148,95,0.25);
+    border-radius: 13px; padding: 11px; text-align: center; cursor: pointer;
+  }
+  .vcard__btn-primary {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #2A1810;
+    background: linear-gradient(180deg, #D7B274 0%, #B8945F 100%);
+    border: 0; border-radius: 13px; padding: 11px; text-align: center; cursor: pointer;
+  }
+  .vcard__btn-outline {
+    font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #D7B274;
+    background: transparent; border: 1px solid rgba(184,148,95,0.6);
+    border-radius: 13px; padding: 12px; text-align: center; cursor: pointer;
+  }
+  .vcard__btn-block { width: 100%; margin-top: 2px; }
+  .vcard__divider { height: 1px; background: rgba(184,148,95,0.15); margin: 2px 0; }
+  .vcard__toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .vcard__toggle-label { font-family: 'Inter', sans-serif; font-size: 14px; color: rgba(255,254,251,0.88); }
+  .vcard__toggle { width: 44px; height: 26px; border-radius: 999px; background: linear-gradient(180deg,#D7B274,#B8945F); position: relative; flex: none; }
+  .vcard__toggle .knob { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: #FFFEFB; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .vcard__sig {
+    font-family: 'Lora', Georgia, serif; font-style: italic; font-size: 13px;
+    color: rgba(255,254,251,0.4); text-align: right; margin-top: 6px;
+  }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center gap-6 py-10 px-4 selection:bg-signal-red selection:text-paper">
+
+  <!-- ============================ CENTRAL APP ============================ -->
+  <!-- Device frame simulating mobile viewport chassis (393px x 852px). -->
+  <div
+    id="phone"
+    data-state="hibernation"
+    class="relative w-[393px] h-[852px] rounded-[36px] border border-slate-black overflow-hidden flex flex-col select-none"
+    style="box-shadow: 0 25px 60px -15px rgba(42,30,26,0.45); transform: scale(0.85); transform-origin: center center; background: linear-gradient(135deg, #2A1E1A 0%, #1c1310 100%);"
+  >
+    <!-- Core layout wrapper -->
+    <div class="absolute inset-0 flex flex-col justify-between p-6">
+
+      <!-- Top header row -->
+      <div class="flex justify-between items-start z-40 pt-1 pointer-events-none">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-serif italic font-medium text-lg text-[#FFFEFB] tracking-tight antialiased">Stevens</span>
+        </div>
+
+        <!-- Ambient status indicators -->
+        <div class="flex items-center gap-2">
+          <span id="pill-listening" class="font-mono text-[8.5px] uppercase tracking-widest text-[#E8B888] font-bold items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#E8B888] animate-ping"></span>
+            listening
+          </span>
+          <span id="pill-responding" class="font-mono text-[8.5px] uppercase tracking-widest text-white font-bold items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#Eebd8d] animate-pulse"></span>
+            responding
+          </span>
+
+          <!-- Control Centre button (hibernation only) -->
+          <button id="btn-control"
+            class="font-mono text-[9px] uppercase tracking-wider text-[#FFFEFB] hover:text-[#Eebd8d] bg-[#18110E]/85 hover:bg-[#251510]/95 border border-[#B8945F]/35 hover:border-[#Eebd8d]/70 px-3.5 py-1.5 rounded-[8px] font-semibold transition-all duration-200 active:scale-95 pointer-events-auto cursor-pointer items-center justify-center gap-1.5 shrink-0 shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#Eebd8d] animate-pulse shrink-0"></span>
+            <span>Control Centre</span>
+          </button>
+
+          <!-- Gold status dot indicator -->
+          <div id="status-dot" class="w-2 h-2 rounded-full border border-black/30 transition-all duration-500"></div>
+        </div>
+      </div>
+
+      <!-- Central specs, orbits, and sound-wave field -->
+      <div class="relative flex-1 flex items-center justify-center">
+
+        <!-- Concentric rings removed: centered behind the spectacles they read as a round "face" outline. -->
+
+        <!-- Radial glow: saffron mist (listening / speaking) -->
+        <div id="glow-saffron"
+          class="absolute left-[50%] top-[62%] -translate-x-[50%] -translate-y-[50%] w-[180px] h-[180px] rounded-full blur-[40px] bg-[#E8B888]/30 pointer-events-none mix-blend-screen opacity-0 transition-opacity duration-500 ease-out"></div>
+
+        <!-- Radial glow: brass (speaking) -->
+        <div id="glow-brass"
+          class="absolute left-[50%] top-[62%] -translate-x-[50%] -translate-y-[50%] w-[210px] h-[210px] rounded-full blur-[45px] bg-[#B8945F]/25 pointer-events-none mix-blend-screen opacity-0 transition-opacity duration-500 ease-out"></div>
+
+        <!-- Floating Spectacles Avatar -->
+        <div id="spec-container"
+          class="absolute top-[125px] left-1/2 -translate-x-1/2 z-20 transition-all duration-300 ease-out flex items-center justify-center transform-gpu">
+          <svg class="text-brass-glow filter drop-shadow-[0_8px_20px_rgba(42,30,26,0.3)] transition-colors duration-300"
+               style="color: #B8945F;" width="220" height="150" viewBox="0 0 240 160">
+            <!-- Left lens -->
+            <circle id="left-lens" cx="75" cy="75" r="33" fill="none" stroke="currentColor" stroke-width="1.5" class="transition-all duration-300" />
+            <circle cx="75" cy="75" r="2" fill="currentColor" class="opacity-40" />
+            <!-- Right lens -->
+            <circle id="right-lens" cx="165" cy="75" r="33" fill="none" stroke="currentColor" stroke-width="1.5" class="transition-all duration-300" />
+            <circle cx="165" cy="75" r="2" fill="currentColor" class="opacity-40" />
+            <!-- Bridge saddle arc -->
+            <path d="M 108 75 Q 120 62 132 75" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <!-- Temples -->
+            <path d="M 42 75 H 24" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <path d="M 198 75 H 216" fill="none" stroke="currentColor" stroke-width="1.5" />
+            <!-- Left dangling chain -->
+            <g class="animate-soft-swing origin-[42px_75px]">
+              <path d="M 42 75 C 43 97, 36 115, 45 145" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 3" class="opacity-45" />
+              <circle cx="45" cy="145" r="1.5" fill="currentColor" class="opacity-70" />
+            </g>
+            <!-- Right dangling chain -->
+            <g class="animate-soft-swing origin-[198px_75px]">
+              <path d="M 198 75 C 197 97, 204 115, 192 145" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="2 3" class="opacity-45" />
+              <circle cx="192" cy="145" r="1.5" fill="currentColor" class="opacity-70" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- "Tap Spectacles" nudge (hibernation) -->
+        <div id="nudge" class="absolute top-[300px] left-0 right-0 z-40 flex-col items-center justify-center gap-1 text-center pointer-events-none animate-pulse" style="animation-duration: 3s;">
+          <span class="font-mono text-[8px] uppercase tracking-[0.18em] text-[#Eebd8d]/75 font-bold">Stevens is resting</span>
+          <span class="font-mono text-[8px] uppercase tracking-[0.18em] text-[#Eebd8d] font-bold">Tap to speak</span>
+        </div>
+
+        <!-- "Tap to close" nudge (listening / responding) -->
+        <div id="nudge-close" class="absolute top-[300px] left-0 right-0 z-40 flex-col items-center justify-center gap-1 text-center pointer-events-none animate-pulse" style="animation-duration: 3s;">
+          <span class="font-mono text-[8px] uppercase tracking-[0.18em] text-[#Eebd8d] font-bold">Tap to close</span>
+        </div>
+
+        <!-- Saffron sound-wave visualizer -->
+        <div id="soundwave" class="absolute top-[61%] left-0 right-0 flex items-center justify-center gap-1.5">
+          <!-- 8 bars injected by JS -->
+        </div>
+
+        <!-- 6 orbiting shards (≤5 visible) -->
+        <div class="absolute inset-0 z-30 pointer-events-none">
+
+          <!-- shard-suggestion (light glass) -->
+          <div class="shard shard-suggestion" data-idx="0">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Ask me about the trip to Goa</span>
+          </div>
+
+          <!-- shard-pending (lantern) -->
+          <div class="shard shard-pending" data-idx="1">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Cook's salary, pending</span>
+            <span class="shard-flame"></span>
+          </div>
+
+          <!-- shard-suggestion (light glass) -->
+          <div class="shard shard-suggestion" data-idx="2">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Ask me what's in the fridge</span>
+          </div>
+
+          <!-- shard-pending (lantern) -->
+          <div class="shard shard-pending" data-idx="3">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Electricity bill, due in 3 days</span>
+            <span class="shard-flame"></span>
+          </div>
+
+          <!-- shard-suggestion (light glass) -->
+          <div class="shard shard-suggestion" data-idx="4">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Ask me about Diwali plans</span>
+          </div>
+
+          <!-- shard-pending (lantern) -->
+          <div class="shard shard-pending" data-idx="5">
+            <span class="shard-dot"></span>
+            <span class="shard-text">Web check-in opens at 4pm</span>
+            <span class="shard-flame"></span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom panels -->
+      <div class="relative z-40">
+
+        <!-- LISTENING VIEW: Choice card + Action card -->
+        <div id="panel-listening" class="flex flex-col gap-3">
+          <!-- Choice card -->
+          <div class="rounded-[24px] backdrop-blur-[40px] border p-5 flex flex-col gap-4 shadow-2xl"
+               style="background: rgba(51,33,27,0.65); border-color: rgba(184,148,95,0.25);">
+            <div class="space-y-1 text-left">
+              <h3 class="font-serif font-medium text-lg leading-snug text-[#FFFEFB]">Meal plan for the day prepared. Show?</h3>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-1">
+              <div class="w-full bg-[#E8B888] text-[#29170f] font-sans font-semibold text-xs py-2 px-4 rounded-[12px] shadow-sm flex items-center justify-center gap-1.5">
+                <span>Show me</span>
+              </div>
+              <div class="w-full bg-[#FFE9E2]/5 text-white/95 border border-[#B8945F]/40 font-sans font-medium text-xs py-2 px-4 rounded-[12px] flex items-center justify-center">
+                <span>Not now</span>
+              </div>
+            </div>
+          </div>
+          <!-- Action card -->
+          <div class="rounded-[20px] backdrop-blur-[24px] border p-3.5 flex items-center justify-between shadow-lg"
+               style="background: rgba(42,28,23,0.45); border-color: rgba(184,148,95,0.2);">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-full bg-[#E8B888]/15 flex items-center justify-center border border-[#E8B888]/20 shrink-0">
+                <i data-lucide="coffee" class="w-3.5 h-3.5 text-[#E8B888]"></i>
+              </div>
+              <div class="flex flex-col text-left">
+                <span class="font-mono text-[8px] text-[#B8945F]/70 uppercase tracking-wider">Update</span>
+                <span class="font-sans font-medium text-[11px] text-white/90">Ordering Espresso from Starbucks</span>
+              </div>
+            </div>
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F6B8A7] opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-[#F6B8A7]"></span>
+            </span>
+          </div>
+        </div>
+
+        <!-- SPEAKING VIEW: Morning summary -->
+        <div id="panel-speaking" class="flex flex-col gap-3">
+          <div class="rounded-[24px] backdrop-blur-[40px] border p-5 flex flex-col gap-4 shadow-2xl"
+               style="background: rgba(42,28,23,0.8); border-color: rgba(184,148,95,0.3);">
+            <div class="flex items-center justify-between border-b border-[#B8945F]/15 pb-2">
+              <div class="flex flex-col text-left">
+                <h3 class="font-sans font-semibold text-sm text-[#FFFEFB]">Your Morning Summary</h3>
+              </div>
+              <div class="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-spin" style="animation-duration: 8s;">
+                <i data-lucide="sparkle" class="w-3 h-3 text-[#E8B888]"></i>
+              </div>
+            </div>
+            <div class="space-y-3 font-sans text-xs text-left">
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#E8B888] shrink-0 mt-0.5"></i>
+                <div class="flex-1 border-b border-[#B8945F]/10 pb-2">
+                  <p class="text-[11px] text-white/90 font-medium leading-normal">10:30 AM — Call mom, wish her birthday</p>
+                  <p class="text-[9px] text-gray-400">Reminder</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="coffee" class="w-3.5 h-3.5 text-[#E8B888] shrink-0 mt-0.5"></i>
+                <div class="flex-1 border-b border-[#B8945F]/10 pb-2">
+                  <p class="text-[11px] text-white/90 font-medium leading-normal">Starbucks — Triple Espresso Placed</p>
+                  <p class="text-[9px] text-[#F5B8A7] font-medium font-mono animate-pulse">Arriving in 12m</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="cloud-sun" class="w-3.5 h-3.5 text-[#E8B888] shrink-0 mt-0.5"></i>
+                <div class="flex-1 border-b border-[#B8945F]/10 pb-2">
+                  <p class="text-[11px] text-white/90 font-medium leading-normal">Talk to the insurance agent</p>
+                  <p class="text-[9px] text-gray-400">To-do</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-[#B8945F] shrink-0 mt-0.5"></i>
+                <div class="flex-1 pb-1">
+                  <p class="text-[11px] text-white/90 font-medium leading-normal">Inventory low — grocery list created</p>
+                  <p class="text-[9px] text-[#Eebd8d] font-mono">Inventory alert</p>
+                </div>
+              </div>
+            </div>
+            <div class="w-full bg-[#FFE9E2]/5 text-white/90 border border-[#B8945F]/20 font-sans font-medium text-xs py-2 rounded-[12px] mt-2 flex items-center justify-center gap-1.5">
+              <span>Dismiss Summary</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calibration metrics row -->
+        <div class="mt-2 flex justify-between items-end font-mono text-[8px] text-[#B8945F]/35">
+          <div class="space-y-0.5 text-left">
+            <div class="footer-hib-only">3 FAMILY MEMBERS CONNECTED</div>
+            <div>TOKEN UTILIZATION: 50%</div>
+          </div>
+          <div class="text-right space-y-0.5">
+            <div class="footer-hib-only">STEVENS VERSION 0.1</div>
+            <div>POWERED ON CREOLE NETWORK</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Carousel — Screen C: last-24h value-card deck (covers the phone when active) -->
+    <div id="carousel" class="absolute inset-0 z-40 flex-col select-none" style="background: linear-gradient(135deg, #2A1E1A 0%, #1c1310 100%);">
+      <!-- header -->
+      <div class="px-6 pt-7 pb-2 flex items-center justify-between shrink-0">
+        <span class="font-mono text-[10px] uppercase tracking-[0.18em] text-[#E8B888] font-bold">Last 24 hours</span>
+        <span class="font-mono text-[9px] uppercase tracking-widest text-[#FFFEFB]/35">Steven's Deck</span>
+      </div>
+
+      <!-- deck -->
+      <div class="flex-1 relative overflow-hidden flex items-center">
+        <div id="deck-track">
+
+          <!-- 1 · CHOICE -->
+          <div class="vcard">
+            <div class="vcard__badge">P</div>
+            <div class="vcard__eyebrow">Choice</div>
+            <div class="vcard__title">Which day for the dinner?</div>
+            <div class="vcard__choices">
+              <button class="vcard__pill">Tue</button>
+              <button class="vcard__pill">Wed</button>
+              <button class="vcard__pill">Thu</button>
+              <button class="vcard__pill">Fri</button>
+            </div>
+            <div class="vcard__sig">— Stevens.</div>
+          </div>
+
+          <!-- 2 · CONFIRM -->
+          <div class="vcard">
+            <div class="vcard__badge">K</div>
+            <div class="vcard__eyebrow">Confirm</div>
+            <div class="vcard__title">Set reminder for cook salary on the 1st?</div>
+            <div class="vcard__row2">
+              <button class="vcard__btn-secondary">Not now</button>
+              <button class="vcard__btn-primary">Yes, set it</button>
+            </div>
+            <div class="vcard__sig">— Stevens.</div>
+          </div>
+
+          <!-- 3 · SUMMARY -->
+          <div class="vcard">
+            <div class="vcard__badge">P</div>
+            <div class="vcard__eyebrow">Travel</div>
+            <div class="vcard__title">Goa trip — 14 Dec</div>
+            <ul class="vcard__list">
+              <li><span class="dot"></span>Flight 6E 187 · Bangalore → Goa</li>
+              <li><span class="dot"></span>Departure 06:20 · Gate B11</li>
+              <li><span class="dot"></span>Stay: The Postcard, Velha Goa</li>
+            </ul>
+            <div class="vcard__sig">— Stevens.</div>
+          </div>
+
+          <!-- 4 · ACTION -->
+          <div class="vcard">
+            <div class="vcard__badge">K</div>
+            <div class="vcard__eyebrow">Payment</div>
+            <div class="vcard__title">Pay ₹15,000 to Lakshmi</div>
+            <div class="vcard__sub">Monthly salary · Auto-detected from receipts</div>
+            <button class="vcard__btn-primary vcard__btn-block">Pay now</button>
+            <div class="vcard__sig">— Stevens.</div>
+          </div>
+
+          <!-- 5 · COMPOSITE -->
+          <div class="vcard">
+            <div class="vcard__badge">P</div>
+            <div class="vcard__eyebrow">Travel</div>
+            <div class="vcard__title">Bangalore → Goa, 14 Dec</div>
+            <div class="vcard__sub">PNR PNR2H7L · Seat 14A<br>Web check-in opens 14 Dec 04:20</div>
+            <div class="vcard__divider"></div>
+            <div class="vcard__toggle-row">
+              <span class="vcard__toggle-label">Auto check-in when window opens</span>
+              <span class="vcard__toggle"><span class="knob"></span></span>
+            </div>
+            <div class="vcard__divider"></div>
+            <div class="vcard__sub">The Postcard, Velha Goa · Check-in 14:00</div>
+            <button class="vcard__btn-outline vcard__btn-block">Open boarding pass</button>
+            <div class="vcard__sig">— Stevens.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- exit hint -->
+      <div class="pb-6 pt-2 flex flex-col items-center gap-3 shrink-0">
+        <div id="deck-dots" class="flex items-center gap-1.5"></div>
+        <button id="deck-cancel" class="deck-cancel" aria-label="Dismiss deck">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span class="font-mono text-[8px] uppercase tracking-[0.16em] text-[#Eebd8d]/70 font-bold">swipe up to dismiss</span>
+      </div>
+    </div>
+
+    <!-- ============ CONTROL CENTRE — glass top-drawer (full hub) ============ -->
+    <div id="cc-layer" class="absolute inset-0 z-50">
+
+      <!-- dimmed / blurred backdrop (tap to close) -->
+      <div id="cc-backdrop" class="absolute inset-0"
+        style="background: rgba(8,5,4,0.5); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);"></div>
+
+      <!-- the sheet (anchored to the top edge; rounded bottom corners) -->
+      <!-- SWAP BLOCK ↓ : border + box-shadow below = layover boundary / border-glow -->
+      <div id="control-centre" class="absolute top-0 left-0 right-0 z-50 flex flex-col"
+        style="max-height: calc(100% - 16px);
+               background: linear-gradient(135deg, rgba(20,13,11,0.985) 0%, rgba(10,6,5,0.99) 100%);
+               -webkit-backdrop-filter: blur(35px); backdrop-filter: blur(35px);
+               border: 1.5px solid rgba(184,148,95,0.35); border-top: 0;
+               border-radius: 0 0 26px 26px;
+               box-shadow: inset 0 1px 25px rgba(0,0,0,0.95), 0 15px 35px rgba(0,0,0,0.85), 0 0 28px rgba(184,148,95,0.06);">
+      <!-- SWAP BLOCK ↑ -->
+
+        <!-- 1 · grabber + header -->
+        <div class="px-5 pt-3 pb-3 shrink-0">
+          <div id="cc-grabber" class="mx-auto w-11 h-[5px] rounded-full bg-[#B8945F]/45 mb-3.5 cursor-grab" style="touch-action: none;"></div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-[#FFE9E2]/10 border border-[#B8945F]/40 flex items-center justify-center">
+                <span class="font-serif italic text-xs text-[#Eebd8d] font-bold">S</span>
+              </div>
+              <div class="flex flex-col text-left">
+                <span class="font-sans text-xs font-semibold text-[#FFFEFB] leading-tight">Control Centre</span>
+                <span class="font-mono text-[7px] text-[#B8945F]/80 tracking-widest uppercase font-bold">Stevens · Household</span>
+              </div>
+            </div>
+            <button id="cc-close"
+              class="w-6 h-6 rounded-full bg-white/5 hover:bg-[#FFE9E2]/15 text-white/80 border border-[#B8945F]/35 flex items-center justify-center transition-all cursor-pointer active:scale-90">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- scrollable hub -->
+        <div class="flex-1 overflow-y-auto px-5 pb-4 pt-3 scrollbar-thin">
+
+          <!-- 1 · CONNECTORS (primary) — the apps the user links Stevens to.
+               Source-level partner-sharing grants will live on these rows later. -->
+          <div class="cc-section-label">Connectors</div>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="mail"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Email</span><span class="cc-tile-sub">shobhit@gmail.com</span></span>
+            <span class="cc-dot" style="background:#7FB87A;box-shadow:0 0 6px rgba(127,184,122,0.5);"></span>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="calendar"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Calendar</span><span class="cc-tile-sub">Google · primary</span></span>
+            <span class="cc-dot" style="background:#7FB87A;box-shadow:0 0 6px rgba(127,184,122,0.5);"></span>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="message-circle"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">WhatsApp</span><span class="cc-tile-sub">+91 ····· 6789</span></span>
+            <span class="cc-dot" style="background:#7FB87A;box-shadow:0 0 6px rgba(127,184,122,0.5);"></span>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="shopping-cart"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Groceries</span><span class="cc-tile-sub">Blinkit · Zepto</span></span>
+            <span class="cc-pill-connect">Connect</span>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="wallet"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Payments</span><span class="cc-tile-sub">UPI · cards</span></span>
+            <span class="cc-pill-connect">Connect</span>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="layout-grid"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Browse all apps</span><span class="cc-tile-sub">Food, travel, banking &amp; more</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+
+          <!-- 2 · SUBSCRIPTION & TOKENS — battery-style usage + top up -->
+          <div class="cc-section-label">Subscription &amp; tokens</div>
+          <div class="cc-tile" style="cursor:default;">
+            <span class="cc-batt"><span class="cc-batt-fill" style="width:62%;"></span></span>
+            <span class="flex-1"><span class="cc-tile-title">62% tokens left</span></span>
+            <button id="cc-topup" class="shrink-0 font-sans font-bold text-[10px] text-[#29170f] px-3 py-1.5 rounded-[9px] active:scale-95 transition-transform" style="background:linear-gradient(180deg,#E8B888,#B8945F);">Top up</button>
+          </div>
+
+          <!-- 3 · PRIVACY & DATA — single vault entry -->
+          <div class="cc-section-label">Privacy &amp; data</div>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="shield"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Your Data Vault</span><span class="cc-tile-sub">Encrypted</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+
+          <!-- 4 · ACCOUNT — identity, legal, session, deletion -->
+          <div class="cc-section-label">Account</div>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="circle-user-round"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Account</span><span class="cc-tile-sub">Shobhit · +91 ····· 6789</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="shield-check"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">App permissions</span><span class="cc-tile-sub">Mic on · Notifications on</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="file-text"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Terms &amp; Privacy Policy</span></span>
+            <i data-lucide="external-link" class="cc-chev"></i>
+          </button>
+          <button id="cc-signout" class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="log-out"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Sign out</span></span>
+          </button>
+          <button class="cc-tile cc-danger">
+            <span class="cc-tile-ic"><i data-lucide="trash-2"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Delete account</span><span class="cc-tile-sub" style="color:rgba(246,184,167,0.6);">Permanently erase data &amp; cancel</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+
+          <!-- 5 · HELP & SUPPORT -->
+          <div class="cc-section-label">Help &amp; support</div>
+          <button class="cc-tile">
+            <span class="cc-tile-ic"><i data-lucide="life-buoy"></i></span>
+            <span class="flex-1"><span class="cc-tile-title">Help &amp; contact support</span></span>
+            <i data-lucide="chevron-right" class="cc-chev"></i>
+          </button>
+          <div class="text-center font-mono text-[7px] text-[#B8945F]/40 uppercase tracking-widest leading-relaxed pt-4 pb-1">
+            Stevens v0.1 · Build 0426<br>Powered on Creole Network
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- ===================== /CONTROL CENTRE ===================== -->
+  </div>
+  <!-- ========================== /CENTRAL APP =========================== -->
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    if (window.lucide) lucide.createIcons();
+
+    /* Fit the 393×852 phone frame to the viewport on touch devices (see @media pointer:coarse). */
+    function fitPhone() {
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const s = Math.min(vw / 393, vh / 852);               // largest scale that shows the whole frame
+      const root = document.documentElement;
+      root.style.setProperty('--fit', s.toFixed(4));
+      root.style.setProperty('--vph', vh + 'px');           // page height = actual visible viewport
+    }
+    fitPhone();
+    window.addEventListener('resize', fitPhone);
+    window.addEventListener('orientationchange', () => setTimeout(fitPhone, 200));
+
+    /* ===================================================================
+       STATE + ANIMATION ENGINE (ported verbatim from PhoneViewport.tsx)
+       =================================================================== */
+    const phone = document.getElementById('phone');
+    const leftLens = document.getElementById('left-lens');
+    const rightLens = document.getElementById('right-lens');
+    const specContainer = document.getElementById('spec-container');
+    const glowSaffron = document.getElementById('glow-saffron');
+    const glowBrass = document.getElementById('glow-brass');
+    const shardEls = Array.from(document.querySelectorAll('.shard'));
+
+    const settings = { orbitSpeed: 1.0, spectaclesScale: 1.0, soundwaveAmp: 0.5, zoom: 0.85 };
+    let activeState = 'hibernation';
+    let hoveredShardIdx = null;
+    let clockTime = 0;
+
+    /* ---- Soundwave bars (ported) ---- */
+    const soundwave = document.getElementById('soundwave');
+    const speeds = [0.85, 0.55, 0.75, 1.25, 0.95, 0.65, 0.8, 0.5];
+    for (let i = 0; i < 8; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'bar w-[3.5px] rounded-full transition-all duration-300';
+      bar.style.height = '20px';
+      bar.style.animation = `sound-bounce-${i} ${speeds[i]}s ease-in-out infinite alternate`;
+      bar.style.animationDelay = `${i * 0.08}s`;
+      soundwave.appendChild(bar);
+    }
+
+    /* ---- Hover-to-slow on shards (preserved polish) ---- */
+    shardEls.forEach((el, idx) => {
+      el.addEventListener('mouseenter', () => { hoveredShardIdx = idx; });
+      el.addEventListener('mouseleave', () => { hoveredShardIdx = null; });
+    });
+
+    /* ---- Animation tick (exact math from source) ---- */
+    function tick() {
+      const currentSpeed = hoveredShardIdx !== null ? 0.1 : settings.orbitSpeed;
+      clockTime += 16.67 * currentSpeed;
+
+      const omega = (2 * Math.PI) / 90000; // 90s loop base speed
+      const angleOffset = clockTime * omega;
+
+      let activeStrokeWidth = 1.5;
+      let activeScale = settings.spectaclesScale;
+
+      if (activeState === 'hibernation') {
+        const breatheOmega = (2 * Math.PI) / 4400; // breath over 4.4s
+        const breatheFactor = Math.sin(clockTime * breatheOmega);
+        const breathingScale = 1.0 + (breatheFactor + 1) * 0.008; // 1.00 → 1.016
+        activeScale = breathingScale * settings.spectaclesScale;
+        specContainer.style.transform = `translateX(-50%) scale(${activeScale})`;
+        leftLens.setAttribute('stroke-width', '1.50');
+        rightLens.setAttribute('stroke-width', '1.50');
+        glowSaffron.style.opacity = '0';
+        glowBrass.style.opacity = '0';
+
+      } else if (activeState === 'listening') {
+        activeScale = 1.08 * settings.spectaclesScale;
+        specContainer.style.transform = `translateX(-50%) scale(${activeScale})`;
+        leftLens.setAttribute('stroke-width', '1.75');
+        rightLens.setAttribute('stroke-width', '1.75');
+        glowSaffron.style.opacity = '0.50';
+        const pulse = 1.0 + Math.sin(clockTime * 0.0025) * 0.04;
+        glowSaffron.style.transform = `translate(-50%, -50%) scale(${pulse})`;
+        glowBrass.style.opacity = '0';
+
+      } else if (activeState === 'speaking') {
+        const SpeechWave = Math.sin(clockTime * 0.015) * Math.cos(clockTime * 0.007);
+        activeStrokeWidth = 1.5 + (SpeechWave + 1.0) * 0.65; // 1.5 → 2.8px
+        activeScale = 1.03 * settings.spectaclesScale;
+        specContainer.style.transform = `translateX(-50%) scale(${activeScale})`;
+        leftLens.setAttribute('stroke-width', activeStrokeWidth.toFixed(2));
+        rightLens.setAttribute('stroke-width', activeStrokeWidth.toFixed(2));
+        glowSaffron.style.opacity = '0.30';
+        glowBrass.style.opacity = '0.65';
+        const pulseFactor = 1.0 + (SpeechWave + 1.0) * 0.04;
+        glowBrass.style.transform = `translate(-50%, -50%) scale(${pulseFactor})`;
+      }
+
+      /* ---- Shard orbit (6 shards, ≤5 visible, 3D depth) ---- */
+      shardEls.forEach((shardEl, idx) => {
+        if (!shardEl) return;
+
+        if (activeState !== 'hibernation') {
+          shardEl.style.opacity = '0';
+          shardEl.style.pointerEvents = 'none';
+          shardEl.style.transform = 'scale(0.8) translate3d(0,0,0)';
+          return;
+        }
+
+        const cardAngle = angleOffset + (idx * (2 * Math.PI / 6)); // 60° apart
+        const centerX = 196.5;
+        const centerY = 330;
+        const semiMajorX = 220;
+        const semiMajorY = 160;
+
+        const cosVal = Math.cos(cardAngle);
+        const sinVal = Math.sin(cardAngle);
+
+        const x = centerX + semiMajorX * cosVal - 130;  // shard width(260)/2
+        const y = centerY + semiMajorY * sinVal - 28;   // shard height(56)/2
+
+        const relativeDepth = (sinVal + 1) / 2;          // [0,1]  (0 = behind avatar/top, 1 = front/bottom)
+        const scale = 0.72 + (0.28 * relativeDepth);     // [0.72,1.05]
+        const zIndexVal = Math.round(20 + 25 * relativeDepth);
+
+        // Fade fully behind / around the avatar: shards only resolve to full opacity
+        // across the clear front-lower arc. As they near the spectacles + orb (upper
+        // half) and the screen sides they dim to nothing, so they never overlap or
+        // clutter the avatar space.
+        const fadeStart = 0.50; // at/behind avatar + side entry -> invisible
+        const fadeFull  = 0.78; // clear front-lower arc -> fully visible
+        let opacityVal;
+        if (relativeDepth <= fadeStart) {
+          opacityVal = 0;
+        } else if (relativeDepth >= fadeFull) {
+          opacityVal = 1;
+        } else {
+          const t = (relativeDepth - fadeStart) / (fadeFull - fadeStart);
+          opacityVal = t * t * (3 - 2 * t); // smoothstep ease-in/out
+        }
+
+        const rotateVal = cosVal * 4.5; // [-4.5,4.5] deg
+
+        shardEl.style.left = `${x}px`;
+        shardEl.style.top = `${y}px`;
+        shardEl.style.transform = `scale(${hoveredShardIdx === idx ? scale * 1.06 : scale}) rotate(${rotateVal}deg)`;
+        shardEl.style.zIndex = `${hoveredShardIdx === idx ? 99 : zIndexVal}`;
+        shardEl.style.opacity = `${opacityVal}`;
+        shardEl.style.pointerEvents = opacityVal > 0.1 ? 'auto' : 'none';
+      });
+
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    /* ===================================================================
+       AUTO-SEQUENCE: hibernation → listening → speaking (looping)
+       =================================================================== */
+    function setState(s) {
+      activeState = s;
+      phone.dataset.state = s;
+    }
+
+    const tour = ['hibernation', 'listening', 'speaking'];
+    const dwell = { hibernation: 7000, listening: 5000, speaking: 7000 };
+    let tourIdx = 0;
+    let tourTimer = null;
+
+    function scheduleNext(state) { tourTimer = setTimeout(advance, dwell[state]); }
+    function advance() {
+      tourIdx = (tourIdx + 1) % tour.length;
+      const next = tour[tourIdx];
+      setState(next);
+      scheduleNext(next);
+    }
+    function pauseTour() { if (tourTimer) { clearTimeout(tourTimer); tourTimer = null; } }
+    function resumeTour() { if (!tourTimer) scheduleNext(activeState); }
+
+    setState('hibernation');
+    scheduleNext('hibernation');
+
+    /* ===================================================================
+       CONTROL CENTRE — glass top-drawer (open / close / drag / quick toggle)
+       Opens from hibernation via the button OR a pull-down from the top edge.
+       =================================================================== */
+    const ccLayer = document.getElementById('cc-layer');
+    const ccSheet = document.getElementById('control-centre');
+    const btnControl = document.getElementById('btn-control');
+
+    function openCC() {
+      if (activeState !== 'hibernation') return;
+      pauseTour();
+      ccSheet.style.transition = ''; ccSheet.style.transform = '';
+      ccLayer.classList.add('cc-open');
+    }
+    function closeCC() {
+      ccLayer.classList.remove('cc-open');
+      ccSheet.style.transition = ''; ccSheet.style.transform = '';
+      resumeTour();
+    }
+    btnControl.addEventListener('click', openCC);
+    document.getElementById('cc-close').addEventListener('click', closeCC);
+    document.getElementById('cc-signout').addEventListener('click', closeCC);
+
+    const ccBackdrop = document.getElementById('cc-backdrop');
+    ccBackdrop.addEventListener('click', closeCC);
+    /* keep the backdrop + sheet from waking the phone's gesture layer */
+    ccBackdrop.addEventListener('pointerdown', (e) => e.stopPropagation());
+    ccSheet.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+    /* grabber: drag up to dismiss */
+    const grabber = document.getElementById('cc-grabber');
+    let gStart = null;
+    grabber.addEventListener('pointerdown', (e) => {
+      gStart = e.clientY; ccSheet.style.transition = 'none';
+      try { grabber.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    grabber.addEventListener('pointermove', (e) => {
+      if (gStart == null) return;
+      const dy = e.clientY - gStart;
+      if (dy < 0) ccSheet.style.transform = `translateY(${dy}px)`;
+    });
+    grabber.addEventListener('pointerup', (e) => {
+      if (gStart == null) return;
+      const dy = e.clientY - gStart; gStart = null;
+      ccSheet.style.transition = 'transform .3s cubic-bezier(0.16,1,0.3,1)';
+      if (dy < -48) { closeCC(); return; }
+      ccSheet.style.transform = '';
+    });
+
+    /* (Share-with-partner toggle removed — sharing is per-source / per-transaction, not a global switch.) */
+
+    /* ===================================================================
+       CAROUSEL (Screen C) — gestures + iOS app-switcher deck.
+       Enter: hibernation + horizontal swipe (either direction).
+       Navigate: horizontal drag between cards.  Exit: swipe down.
+       =================================================================== */
+    const deckTrack = document.getElementById('deck-track');
+    const vcards = Array.from(document.querySelectorAll('.vcard'));
+    const dotsWrap = document.getElementById('deck-dots');
+    const N = vcards.length;
+    // --- positioning extracted from the reference getSlotSchema() ---
+    const PEEK_X = 133;        // side peeks swept to the sides (active centred)
+    const PEEK_SCALE = 0.65;   // side peeks scaled to 0.65
+    const PEEK_OP = 0.15;      // side peeks diluted to 15% opacity
+    const PEEK_ROT = 4;        // ±4° tilt on the side peeks
+    const PARALLAX = 0.6;      // peeks shift at 0.6x the active card's drag
+    const EASE = 'cubic-bezier(0.22,1,0.36,1)';
+    let deckIndex = 0;
+
+    vcards.forEach(() => { const d = document.createElement('span'); d.className = 'deck-dot'; dotsWrap.appendChild(d); });
+    const dots = Array.from(dotsWrap.children);
+
+    // Slot for card i relative to the active card (round-robin both directions).
+    function slotFor(i) {
+      const rel = (i - deckIndex + N) % N;
+      if (rel === 0)              return { x: 0,       scale: 1,          op: 1,       rot: 0,          z: 30, pe: 'auto', role: 'active' };
+      if (rel === 1)              return { x: PEEK_X,  scale: PEEK_SCALE, op: PEEK_OP, rot:  PEEK_ROT,  z: 10, pe: 'auto', role: 'peek'   };
+      if (rel === N - 1 && N > 1) return { x: -PEEK_X, scale: PEEK_SCALE, op: PEEK_OP, rot: -PEEK_ROT,  z: 10, pe: 'auto', role: 'peek'   };
+      return                             { x: 0,       scale: 0.4,        op: 0,       rot: 0,          z: 1,  pe: 'none', role: 'hidden' };
+    }
+
+    // dragX moves the active card 1:1; the side peeks parallax at 0.6x. Cards are centred
+    // (CSS top) and TOP-aligned (transform-origin: top), so different-height cards share a top edge.
+    function render(dragX, animate) {
+      vcards.forEach((c, i) => {
+        const s = slotFor(i);
+        const tx = s.role === 'active' ? dragX : (s.role === 'peek' ? s.x + dragX * PARALLAX : s.x);
+        c.style.transition = animate ? `transform .4s ${EASE}, opacity .4s ease` : 'none';
+        c.style.transform = `translateX(-50%) translateX(${tx.toFixed(1)}px) rotate(${s.rot}deg) scale(${s.scale})`;
+        c.style.opacity = `${s.op}`;
+        c.style.zIndex = `${s.z}`;
+        c.style.pointerEvents = s.pe;
+      });
+      dots.forEach((dd, i) => dd.classList.toggle('active', i === deckIndex));
+    }
+    function updateDeck(animate) { render(0, animate); }
+    function cycleNext() { deckIndex = (deckIndex + 1) % N; updateDeck(true); }
+    function cyclePrev() { deckIndex = (deckIndex - 1 + N) % N; updateDeck(true); }
+
+    function enterCarousel() {       // opened ONLY from hibernation (a horizontal swipe, either direction)
+      pauseTour();
+      deckIndex = 0;
+      setState('carousel');
+      updateDeck(false);
+    }
+    function exitCarousel() {        // swipe up / ✕ → back to the home (hibernation) screen
+      tourIdx = 0;
+      setState('hibernation');
+      resumeTour();
+    }
+    function returnHome() {          // TAP anywhere on listening / responding → home (hibernation)
+      pauseTour();
+      tourIdx = 0;
+      setState('hibernation');
+      resumeTour();                  // tour keeps rolling: hibernation → listening → … as before
+    }
+    function goListening() {         // TAP anywhere on hibernation → listening (then auto-advances to responding)
+      pauseTour();
+      tourIdx = tour.indexOf('listening');
+      setState('listening');
+      resumeTour();
+    }
+
+    let pStart = null, pActive = false, pStartTopZone = false;
+    phone.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) { pStart = null; pActive = false; return; }  // let buttons fire their own click (don't capture the pointer)
+      pStart = { x: e.clientX, y: e.clientY };
+      pActive = true;
+      const rect = phone.getBoundingClientRect();
+      pStartTopZone = (e.clientY - rect.top) < rect.height * 0.16;   // top ~16% = Control Centre pull-down zone
+      try { phone.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    phone.addEventListener('pointermove', (e) => {
+      if (!pActive || !pStart || activeState !== 'carousel') return;
+      const dx = e.clientX - pStart.x, dy = e.clientY - pStart.y;
+      if (Math.abs(dx) > Math.abs(dy)) render(dx, false);   // active 1:1 + peek parallax
+    });
+    phone.addEventListener('pointerup', (e) => {
+      if (!pStart) { pActive = false; return; }
+      const dx = e.clientX - pStart.x, dy = e.clientY - pStart.y;
+      const adx = Math.abs(dx), ady = Math.abs(dy);
+      pActive = false; pStart = null;
+
+      const isTap = adx < 10 && ady < 10;   // negligible movement = a tap (vs. a swipe)
+
+      // From hibernation: pull DOWN (top edge) → Control Centre · horizontal swipe → carousel · TAP → listening.
+      if (activeState === 'hibernation') {
+        if (pStartTopZone && dy > 46 && ady > adx) { openCC(); return; }
+        if (adx > 60 && adx > ady) { enterCarousel(); return; }
+        if (isTap) { goListening(); return; }
+        return;
+      }
+
+      // From listening / responding: TAP anywhere closes the mode → home (Siri-style). No tap = auto-rolls on.
+      if (activeState === 'listening' || activeState === 'speaking') {
+        if (isTap) { returnHome(); return; }
+        return;
+      }
+
+      if (activeState === 'carousel') {
+        if (dy < -60 && ady > adx) { exitCarousel(); return; }            // swipe UP → home
+        if (adx > 70 && adx > ady) { dx < 0 ? cycleNext() : cyclePrev(); } // navigate (round-robin)
+        else updateDeck(true);                                            // snap back to centre
+      }
+    });
+    phone.addEventListener('pointercancel', () => {
+      pActive = false; pStart = null;
+      if (activeState === 'carousel') updateDeck(true);
+    });
+
+    // cancel (✕) button → close the deck (home / hibernation)
+    document.getElementById('deck-cancel').addEventListener('click', () => {
+      if (activeState === 'carousel') exitCarousel();
+    });
+
+  </script>
+</body>
+</html>
