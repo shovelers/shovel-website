@@ -1180,6 +1180,13 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
   justify-content: space-between;
 }
 
+/* Animated "brain" diagram inside the schematic body (site tokens only) */
+.brain-stage { position: relative; aspect-ratio: 1 / 1.04; width: 100%; }
+.brain-stage svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.tier-tag { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.04em; fill: var(--mute); }
+.tier-tag.on { fill: var(--acc); }
+.tier-fn  { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--mute); }
+
 .creole__action {
   margin-top: 40px;
   display: inline-flex;
@@ -1246,24 +1253,29 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
 .consulting__pullquote {
   margin-top: 40px;
-  padding: 32px;
-  background: var(--acc);
-  color: var(--white);
+  padding: 4px 0 4px 22px;
+  border-left: 2px solid var(--acc);
+  max-width: 34ch;
 }
 
 .consulting__pullquote-text {
   font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(30px, 3vw, 44px);
-  line-height: 1.0;
-  letter-spacing: -0.035em;
-  margin: 0 0 16px;
+  font-weight: 500;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
 }
 
 .consulting__pullquote-attr {
+  display: block;
+  margin-top: 14px;
   font-family: var(--f-mono);
   font-size: 11px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--acc);
 }
 
 .consulting__sidebar {
@@ -2437,42 +2449,43 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
           <p>Each layer of knowledge gets mapped, understood for its additive function, and converted into an AI-native form. The brain emerges from the bottom.</p>
         </div>
         <div class="consulting__pullquote">
-          <p class="consulting__pullquote-text">"AI-native is knowledge architected to be operable."</p>
+          <p class="consulting__pullquote-text">AI-native is knowledge architected to be operable.</p>
+          <p class="consulting__pullquote-attr">— The enterprise thesis</p>
         </div>
       </div>
 
-      <aside class="schematic reveal delay-2" aria-label="Knowledge layers">
+      <aside class="schematic reveal delay-2" aria-label="The brain, built layer by layer from the bottom up">
         <div class="schematic__head">
           <span class="schematic__title">The brain, layered</span>
+          <span class="schematic__num" id="layerReadout">04 / 04 · OPERABLE</span>
         </div>
         <div class="schematic__body">
-          <div class="schematic__layer">
-            <span class="schematic__layer-tag">L3</span>
-            <div class="schematic__layer-body">
-              <p class="schematic__layer-name">Operations</p>
-              <p class="schematic__layer-desc">How the business actually runs.</p>
-            </div>
-            <span class="schematic__layer-arrow">↑</span>
-          </div>
-          <div class="schematic__layer">
-            <span class="schematic__layer-tag">L2</span>
-            <div class="schematic__layer-body">
-              <p class="schematic__layer-name">Technology</p>
-              <p class="schematic__layer-desc">Systems, stack, integrations.</p>
-            </div>
-            <span class="schematic__layer-arrow">↑</span>
-          </div>
-          <div class="schematic__layer schematic__layer--active">
-            <span class="schematic__layer-tag">L1</span>
-            <div class="schematic__layer-body">
-              <p class="schematic__layer-name">Data &amp; APIs</p>
-              <p class="schematic__layer-desc">What the company actually knows.</p>
-            </div>
-            <span class="schematic__layer-arrow">↑</span>
+          <div class="brain-stage" id="brainStage">
+            <svg id="brainSvg" viewBox="0 0 520 540" role="img"
+                 aria-label="A brain built layer by layer from the bottom: raw knowledge converts to an AI-native operating intelligence">
+              <defs>
+                <radialGradient id="coreGlow" cx="50%" cy="40%" r="55%">
+                  <stop offset="0%" stop-color="#FF2D2D" stop-opacity=".42"/>
+                  <stop offset="55%" stop-color="#FF2D2D" stop-opacity=".12"/>
+                  <stop offset="100%" stop-color="#FF2D2D" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="riseGrad" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%" stop-color="#CFCABF"/>
+                  <stop offset="100%" stop-color="#FF2D2D"/>
+                </linearGradient>
+              </defs>
+              <circle id="bloom" cx="300" cy="215" r="180" fill="url(#coreGlow)" opacity="0"/>
+              <g id="linkLayer" stroke="#0A0A0A" stroke-width="1" fill="none"></g>
+              <g id="nodeLayer"></g>
+              <g id="tierLabels"></g>
+              <rect x="38" y="70" width="3" height="400" rx="1.5" fill="url(#riseGrad)" opacity=".5"/>
+              <text x="34" y="486" class="tier-fn" text-anchor="middle">RAW</text>
+              <text x="34" y="60"  class="tier-fn" text-anchor="middle" fill="#FF2D2D">AI-NATIVE</text>
+            </svg>
           </div>
         </div>
         <div class="schematic__foot">
-          <span>Three layers. Mapped bottom to top.</span>
+          <span>Built bottom to top.</span>
           <span>AI-native</span>
         </div>
       </aside>
@@ -2605,6 +2618,121 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
         msg({ type:'stevens:setPlaying', playing: lastVisible });
       });
     }, { threshold: 0.15 }).observe(frame);
+  }
+})();
+</script>
+
+<!-- Enterprise section — animated "brain" diagram (self-contained; no external deps) -->
+<script id="brain-diagram">
+(function(){
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.getElementById('brainSvg');
+  if(!svg) return;
+  const nodeLayer=document.getElementById('nodeLayer');
+  const linkLayer=document.getElementById('linkLayer');
+  const tierLabels=document.getElementById('tierLabels');
+  const bloom=document.getElementById('bloom');
+  const readout=document.getElementById('layerReadout');
+
+  // Four tiers, bottom to top — the brain emerges upward.
+  const TIERS=[
+    {y:430, name:'STORED',   fn:'carriers · apis · ops', n:5},
+    {y:330, name:'MANAGED',  fn:'curated · versioned',   n:4},
+    {y:230, name:'FLOWING',  fn:'transfer · between',    n:3},
+    {y:130, name:'OPERABLE', fn:'the brain · steerable', n:2},
+  ];
+  const cx=300, spanW=300;
+  const tierNodes=[];
+
+  TIERS.forEach((tier,ti)=>{
+    const t1=document.createElementNS(NS,'text');
+    t1.setAttribute('x',70); t1.setAttribute('y',tier.y-8);
+    t1.setAttribute('class','tier-tag'); t1.dataset.tier=ti;
+    t1.textContent='L'+ti;
+    tierLabels.appendChild(t1);
+    const t2=document.createElementNS(NS,'text');
+    t2.setAttribute('x',70); t2.setAttribute('y',tier.y+8);
+    t2.setAttribute('class','tier-fn');
+    t2.textContent=tier.fn;
+    tierLabels.appendChild(t2);
+
+    const nodes=[];
+    for(let i=0;i<tier.n;i++){
+      const x = cx - spanW/2 + (spanW/(tier.n-1||1))*i + (tier.n===1?spanW/2:0);
+      const c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',x); c.setAttribute('cy',tier.y);
+      c.setAttribute('r', ti===3?9:6);
+      c.setAttribute('fill','#FFFFFF');
+      c.setAttribute('stroke','#0A0A0A');
+      c.setAttribute('stroke-width','1.4');
+      c.style.transition='fill .4s, stroke .4s, r .4s';
+      nodeLayer.appendChild(c);
+      nodes.push({x,y:tier.y,el:c});
+    }
+    tierNodes.push(nodes);
+  });
+
+  const links=[];
+  for(let ti=0;ti<tierNodes.length-1;ti++){
+    tierNodes[ti].forEach(a=>{
+      const up=[...tierNodes[ti+1]].sort((p,q)=>Math.abs(p.x-a.x)-Math.abs(q.x-a.x)).slice(0,2);
+      up.forEach(b=>{
+        const ln=document.createElementNS(NS,'line');
+        ln.setAttribute('x1',a.x); ln.setAttribute('y1',a.y);
+        ln.setAttribute('x2',b.x); ln.setAttribute('y2',b.y);
+        ln.setAttribute('stroke-opacity','0.12');
+        ln.style.transition='stroke-opacity .4s';
+        linkLayer.appendChild(ln);
+        links.push({el:ln,tier:ti});
+      });
+    });
+  }
+
+  function setActiveTier(active){
+    if(readout) readout.textContent = String(active+1).padStart(2,'0')+' / 04 · '+(active>=0?TIERS[active].name:'—');
+    tierNodes.forEach((nodes,ti)=>{
+      const on = active<0 ? false : ti<=active;
+      nodes.forEach(n=>{
+        n.el.setAttribute('fill', on?'#FF2D2D':'#FFFFFF');
+        n.el.setAttribute('stroke', on?'#D40D0D':'#0A0A0A');
+      });
+    });
+    tierLabels.querySelectorAll('.tier-tag').forEach(el=>{
+      el.classList.toggle('on', active>=0 && (+el.dataset.tier)<=active);
+    });
+    links.forEach(l=> l.el.setAttribute('stroke-opacity', (active>=0 && l.tier<active)?'0.55':'0.12'));
+    bloom.setAttribute('opacity', active>=0 ? (0.12+0.22*(active+1)/4).toFixed(3) : '0');
+  }
+
+  // hover a tier via its scaffold label
+  tierLabels.querySelectorAll('.tier-tag').forEach(el=>{
+    el.style.cursor='pointer';
+    el.addEventListener('mouseenter',()=>{ pauseAuto(); setActiveTier(+el.dataset.tier); });
+  });
+  svg.addEventListener('mouseleave',()=> resumeAuto());
+
+  // auto build-up loop: bottom -> top, dwell on the full brain, reset
+  let auto=false, step=0, timer=null;
+  const SEQ=[0,1,2,3,3,3];
+  function tick(){
+    if(!auto) return;
+    setActiveTier(SEQ[step%SEQ.length]);
+    step++;
+    timer=setTimeout(tick, step%SEQ.length===0?900:1400);
+  }
+  function pauseAuto(){ auto=false; clearTimeout(timer); }
+  function resumeAuto(){ if(auto) return; auto=true; step=0; tick(); }
+
+  // run only while in view (matches the site's reveal-on-scroll behaviour)
+  if('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ if(!auto){ auto=true; step=0; tick(); } }
+        else { pauseAuto(); }
+      });
+    },{threshold:0.3}).observe(document.getElementById('brainStage'));
+  } else {
+    setActiveTier(3); // reduced-motion / no-IO: show the finished brain
   }
 })();
 </script>
