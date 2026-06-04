@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stevens — A smart confidant who elevates how you live</title>
+<meta name="description" content="Stevens is a smart confidant — intelligent software that lives in your home. It knows what matters, carries the exhausting rest, and helps you live a little better. The brain of the family." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'], serif: ['Lora','Georgia','serif'] },
+      colors: {
+        'canvas-dawn':'#F5E8D8','canvas-dusk':'#2A1E1A','saffron':'#E8B888','saffron-lt':'#Eebd8d',
+        'rose-clay':'#C28A7A','brass':'#B8945F','ivory':'#FAF4EC','whisper':'#FFFEFB',
+        'ink':'#2A1810','slate':'#6B5B52','burgundy':'#3A1F1A',
+      },
+    } },
+  };
+</script>
+<style>
+  :root{ --brass:#B8945F; --saffron:#E8B888; --rose:#C28A7A; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:#1c1310; color:#FFFEFB; font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  ::selection{ background:#E8B888; color:#29170f; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 clamp(20px,5vw,48px); }
+
+  /* warm ambient canvas */
+  .canvas-bg{ position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 78% 8%, rgba(232,184,136,.16), transparent 60%),
+      radial-gradient(50% 45% at 12% 30%, rgba(194,138,122,.12), transparent 60%),
+      radial-gradient(70% 60% at 50% 110%, rgba(184,148,95,.14), transparent 60%),
+      linear-gradient(180deg,#2A1E1A 0%, #1c1310 55%, #160f0c 100%);
+  }
+  .glass{
+    background:linear-gradient(160deg, rgba(250,244,236,0.07), rgba(61,46,38,0.10));
+    border:1px solid rgba(184,148,95,0.22);
+    -webkit-backdrop-filter:blur(26px); backdrop-filter:blur(26px);
+    box-shadow:0 24px 60px -28px rgba(58,31,26,0.7), inset 0 1px 0 rgba(255,254,251,0.08);
+    border-radius:24px;
+  }
+  .glass-soft{ background:rgba(250,244,236,0.04); border:1px solid rgba(184,148,95,0.16); border-radius:18px; }
+  .eyebrow{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#B8945F; font-weight:600; }
+  .sig{ font-family:'Lora',serif; font-style:italic; color:rgba(255,254,251,0.5); }
+  .btn-primary{ background:linear-gradient(180deg,#E8B888,#B8945F); color:#29170f; font-weight:600;
+    padding:13px 22px; border-radius:14px; display:inline-flex; align-items:center; gap:8px; transition:transform .15s, filter .2s; }
+  .btn-primary:hover{ filter:brightness(1.05); transform:translateY(-1px); }
+  .btn-ghost{ border:1px solid rgba(184,148,95,0.4); color:#FFFEFB; padding:13px 22px; border-radius:14px;
+    display:inline-flex; align-items:center; gap:8px; transition:background .2s, border-color .2s; }
+  .btn-ghost:hover{ background:rgba(232,184,136,0.08); border-color:rgba(232,184,136,0.7); }
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  .soft-swing{ animation:soft-swing 6s ease-in-out infinite; transform-origin:center; }
+  @keyframes soft-swing{ 0%,100%{transform:rotate(-1.2deg)} 50%{transform:rotate(1.2deg)} }
+  .breathe{ animation:breathe 5s ease-in-out infinite; }
+  @keyframes breathe{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+  a{ color:inherit; }
+</style>
+</head>
+<body>
+<div class="canvas-bg"></div>
+
+<!-- ============ NAV ============ -->
+<header class="sticky top-0 z-50" style="backdrop-filter:blur(14px); background:rgba(28,19,16,0.55); border-bottom:1px solid rgba(184,148,95,0.14);">
+  <div class="wrap flex items-center justify-between py-4">
+    <a href="#top" class="font-serif italic text-xl text-whisper tracking-tight">Stevens</a>
+    <nav class="hidden md:flex items-center gap-7 text-sm text-whisper/70">
+      <a href="#how" class="hover:text-whisper transition">How it helps</a>
+      <a href="#family" class="hover:text-whisper transition">Family</a>
+      <a href="#trust" class="hover:text-whisper transition">Your trust</a>
+      <a href="#builders" class="hover:text-whisper transition">Builders</a>
+    </nav>
+    <a href="#get" class="btn-primary text-sm" style="padding:9px 16px;">Get Stevens</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="top" class="wrap pt-16 md:pt-24 pb-20 text-center">
+  <!-- avatar -->
+  <div class="flex justify-center mb-8 reveal">
+    <div class="relative breathe">
+      <div class="absolute inset-0 -z-10 blur-3xl" style="background:radial-gradient(circle,rgba(232,184,136,.35),transparent 65%); transform:scale(1.8);"></div>
+      <svg width="170" height="118" viewBox="0 0 240 160" style="color:#B8945F;">
+        <circle cx="75" cy="75" r="33" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="75" cy="75" r="2" fill="currentColor" opacity=".4"/>
+        <circle cx="165" cy="75" r="33" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="165" cy="75" r="2" fill="currentColor" opacity=".4"/>
+        <path d="M 108 75 Q 120 62 132 75" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M 42 75 H 24" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M 198 75 H 216" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <g class="soft-swing" style="transform-origin:42px 75px"><path d="M 42 75 C 43 97, 36 115, 45 145" fill="none" stroke="currentColor" stroke-width=".75" stroke-dasharray="2 3" opacity=".45"/><circle cx="45" cy="145" r="1.5" fill="currentColor" opacity=".7"/></g>
+        <g class="soft-swing" style="transform-origin:198px 75px"><path d="M 198 75 C 197 97, 204 115, 192 145" fill="none" stroke="currentColor" stroke-width=".75" stroke-dasharray="2 3" opacity=".45"/><circle cx="192" cy="145" r="1.5" fill="currentColor" opacity=".7"/></g>
+      </svg>
+    </div>
+  </div>
+  <p class="eyebrow mb-5 reveal">Meet Stevens</p>
+  <h1 class="font-medium leading-[1.05] tracking-tight reveal" style="font-size:clamp(2.4rem,6vw,4.6rem);">
+    A smart confidant who<br><span class="text-saffron">elevates how you live.</span>
+  </h1>
+  <p class="mt-7 mx-auto max-w-2xl text-lg md:text-xl text-whisper/65 leading-relaxed reveal">
+    Intelligent software that lives in your home. It knows what matters, carries the exhausting rest, and helps you live a little better.
+  </p>
+  <div class="mt-9 flex flex-wrap items-center justify-center gap-3 reveal">
+    <a href="#get" class="btn-primary">Download for iPhone</a>
+    <a href="#get" class="btn-ghost">Get it on Android</a>
+  </div>
+  <p class="sig mt-8 text-base reveal">The brain of the family.</p>
+</section>
+
+<!-- ============ THE MOMENT ============ -->
+<section class="wrap py-16 md:py-24 text-center">
+  <p class="text-lg md:text-2xl leading-relaxed text-whisper/55 max-w-3xl mx-auto reveal">
+    The electricity bill due Friday. The web check-in you haven't done. What's running low in the kitchen. Whose birthday is Thursday. The orthopedic you keep meaning to call.
+  </p>
+  <p class="mt-8 text-xl md:text-3xl font-medium text-whisper reveal">
+    The micro-transactions you run — <span class="text-saffron">together they are exhausting.</span>
+  </p>
+  <p class="mt-4 text-2xl md:text-4xl font-semibold reveal">Stevens holds them for you.</p>
+  <p class="sig mt-6 text-base reveal">An empty mind is a calm home.</p>
+</section>
+
+<!-- ============ WHAT STEVENS DOES ============ -->
+<section id="how" class="wrap py-14 md:py-20">
+  <div class="text-center mb-12 reveal">
+    <p class="eyebrow mb-3">What Stevens does</p>
+    <h2 class="font-medium tracking-tight" style="font-size:clamp(1.8rem,4vw,3rem);">Three ways it shows up.</h2>
+  </div>
+  <div class="grid md:grid-cols-3 gap-5">
+    <!-- ELEVATE -->
+    <div class="glass p-7 reveal">
+      <p class="eyebrow mb-3" style="color:#E8B888;">Elevate</p>
+      <h3 class="text-2xl font-medium mb-2">Live a little better.</h3>
+      <p class="text-whisper/60 leading-relaxed mb-5">What to cook tonight. How to pack for the beach. A gift your mother will actually love. Stevens has taste, and it learns yours.</p>
+      <div class="glass-soft p-4 text-sm">
+        <p class="text-whisper/50">You</p>
+        <p class="mb-3">“What should I cook for guests on Saturday?”</p>
+        <p class="text-saffron/80">Stevens</p>
+        <p>“Three you can pull off — and you already have most of it.”</p>
+      </div>
+    </div>
+    <!-- SOLVE -->
+    <div class="glass p-7 reveal">
+      <p class="eyebrow mb-3" style="color:#E8B888;">Solve</p>
+      <h3 class="text-2xl font-medium mb-2">Just handle it.</h3>
+      <p class="text-whisper/60 leading-relaxed mb-5">Plan the week's meals. Find that flight ticket. Reorder the essentials. Remind me before it's late. Say it once; consider it done.</p>
+      <div class="glass-soft p-4 text-sm">
+        <p class="text-whisper/50">You</p>
+        <p class="mb-3">“Plan tomorrow's dinner.”</p>
+        <p class="text-saffron/80">Stevens</p>
+        <p>“Done. I'll nudge whoever's cooking around 6:30.”</p>
+      </div>
+    </div>
+    <!-- CARE -->
+    <div class="glass p-7 reveal">
+      <p class="eyebrow mb-3" style="color:#E8B888;">Care</p>
+      <h3 class="text-2xl font-medium mb-2">It's got your back.</h3>
+      <p class="text-whisper/60 leading-relaxed mb-5">The bills, the insurance, the thing you mentioned last week. Stevens watches the household quietly and remembers what matters — so you don't have to.</p>
+      <div class="glass-soft p-4 text-sm">
+        <p class="text-whisper/50">Stevens</p>
+        <p class="mb-3">“The LIC premium is due in three days.”</p>
+        <p class="text-saffron/80">You</p>
+        <p>“Remind me Friday morning.” — “Of course.”</p>
+      </div>
+    </div>
+  </div>
+  <p class="text-center text-whisper/40 text-sm mt-6 reveal">Always your next best step — never a pitch. You decide; Stevens carries.</p>
+</section>
+
+<!-- ============ FAMILY ============ -->
+<section id="family" class="wrap py-16 md:py-24">
+  <div class="glass p-8 md:p-14 reveal" style="border-color:rgba(194,138,122,0.3); box-shadow:0 30px 80px -30px rgba(194,138,122,0.35), inset 0 1px 0 rgba(255,254,251,0.08);">
+    <div class="md:flex items-center gap-12">
+      <div class="md:w-1/2">
+        <p class="eyebrow mb-3" style="color:#C28A7A;">Better together</p>
+        <h2 class="font-medium tracking-tight mb-4" style="font-size:clamp(1.8rem,4vw,2.8rem);">One Stevens. Both of you.</h2>
+        <p class="text-whisper/65 leading-relaxed mb-4">Run the household together — meals, groceries, reminders, plans. A quiet tap flips Stevens into Family mode, and the two of you share the load.</p>
+        <p class="text-whisper/65 leading-relaxed">Shared by default for the chores. Private when it should be. Your email, your money, your own things stay yours — Stevens shares only what you allow, and asks before it does.</p>
+      </div>
+      <div class="md:w-1/2 mt-8 md:mt-0">
+        <div class="glass-soft p-5" style="border-color:rgba(194,138,122,0.25);">
+          <div class="flex items-center gap-2 mb-4"><span class="w-2 h-2 rounded-full" style="background:#C28A7A;box-shadow:0 0 8px #C28A7A;"></span><span class="text-sm text-whisper/60">Aditi is here</span></div>
+          <p class="text-sm text-whisper/50">You</p>
+          <p class="mb-3 text-sm">“We're low on milk and atta — add to the list?”</p>
+          <p class="text-sm" style="color:#C28A7A;">Stevens</p>
+          <p class="text-sm">“Added. Aditi can see it too. Want me to order?”</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section id="trust" class="wrap py-16 md:py-24">
+  <div class="text-center mb-12 reveal">
+    <p class="eyebrow mb-3">Your trust, kept</p>
+    <h2 class="font-medium tracking-tight" style="font-size:clamp(1.8rem,4vw,3rem);">Your life stays yours.</h2>
+    <p class="text-whisper/55 mt-4 max-w-2xl mx-auto">We built Stevens the way we'd want it for our own homes. Trust isn't a setting here — it's the foundation.</p>
+  </div>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">You decide what's shared</h3><p class="text-whisper/55 text-sm leading-relaxed">Stevens asks before it shares anything — and it remembers your “no.” The personal stays personal.</p></div>
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">It listens only when you tap</h3><p class="text-whisper/55 text-sm leading-relaxed">No always-on microphone, ever. Stevens speaks when you tap and talk — and rests the rest of the time.</p></div>
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">It never acts as you</h3><p class="text-whisper/55 text-sm leading-relaxed">Stevens works for you, never as you. It won't send from your partner's account or move money on its own.</p></div>
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">Your own private vault</h3><p class="text-whisper/55 text-sm leading-relaxed">What Stevens knows lives in a vault that's yours alone — encrypted, and never shared across households.</p></div>
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">See it. Change it. Revoke it.</h3><p class="text-whisper/55 text-sm leading-relaxed">Every permission is visible and reversible in a tap. You're always in control of what Stevens can reach.</p></div>
+    <div class="glass-soft p-6 reveal"><h3 class="font-medium mb-2">We equip you. You decide.</h3><p class="text-whisper/55 text-sm leading-relaxed">A tool is leverage. Stevens extends what you can do; the choices remain entirely yours.</p></div>
+  </div>
+  <p class="sig text-center mt-8 reveal">— Stevens.</p>
+</section>
+
+<!-- ============ HOW TO USE ============ -->
+<section class="wrap py-14 md:py-20 text-center">
+  <p class="eyebrow mb-3 reveal">How to best use Stevens</p>
+  <h2 class="font-medium tracking-tight mb-8 reveal" style="font-size:clamp(1.8rem,4vw,2.6rem);">Just say it.</h2>
+  <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto reveal">
+    <span class="glass-soft px-5 py-3 text-whisper/80">“Plan tomorrow's dinner.”</span>
+    <span class="glass-soft px-5 py-3 text-whisper/80">“Remind us the rent's due on the 5th.”</span>
+    <span class="glass-soft px-5 py-3 text-whisper/80">“What did we spend on groceries this month?”</span>
+    <span class="glass-soft px-5 py-3 text-whisper/80">“Find my Goa tickets.”</span>
+    <span class="glass-soft px-5 py-3 text-whisper/80">“What's running low in the kitchen?”</span>
+    <span class="glass-soft px-5 py-3 text-whisper/80">“Add Aditi to this.”</span>
+  </div>
+</section>
+
+<!-- ============ BUILDERS ============ -->
+<section id="builders" class="wrap py-16 md:py-24">
+  <div class="text-center mb-12 reveal">
+    <p class="eyebrow mb-3">The builders</p>
+    <h2 class="font-medium tracking-tight" style="font-size:clamp(1.8rem,4vw,3rem);">Made by people who believe<br>software should serve you.</h2>
+  </div>
+  <div class="grid md:grid-cols-2 gap-5">
+    <div class="glass p-8 reveal">
+      <div class="flex items-center gap-4 mb-5">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl font-serif italic" style="background:rgba(184,148,95,0.18);border:1px solid rgba(184,148,95,0.4);color:#Eebd8d;">S</div>
+        <div><h3 class="text-xl font-medium">Shobhit Srivastava</h3><p class="text-brass text-sm">Founder &amp; CEO</p></div>
+      </div>
+      <p class="text-whisper/60 leading-relaxed text-[15px]">A career building the infrastructure of trust. He led product engineering at Gojek, founded and exited CodeIgnition, and has spent years on distributed systems, digital identity, and the protocols a modern, local-first internet needs. Shobhit believes technology, used well, empowers people and propels us forward as a civilisation — and that the people holding the tools should always hold the keys.</p>
+      <a href="https://sinisterlight.com/about/" target="_blank" rel="noopener" class="inline-block mt-5 text-sm text-saffron/80 hover:text-saffron transition">Read Shobhit's story →</a>
+    </div>
+    <div class="glass p-8 reveal">
+      <div class="flex items-center gap-4 mb-5">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl font-serif italic" style="background:rgba(194,138,122,0.18);border:1px solid rgba(194,138,122,0.4);color:#C28A7A;">S</div>
+        <div><h3 class="text-xl font-medium">Smriti</h3><p class="text-brass text-sm">Head of Product &amp; Design</p></div>
+      </div>
+      <p class="text-whisper/60 leading-relaxed text-[15px]">The craft behind Stevens — its voice, its calm, its warmth. Smriti shapes how intelligent software can feel human: an experience built on care, restraint, and respect for the person using it. She believes deeply in local-first, community-owned software and in identity and privacy as rights — and that the best technology elevates a life without ever taking it over.</p>
+      <a href="https://www.linkedin.com/in/smritisri/" target="_blank" rel="noopener" class="inline-block mt-5 text-sm text-saffron/80 hover:text-saffron transition">Connect with Smriti →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GET STEVENS ============ -->
+<section id="get" class="wrap py-16 md:py-24">
+  <div class="glass p-10 md:p-16 text-center reveal">
+    <h2 class="font-medium tracking-tight mb-4" style="font-size:clamp(2rem,5vw,3.4rem);">Bring Stevens home.</h2>
+    <p class="text-whisper/60 max-w-xl mx-auto mb-8">Live a little better, and let the exhausting rest take care of itself.</p>
+    <div class="flex flex-wrap justify-center gap-3 mb-10">
+      <a href="#" class="btn-primary">Download for iPhone</a>
+      <a href="#" class="btn-ghost">Get it on Android</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-4 text-left max-w-3xl mx-auto">
+      <div class="glass-soft p-5"><h4 class="font-medium text-sm mb-1">Is Stevens always listening?</h4><p class="text-whisper/50 text-sm">No. You tap, then talk. There's no always-on microphone.</p></div>
+      <div class="glass-soft p-5"><h4 class="font-medium text-sm mb-1">What happens to my data?</h4><p class="text-whisper/50 text-sm">It lives in your private vault — encrypted, yours, never sold.</p></div>
+      <div class="glass-soft p-5"><h4 class="font-medium text-sm mb-1">Need a hand?</h4><p class="text-whisper/50 text-sm"><a href="mailto:hello@stevens.app" class="text-saffron/80 hover:text-saffron">hello@stevens.app</a> — we're real people.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t" style="border-color:rgba(184,148,95,0.14);">
+  <div class="wrap py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-whisper/45">
+    <p class="font-serif italic text-base text-whisper/70">Stevens</p>
+    <p>Crafted with love at <a href="https://shovel.company" target="_blank" rel="noopener" class="text-saffron/80 hover:text-saffron transition">Shovel</a> · Shovel Labs LLP, Bengaluru</p>
+    <p><a href="mailto:hello@stevens.app" class="hover:text-whisper transition">hello@stevens.app</a></p>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const io = new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay = (i%6*40)+'ms'; io.observe(el); });
+</script>
+</body>
+</html>
