@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stevens — Just tell Stevens.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --canvas-dawn:#F5E8D8; --canvas-dusk:#2A1E1A;
+  --saffron:#E8B888; --rose-clay:#C28A7A; --brass:#B8945F;
+  --ivory:#FAF4EC; --burgundy:#3A1F1A; --whisper:#FFFEFB; --ink:#2A1810; --slate:#6B5B52;
+  --bg:#1C1310; --on:#FFFEFB; --on-soft:rgba(255,254,251,.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color 1.1s ease,color 1.1s ease}
+::selection{background:var(--brass);color:var(--whisper)}
+
+.grain{position:fixed;inset:0;z-index:120;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:130;background:linear-gradient(90deg,var(--saffron),var(--brass))}
+
+.chrome{position:fixed;z-index:110;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:20px clamp(20px,4vw,48px);mix-blend-mode:difference}
+.brandmark{font-family:"Lora",serif;font-style:italic;font-weight:500;font-size:1.12rem;color:#fff}
+.getbtn{font-family:"Inter";font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+  text-decoration:none;border-bottom:1px solid rgba(255,255,255,.6);padding-bottom:2px}
+
+/* ============ HERO FILM STAGE ============ */
+.stage{position:relative;height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 38%,#3a2a20,#1C1310 70%)}
+/* letterbox */
+.stage::before,.stage::after{content:"";position:absolute;left:0;right:0;height:8vh;background:var(--burgundy);z-index:6;pointer-events:none}
+.stage::before{top:0}.stage::after{bottom:0}
+
+/* the film frame (poster placeholder) */
+.film{position:absolute;inset:0;z-index:1}
+.poster{position:absolute;inset:0;
+  background:
+    radial-gradient(60% 50% at 64% 42%,rgba(232,184,136,.42),transparent 60%),
+    radial-gradient(50% 60% at 30% 70%,rgba(194,138,122,.34),transparent 60%),
+    linear-gradient(180deg,#2a1d16,#1a120e);
+  filter:saturate(108%)}
+/* faint figure suggestion — warm window light + silhouette glow */
+.poster::after{content:"";position:absolute;right:14%;top:26%;width:36vw;height:54vh;border-radius:46% 46% 40% 40%;
+  background:radial-gradient(circle at 50% 40%,rgba(245,232,216,.18),transparent 62%);filter:blur(26px)}
+.kenburns{position:absolute;inset:0;animation:ken 24s ease-in-out infinite alternate}
+@keyframes ken{from{transform:scale(1.04) transl}to{transform:scale(1.12) translate(-1.5%,-1%)}}
+
+.filmgrad{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(28,19,16,.35),transparent 30%,transparent 55%,rgba(28,19,16,.72))}
+
+.hero-copy{position:relative;z-index:5;text-align:center;padding:0 24px;transform:translateZ(0)}
+.hero-eyebrow{font-family:"Inter";font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--saffron);opacity:0}
+.hero-tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.8rem,8vw,6.4rem);line-height:.95;margin-top:14px;opacity:0}
+.hero-sub{font-family:"Lora",serif;font-style:italic;color:var(--whisper);opacity:0;font-size:clamp(1rem,1.9vw,1.45rem);margin-top:16px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+
+/* play button */
+.play{margin:30px auto 0;width:74px;height:74px;border-radius:50%;border:1px solid rgba(255,254,251,.55);
+  background:rgba(184,148,95,.16);backdrop-filter:blur(8px);display:grid;place-items:center;cursor:pointer;opacity:0;
+  transition:transform .3s,background .3s}
+.play:hover{transform:scale(1.06);background:rgba(184,148,95,.3)}
+.play svg{width:26px;height:26px;margin-left:4px;fill:var(--whisper)}
+.play .ring{position:absolute;width:74px;height:74px;border-radius:50%;border:1px solid rgba(232,184,136,.5);animation:pulse 2.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.runtime{font-family:"Inter";font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--on-soft);margin-top:18px;opacity:0}
+
+.scrollcue{position:absolute;bottom:9.5vh;left:50%;transform:translateX(-50%);z-index:6;font-family:"Inter";
+  font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--on-soft);opacity:.8;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
+
+/* sound toggle on stage */
+.snd{position:absolute;z-index:7;bottom:9.5vh;right:clamp(20px,4vw,48px);appearance:none;background:none;
+  border:1px solid rgba(255,255,255,.4);color:#fff;font-family:"Inter";font-size:.58rem;letter-spacing:.18em;
+  text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
+
+/* ============ THE DAY — scroll-revealed beats ============ */
+.day{position:relative;z-index:2}
+.beat{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16vh clamp(26px,6vw,90px);position:relative}
+.beat .time{font-family:"Inter";font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--brass);
+  margin-bottom:26px;opacity:0;transform:translateY(14px)}
+.said{font-family:"Inter";font-weight:300;font-size:clamp(1.9rem,5vw,4rem);line-height:1.08;letter-spacing:-.02em;
+  max-width:18ch;opacity:0;transform:translateY(20px);filter:blur(5px)}
+.said .q{color:var(--brass)}
+.svo{font-family:"Lora",serif;font-style:italic;font-size:clamp(1.15rem,2.3vw,1.7rem);line-height:1.4;max-width:30ch;
+  margin-top:28px;opacity:0;transform:translateY(14px)}
+.svo .sig{display:block;margin-top:12px;color:var(--brass);font-size:.85em}
+.is-in .time{opacity:1;transform:none;transition:opacity .9s,transform .9s}
+.is-in .said{opacity:1;transform:none;filter:blur(0);transition:opacity 1.1s,transform 1.1s,filter 1.1s;transition-delay:.15s}
+.is-in .svo{opacity:1;transform:none;transition:opacity 1s,transform 1s;transition-delay:.6s}
+
+/* ============ INTERACTIVE PROOFS ============ */
+.proof{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16vh clamp(26px,6vw,90px);position:relative}
+.proof h2{font-family:"Lora",serif;font-style:italic;font-size:clamp(1.6rem,4vw,3rem);line-height:1.18;max-width:20ch;
+  opacity:0;transform:translateY(18px)}
+.proof h2 .accent{color:var(--brass)}
+.is-in h2{opacity:1;transform:none;transition:opacity 1s,transform 1s}
+
+/* ask */
+.pills{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px;opacity:0;transition:opacity .9s .3s}
+.is-in .pills{opacity:1}
+.pill{font-family:"Inter";font-size:.92rem;color:var(--ink);background:rgba(184,148,95,.16);
+  border:1px solid rgba(184,148,95,.5);padding:12px 20px;border-radius:999px;cursor:pointer;transition:transform .2s,background .25s}
+.pill:hover{transform:translateY(-2px);background:rgba(184,148,95,.28)}
+.pill.spent{opacity:.4}
+.askstage{min-height:150px;margin-top:28px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.listen{width:min(330px,82vw);border-radius:22px;padding:18px 22px;opacity:0;transform:translateY(12px) scale(.96);
+  transition:opacity .5s,transform .5s;background:rgba(61,46,38,.14);
+  backdrop-filter:blur(28px) saturate(135%);-webkit-backdrop-filter:blur(28px) saturate(135%);
+  border:1px solid rgba(184,148,95,.4);box-shadow:0 16px 30px rgba(58,31,26,.18),inset 0 1px 0 rgba(232,184,136,.3)}
+.listen.show{opacity:1;transform:none}
+.lrow{display:flex;align-items:center;gap:10px}.ldot{width:8px;height:8px;border-radius:50%;background:var(--brass);box-shadow:0 0 10px var(--brass)}
+.llabel{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--brass)}
+.wave{display:flex;gap:4px;height:22px;align-items:center;margin-top:12px}
+.wave i{width:3px;height:7px;border-radius:2px;background:var(--brass);animation:wv .9s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.2s}.wave i:nth-child(4){animation-delay:.3s}
+.wave i:nth-child(5){animation-delay:.15s}.wave i:nth-child(6){animation-delay:.25s}.wave i:nth-child(7){animation-delay:.05s}.wave i:nth-child(8){animation-delay:.32s}
+@keyframes wv{0%,100%{height:7px}50%{height:20px}}
+.ask-reply{font-family:"Lora",serif;font-style:italic;font-size:clamp(1.2rem,2.4vw,1.8rem);line-height:1.4;color:var(--ink);
+  max-width:26ch;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s}
+.ask-reply.show{opacity:1;transform:none}.ask-reply .sig{display:block;margin-top:10px;color:var(--brass);font-size:.82em}
+
+/* family glows */
+.glowfield{position:relative;width:min(560px,86vw);height:240px;margin-top:14px}
+.glow{position:absolute;top:50%;width:150px;height:150px;border-radius:50%;filter:blur(6px);transform:translateY(-50%);cursor:grab;touch-action:none}
+.glow:active{cursor:grabbing}
+.glow.a{left:8%;background:radial-gradient(circle,rgba(232,184,136,.85),transparent 70%)}
+.glow.b{right:8%;background:radial-gradient(circle,rgba(194,138,122,.9),transparent 70%)}
+.glow .lbl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(42,24,16,.55);font-weight:500}
+.merged{margin-top:6px;font-family:"Lora",serif;font-style:italic;font-size:clamp(1.3rem,2.6vw,2rem);opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
+.merged.show{opacity:1;transform:none}
+.hintlet{font-family:"Inter";font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-soft);margin-top:18px}
+
+/* trust forget */
+.memchip{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;border-radius:16px;margin-top:18px;
+  background:rgba(250,244,236,.07);border:1px solid rgba(184,148,95,.38);transition:opacity .9s,transform .9s,filter .9s}
+.memchip.gone{opacity:0;transform:scale(.7);filter:blur(14px)}
+.memchip .mt{font-family:"Inter";font-size:.95rem;color:var(--on)}.memchip .md{font-family:"Inter";font-size:.72rem;color:var(--on-soft)}
+.forget{margin-top:24px;font-family:"Inter";font-size:.86rem;color:var(--brass);background:none;border:1px solid var(--brass);
+  padding:12px 22px;border-radius:999px;cursor:pointer;transition:opacity .3s,transform .2s}
+.forget:hover{transform:translateY(-2px)}.forget.spent{opacity:0;pointer-events:none}
+.forget-reply{font-family:"Lora",serif;font-style:italic;font-size:clamp(1.15rem,2.3vw,1.6rem);margin-top:22px;opacity:0;transition:opacity .8s;color:var(--on)}
+.forget-reply .sig{display:block;margin-top:10px;color:var(--brass);font-size:.85em}
+
+/* ============ CLOSE ============ */
+.close{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:16vh clamp(26px,6vw,90px)}
+.close .tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.4rem,6.5vw,5rem);line-height:.96;opacity:0;transform:translateY(18px)}
+.is-in .tag{opacity:1;transform:none;transition:opacity 1s,transform 1s}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:30px;opacity:0;transition:opacity .9s .3s}
+.is-in .cta-row{opacity:1}
+.cta{font-family:"Inter";font-weight:500;font-size:.92rem;padding:15px 26px;border-radius:999px;text-decoration:none;transition:transform .25s}
+.cta.primary{background:var(--brass);color:var(--ink);box-shadow:0 12px 28px rgba(184,148,95,.34)}.cta.primary:hover{transform:translateY(-2px)}
+.cta.ghost{border:1px solid var(--brass);color:var(--brass)}
+.builders{display:flex;gap:38px;justify-content:center;flex-wrap:wrap;max-width:760px;margin-top:44px;text-align:left;opacity:0;transition:opacity .9s .5s}
+.is-in .builders{opacity:1}
+.bd{max-width:300px}.bd h3{font-family:"Inter";font-weight:600;font-size:1rem}
+.bd .role{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin:3px 0 9px}
+.bd p{font-size:.86rem;line-height:1.5;color:var(--on-soft)}
+.bd a{color:var(--brass);text-decoration:none;border-bottom:1px solid rgba(184,148,95,.4);font-size:.8rem;display:inline-block;margin-top:8px}
+.crafted{margin-top:30px;font-family:"Lora",serif;font-style:italic;color:var(--on-soft);opacity:0;transition:opacity .9s .6s}
+.is-in .crafted{opacity:1}.crafted a{color:var(--brass);text-decoration:none;border-bottom:1px solid rgba(184,148,95,.4)}
+.fine{margin-top:18px;font-size:.72rem;color:var(--on-soft)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}
+  .said,.svo,.time,h2,.pills,.tag,.cta-row,.builders,.crafted{opacity:1!important;transform:none!important;filter:none!important}}
+@media(max-width:640px){.builders{flex-direction:column;gap:22px}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
+<div class="chrome"><div class="brandmark">Stevens</div><a class="getbtn" href="#close">Get&nbsp;Stevens</a></div>
+
+<!-- ================= HERO FILM ================= -->
+<section class="stage" id="stage" data-bg="#1C1310" data-on="#FFFEFB">
+  <div class="film"><div class="poster kenburns"></div></div>
+  <div class="filmgrad"></div>
+  <div class="hero-copy">
+    <div class="hero-eyebrow" id="hEy">A day · voice-first</div>
+    <div class="hero-tag" id="hTag">Just tell Stevens.</div>
+    <div class="hero-sub" id="hSub">One day. Six words. The rest, handled. — Stevens.</div>
+    <div class="play" id="play" style="position:relative">
+      <span class="ring"></span>
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+    <div class="runtime" id="hRun">Watch the film · 0:38</div>
+  </div>
+  <button class="snd" id="sndBtn">Sound&nbsp;Off</button>
+  <div class="scrollcue">Scroll — see the day</div>
+</section>
+
+<!-- ================= THE DAY ================= -->
+<div class="day">
+
+  <section class="beat" data-bg="#241814" data-on="#FFFEFB">
+    <div class="time">7:14 AM · the morning</div>
+    <div class="said"><span class="q">“</span>What&rsquo;s my day? Do the check-in, and reorder the kitchen.<span class="q">”</span></div>
+    <div class="svo">Two calls, a 4 o&rsquo;clock check-in, low on coffee and eggs. Done — window seat, as always.<span class="sig">— Stevens.</span></div>
+  </section>
+
+  <section class="beat" data-bg="#3A2A1C" data-on="#FFFEFB">
+    <div class="time">8:02 AM · getting ready</div>
+    <div class="said"><span class="q">“</span>Remind me to call Dad before noon. It&rsquo;s important.<span class="q">”</span></div>
+    <div class="svo">I&rsquo;ll nudge you at 11:30. Quietly.<span class="sig">— Stevens.</span></div>
+  </section>
+
+  <section class="beat" data-bg="#B8702E" data-on="#FFFEFB">
+    <div class="time">6:30 PM · the evening</div>
+    <div class="said"><span class="q">“</span>Find a good beer bar near Indiranagar.<span class="q">”</span></div>
+    <div class="svo">Toit&rsquo;s buzzing tonight. Table for four at 8?<span class="sig">— Stevens.</span></div>
+  </section>
+
+  <section class="beat" data-bg="#8C5A52" data-on="#FFFEFB">
+    <div class="time">10:48 PM · running late</div>
+    <div class="said"><span class="q">“</span>Tell Ananya where I am. I&rsquo;ll be a little late.<span class="q">”</span></div>
+    <div class="svo">Shared with Ananya. She says — enjoy.<span class="sig">— Stevens.</span></div>
+  </section>
+
+</div>
+
+<!-- ================= INTERACTIVE PROOFS ================= -->
+<!-- ask (home, the morning task) -->
+<section class="proof" data-bg="#F5E8D8" data-on="#2A1810" id="ask">
+  <h2>11:30 PM · home. <span class="accent">Now you try.</span></h2>
+  <div class="pills">
+    <button class="pill" data-reply="On it. Five Anjuna stays in your inbox by morning.">Plan the Goa trip — Airbnbs in Anjuna</button>
+    <button class="pill" data-reply="Done. Palak dal, jeera rice. You&rsquo;re not out of anything.">Plan tomorrow&rsquo;s dinner</button>
+    <button class="pill" data-reply="Both PNRs, saved last Tuesday. Check-in opens at 4.">Find my Goa tickets</button>
+  </div>
+  <div class="askstage">
+    <div class="listen" id="listen"><div class="lrow"><span class="ldot"></span><span class="llabel">Listening</span></div>
+      <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="ask-reply" id="askReply"></div>
+  </div>
+</section>
+
+<!-- family -->
+<section class="proof" data-bg="#8C5A52" data-on="#FFFEFB" id="family">
+  <h2>One Stevens. <span class="accent">The whole family.</span></h2>
+  <div class="glowfield" id="glowfield">
+    <div class="glow a" id="glowA"><span class="lbl">You</span></div>
+    <div class="glow b" id="glowB"><span class="lbl">Ananya</span></div>
+  </div>
+  <div class="merged" id="mergedLine">Both of you, in the loop.<br><span style="font-family:Lora;font-style:italic;color:var(--saffron);font-size:.8em">&ldquo;I&rsquo;ll keep you both. — Stevens.&rdquo;</span></div>
+  <div class="hintlet" id="famHint">Drag the two lights together →</div>
+</section>
+
+<!-- trust -->
+<section class="proof" data-bg="#1E1410" data-on="#FFFEFB" id="trust">
+  <h2>Your life lives in your vault.<br><span class="accent">You hold the keys.</span></h2>
+  <div class="memchip" id="memchip"><span class="mt">Ananya&rsquo;s birthday</span><span class="md">14 Aug · remind on the 7th</span></div>
+  <button class="forget" id="forgetBtn">Ask Stevens to forget</button>
+  <div class="forget-reply" id="forgetReply">Gone. It was yours to keep, and yours to remove.<span class="sig">— Stevens.</span></div>
+</section>
+
+<!-- ================= CLOSE ================= -->
+<section class="close" data-bg="#F5E8D8" data-on="#2A1810" id="close">
+  <div class="tag">Just tell Stevens.</div>
+  <div class="cta-row">
+    <a class="cta primary" href="#">Get Stevens</a>
+    <a class="cta ghost" href="#">Talk to support</a>
+  </div>
+  <div class="builders">
+    <div class="bd"><h3>Shobhit Srivastava</h3><div class="role">Founder &amp; CEO</div>
+      <p>A decade building software at scale — distributed systems, identity, and the protocols beneath them. Technology should hand people more agency, not less.</p>
+      <a href="https://sinisterlight.com/about/" target="_blank" rel="noopener">sinisterlight.com →</a></div>
+    <div class="bd"><h3>Smriti</h3><div class="role">Head of Product &amp; Design</div>
+      <p>Product and design rooted in care and craft — local-first community, privacy and identity as first principles, software that propels people forward.</p>
+      <a href="https://www.linkedin.com/in/smritisri/" target="_blank" rel="noopener">linkedin →</a></div>
+  </div>
+  <div class="crafted">Crafted with love at <a href="https://shovel.company" target="_blank" rel="noopener">Shovel</a>.</div>
+  <div class="fine">Built in India, for Indian families. Your data lives in your vault — yours to delete, anytime.</div>
+</section>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
+
+function setAmbient(el){document.body.style.setProperty('--bg',el.dataset.bg);
+  const on=el.dataset.on;document.body.style.setProperty('--on',on);
+  document.body.style.setProperty('--on-soft',on==='#FFFEFB'?'rgba(255,254,251,.6)':'rgba(42,24,16,.58)');}
+
+if(window.gsap&&window.ScrollTrigger&&!reduce){
+  gsap.registerPlugin(ScrollTrigger);
+  // hero intro
+  gsap.timeline()
+    .to('#hEy',{opacity:1,y:0,duration:1,ease:'power2.out',delay:.3})
+    .to('#hTag',{opacity:1,duration:1.1,ease:'power2.out'},'-=.5')
+    .to('#hSub',{opacity:1,duration:1,ease:'power2.out'},'-=.6')
+    .to('#play',{opacity:1,duration:.9,ease:'power2.out'},'-=.5')
+    .to('#hRun',{opacity:1,duration:.8},'-=.5');
+
+  // ambient follows each section
+  gsap.utils.toArray('[data-bg]').forEach(el=>{
+    ScrollTrigger.create({trigger:el,start:'top 55%',end:'bottom 45%',
+      onEnter:()=>setAmbient(el),onEnterBack:()=>setAmbient(el)});
+  });
+  // reveal beats / proofs / close
+  gsap.utils.toArray('.beat,.proof,.close').forEach(el=>{
+    ScrollTrigger.create({trigger:el,start:'top 62%',
+      onEnter:()=>{el.classList.add('is-in');initInteractions(el);},
+      onEnterBack:()=>el.classList.add('is-in')});
+  });
+} else { document.querySelectorAll('.beat,.proof,.close,.hero-eyebrow,.hero-tag,.hero-sub,.play,.runtime')
+  .forEach(e=>{e.style.opacity=1;e.classList.add('is-in');}); }
+
+/* play button — placeholder for the film you'll shoot */
+document.getElementById('play').addEventListener('click',()=>{
+  document.getElementById('hSub').textContent='Film coming soon — shooting now.';
+});
+
+/* interactions (init once) */
+const done={};
+function initInteractions(el){
+  if(el.id==='ask'&&!done.ask){done.ask=1;
+    const listen=document.getElementById('listen'),reply=document.getElementById('askReply');
+    document.querySelectorAll('#ask .pill').forEach(pill=>pill.addEventListener('click',()=>{
+      document.querySelectorAll('#ask .pill').forEach(p=>p.classList.remove('spent'));
+      reply.classList.remove('show');listen.classList.add('show');
+      setTimeout(()=>{listen.classList.remove('show');
+        reply.innerHTML=pill.dataset.reply+'<span class="sig">— Stevens.</span>';
+        reply.classList.add('show');pill.classList.add('spent');
+        document.body.style.setProperty('--bg','#EFD9B5');},1150);
+    }));
+  }
+  if(el.id==='family'&&!done.fam){done.fam=1;initGlows();}
+  if(el.id==='trust'&&!done.trust){done.trust=1;
+    const b=document.getElementById('forgetBtn'),c=document.getElementById('memchip'),r=document.getElementById('forgetReply');
+    b.addEventListener('click',()=>{c.classList.add('gone');b.classList.add('spent');setTimeout(()=>r.style.opacity='1',500);});
+  }
+}
+function initGlows(){
+  const field=document.getElementById('glowfield'),A=document.getElementById('glowA'),B=document.getElementById('glowB');
+  const line=document.getElementById('mergedLine'),fh=document.getElementById('famHint');let drag=null,merged=false;
+  const c=el=>{const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};};
+  function check(){if(merged)return;const a=c(A),b=c(B);
+    if(Math.hypot(a.x-b.x,a.y-b.y)<120){merged=true;
+      A.style.transition=B.style.transition='left .5s,right .5s';
+      A.style.left='calc(50% - 75px)';B.style.right='calc(50% - 75px)';
+      line.classList.add('show');fh.style.opacity='0';}}
+  [A,B].forEach(g=>{
+    g.addEventListener('pointerdown',e=>{e.preventDefault();drag=g;g.setPointerCapture(e.pointerId);});
+    g.addEventListener('pointermove',e=>{if(drag!==g)return;const fr=field.getBoundingClientRect();
+      let nx=e.clientX-fr.left-75;nx=Math.max(0,Math.min(fr.width-150,nx));g.style.left=nx+'px';g.style.right='auto';check();});
+    g.addEventListener('pointerup',()=>{drag=null;});
+  });
+}
+
+/* optional ambient sound */
+let actx,gain,on=false;
+document.getElementById('sndBtn').addEventListener('click',e=>{
+  if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)();gain=actx.createGain();gain.gain.value=0;gain.connect(actx.destination);
+    const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=520;lp.connect(gain);
+    [110,110.6,165].forEach(f=>{const o=actx.createOscillator();o.type='sine';o.frequency.value=f;o.connect(lp);o.start();});}
+  on=!on;actx.resume();gain.gain.linearRampToValueAtTime(on?0.05:0,actx.currentTime+0.8);
+  e.currentTarget.textContent=on?'Sound\u00A0On':'Sound\u00A0Off';});
+</script>
+</body>
+</html>
