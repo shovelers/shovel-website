@@ -51,6 +51,9 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 #sndBtn .ic-on{display:none}
 #sndBtn.unmuted .ic-on{display:block}
 #sndBtn.unmuted .ic-off{display:none}
+#fsBtn .ic-fsx{display:none}
+#fsBtn.infs .ic-fsx{display:block}
+#fsBtn.infs .ic-fs{display:none}
 
 .hero-copy{position:relative;z-index:5;text-align:center;padding:0 24px;transform:translateZ(0)}
 .hero-tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.2rem,4.6vw,4rem);line-height:.98;opacity:0}
@@ -185,7 +188,8 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
         <svg class="ic-on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
       </button>
       <button class="vbtn" id="fsBtn" aria-label="Fullscreen">
-        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        <svg class="ic-fs" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        <svg class="ic-fsx" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
       </button>
     </div>
   </div>
@@ -352,11 +356,18 @@ function initGlows(){
   function toggleSound(){ setMuted(!v.muted); if(!v.muted) v.play().catch(()=>{}); }
   sb.addEventListener('click',e=>{e.stopPropagation();toggleSound();});
   v.addEventListener('click',toggleSound);                 // tap the film toggles sound (mweb gesture)
+  const inFS=()=>document.fullscreenElement||document.webkitFullscreenElement||null;
   fb.addEventListener('click',e=>{e.stopPropagation();
-    if(box.requestFullscreen)        box.requestFullscreen().catch(()=>{});
-    else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();        // iOS Safari (native, element FS unsupported)
+    if(inFS()){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); return; }   // toggle: tap again exits
+    if(box.requestFullscreen)            box.requestFullscreen().catch(()=>{});
     else if(box.webkitRequestFullscreen) box.webkitRequestFullscreen();
+    else if(v.webkitEnterFullscreen)     v.webkitEnterFullscreen();    // iPhone Safari (native player; its own controls handle exit)
   });
+  ['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{
+    const fs=!!inFS();
+    fb.classList.toggle('infs',fs);
+    fb.setAttribute('aria-label', fs?'Exit fullscreen':'Fullscreen');
+  }));
   // reduced-motion: don't autoplay; poster shows, tap to play
   if(matchMedia('(prefers-reduced-motion:reduce)').matches){ v.removeAttribute('autoplay'); v.pause();
     v.addEventListener('click',()=>{ if(v.paused) v.play().catch(()=>{}); },{once:true}); }
