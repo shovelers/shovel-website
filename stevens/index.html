@@ -39,19 +39,18 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 .stage::before,.stage::after{content:"";position:absolute;left:0;right:0;height:8vh;background:var(--burgundy);z-index:6;pointer-events:none}
 .stage::before{top:0}.stage::after{bottom:0}
 
-/* the film frame (poster placeholder) */
-.film{position:absolute;inset:0;z-index:1}
-.poster{position:absolute;inset:0;
-  background:
-    radial-gradient(60% 50% at 64% 42%,rgba(232,184,136,.42),transparent 60%),
-    radial-gradient(50% 60% at 30% 70%,rgba(194,138,122,.34),transparent 60%),
-    linear-gradient(180deg,#2a1d16,#1a120e);
-  filter:saturate(108%)}
-/* faint figure suggestion — warm window light + silhouette glow */
-.poster::after{content:"";position:absolute;right:14%;top:26%;width:36vw;height:54vh;border-radius:46% 46% 40% 40%;
-  background:radial-gradient(circle at 50% 40%,rgba(245,232,216,.18),transparent 62%);filter:blur(26px)}
-.kenburns{position:absolute;inset:0;animation:ken 24s ease-in-out infinite alternate}
-@keyframes ken{from{transform:scale(1.04) transl}to{transform:scale(1.12) translate(-1.5%,-1%)}}
+/* the film — 16:9 box, never cropped, letterboxed by the stage on any viewport (incl. mweb) */
+.stage{flex-direction:column;gap:clamp(16px,2.6vh,30px)}
+.filmbox{position:relative;z-index:2;width:min(90vw,148svh);aspect-ratio:16/9;max-height:64svh;
+  border-radius:14px;overflow:hidden;background:#000;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 0 0 1px rgba(232,184,136,.14)}
+.filmbox video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.filmctrls{position:absolute;z-index:3;right:12px;bottom:12px;display:flex;gap:8px}
+.vbtn{appearance:none;background:rgba(28,19,16,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.4);color:#fff;font-family:"Inter";font-size:.56rem;letter-spacing:.16em;
+  text-transform:uppercase;padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .25s}
+.vbtn:hover{background:rgba(184,148,95,.42)}
+.vbtn svg{width:13px;height:13px;fill:currentColor;flex:none}
 
 .filmgrad{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(28,19,16,.35),transparent 30%,transparent 55%,rgba(28,19,16,.72))}
 
@@ -181,19 +180,25 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 
 <!-- ================= HERO FILM ================= -->
 <section class="stage" id="stage" data-bg="#1C1310" data-on="#FFFEFB">
-  <div class="film"><div class="poster kenburns"></div></div>
-  <div class="filmgrad"></div>
   <div class="hero-copy">
     <div class="hero-eyebrow" id="hEy">A day · voice-first</div>
     <div class="hero-tag" id="hTag">Just tell Stevens.</div>
     <div class="hero-sub" id="hSub">One day. Six words. The rest, handled. — Stevens.</div>
-    <div class="play" id="play" style="position:relative">
-      <span class="ring"></span>
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-    </div>
-    <div class="runtime" id="hRun">Watch the film · 0:38</div>
   </div>
-  <button class="snd" id="sndBtn">Sound&nbsp;Off</button>
+  <div class="filmbox" id="filmbox">
+    <video id="film" autoplay muted loop playsinline preload="auto" poster="stevens-film-poster.jpg"
+           disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen">
+      <source src="stevens-film.mp4" type="video/mp4">
+    </video>
+    <div class="filmctrls">
+      <button class="vbtn" id="sndBtn" aria-label="Toggle sound">
+        <svg viewBox="0 0 24 24"><path d="M5 9v6h4l5 5V4L9 9H5z"/></svg><span id="sndLbl">Sound&nbsp;Off</span>
+      </button>
+      <button class="vbtn" id="fsBtn" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5V2H2v7h2zm16 0h2V2h-7v2h5v5zM4 15H2v7h7v-2H4v-5zm18 0h-2v5h-5v2h7v-7z"/></svg><span>Full</span>
+      </button>
+    </div>
+  </div>
   <div class="scrollcue">Scroll — see the day</div>
 </section>
 
@@ -295,9 +300,7 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
   gsap.timeline()
     .to('#hEy',{opacity:1,y:0,duration:1,ease:'power2.out',delay:.3})
     .to('#hTag',{opacity:1,duration:1.1,ease:'power2.out'},'-=.5')
-    .to('#hSub',{opacity:1,duration:1,ease:'power2.out'},'-=.6')
-    .to('#play',{opacity:1,duration:.9,ease:'power2.out'},'-=.5')
-    .to('#hRun',{opacity:1,duration:.8},'-=.5');
+    .to('#hSub',{opacity:1,duration:1,ease:'power2.out'},'-=.6');
 
   // ambient follows each section
   gsap.utils.toArray('[data-bg]').forEach(el=>{
@@ -310,13 +313,8 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
       onEnter:()=>{el.classList.add('is-in');initInteractions(el);},
       onEnterBack:()=>el.classList.add('is-in')});
   });
-} else { document.querySelectorAll('.beat,.proof,.close,.hero-eyebrow,.hero-tag,.hero-sub,.play,.runtime')
+} else { document.querySelectorAll('.beat,.proof,.close,.hero-eyebrow,.hero-tag,.hero-sub')
   .forEach(e=>{e.style.opacity=1;e.classList.add('is-in');}); }
-
-/* play button — placeholder for the film you'll shoot */
-document.getElementById('play').addEventListener('click',()=>{
-  document.getElementById('hSub').textContent='Film coming soon — shooting now.';
-});
 
 /* interactions (init once) */
 const done={};
@@ -355,14 +353,25 @@ function initGlows(){
   });
 }
 
-/* optional ambient sound */
-let actx,gain,on=false;
-document.getElementById('sndBtn').addEventListener('click',e=>{
-  if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)();gain=actx.createGain();gain.gain.value=0;gain.connect(actx.destination);
-    const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=520;lp.connect(gain);
-    [110,110.6,165].forEach(f=>{const o=actx.createOscillator();o.type='sine';o.frequency.value=f;o.connect(lp);o.start();});}
-  on=!on;actx.resume();gain.gain.linearRampToValueAtTime(on?0.05:0,actx.currentTime+0.8);
-  e.currentTarget.textContent=on?'Sound\u00A0On':'Sound\u00A0Off';});
+/* video controls \u2014 sound on/off + fullscreen only (no scrubber, no seek) */
+(function(){
+  const v=document.getElementById('film'), box=document.getElementById('filmbox');
+  const sb=document.getElementById('sndBtn'), sl=document.getElementById('sndLbl'), fb=document.getElementById('fsBtn');
+  if(!v) return;
+  function setMuted(m){v.muted=m; sl.innerHTML=m?'Sound&nbsp;Off':'Sound&nbsp;On';}
+  setMuted(true);
+  function toggleSound(){ setMuted(!v.muted); if(!v.muted) v.play().catch(()=>{}); }
+  sb.addEventListener('click',e=>{e.stopPropagation();toggleSound();});
+  v.addEventListener('click',toggleSound);                 // tap the film toggles sound (mweb gesture)
+  fb.addEventListener('click',e=>{e.stopPropagation();
+    if(box.requestFullscreen)        box.requestFullscreen().catch(()=>{});
+    else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();        // iOS Safari (native, element FS unsupported)
+    else if(box.webkitRequestFullscreen) box.webkitRequestFullscreen();
+  });
+  // reduced-motion: don't autoplay; poster shows, tap to play
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){ v.removeAttribute('autoplay'); v.pause();
+    v.addEventListener('click',()=>{ if(v.paused) v.play().catch(()=>{}); },{once:true}); }
+})();
 </script>
 </body>
 </html>
