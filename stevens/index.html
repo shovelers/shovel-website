@@ -33,50 +33,40 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
   text-decoration:none;border-bottom:1px solid rgba(255,255,255,.6);padding-bottom:2px}
 
 /* ============ HERO FILM STAGE ============ */
-.stage{position:relative;height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+.stage{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(16px,2.8vh,30px);padding:84px clamp(20px,4vw,48px) 28px;
   background:radial-gradient(120% 90% at 50% 38%,#3a2a20,#1C1310 70%)}
-/* letterbox */
-.stage::before,.stage::after{content:"";position:absolute;left:0;right:0;height:8vh;background:var(--burgundy);z-index:6;pointer-events:none}
-.stage::before{top:0}.stage::after{bottom:0}
 
-/* the film — 16:9 box, never cropped, letterboxed by the stage on any viewport (incl. mweb) */
-.stage{flex-direction:column;gap:clamp(16px,2.6vh,30px)}
-.filmbox{position:relative;z-index:2;width:min(90vw,148svh);aspect-ratio:16/9;max-height:64svh;
+/* the film — true 16:9 at every viewport; width is bounded by available height so the aspect never breaks */
+.filmbox{position:relative;z-index:2;width:min(92vw, calc((100svh - 300px)*1.7778), 1240px);aspect-ratio:16/9;
   border-radius:14px;overflow:hidden;background:#000;
   box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 0 0 1px rgba(232,184,136,.14)}
-.filmbox video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.filmbox video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer}
 .filmctrls{position:absolute;z-index:3;right:12px;bottom:12px;display:flex;gap:8px}
-.vbtn{appearance:none;background:rgba(28,19,16,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.4);color:#fff;font-family:"Inter";font-size:.56rem;letter-spacing:.16em;
-  text-transform:uppercase;padding:8px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .25s}
+.vbtn{appearance:none;width:42px;height:42px;border-radius:50%;padding:0;display:grid;place-items:center;
+  background:rgba(28,19,16,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.4);color:#fff;cursor:pointer;transition:background .25s}
 .vbtn:hover{background:rgba(184,148,95,.42)}
-.vbtn svg{width:13px;height:13px;fill:currentColor;flex:none}
-
-.filmgrad{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(28,19,16,.35),transparent 30%,transparent 55%,rgba(28,19,16,.72))}
+.vbtn svg{width:18px;height:18px;fill:currentColor}
+#sndBtn .ic-on{display:none}
+#sndBtn.unmuted .ic-on{display:block}
+#sndBtn.unmuted .ic-off{display:none}
 
 .hero-copy{position:relative;z-index:5;text-align:center;padding:0 24px;transform:translateZ(0)}
-.hero-eyebrow{font-family:"Inter";font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:var(--saffron);opacity:0}
-.hero-tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.8rem,8vw,6.4rem);line-height:.95;margin-top:14px;opacity:0}
-.hero-sub{font-family:"Lora",serif;font-style:italic;color:var(--whisper);opacity:0;font-size:clamp(1rem,1.9vw,1.45rem);margin-top:16px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.hero-tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.2rem,4.6vw,4rem);line-height:.98;opacity:0}
+.hero-sub{font-family:"Lora",serif;font-style:italic;color:var(--whisper);opacity:0;font-size:clamp(.95rem,1.6vw,1.3rem);margin-top:12px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
 
-/* play button */
-.play{margin:30px auto 0;width:74px;height:74px;border-radius:50%;border:1px solid rgba(255,254,251,.55);
-  background:rgba(184,148,95,.16);backdrop-filter:blur(8px);display:grid;place-items:center;cursor:pointer;opacity:0;
-  transition:transform .3s,background .3s}
-.play:hover{transform:scale(1.06);background:rgba(184,148,95,.3)}
-.play svg{width:26px;height:26px;margin-left:4px;fill:var(--whisper)}
-.play .ring{position:absolute;width:74px;height:74px;border-radius:50%;border:1px solid rgba(232,184,136,.5);animation:pulse 2.6s ease-out infinite}
-@keyframes pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.5);opacity:0}}
-.runtime{font-family:"Inter";font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--on-soft);margin-top:18px;opacity:0}
+.scrollcue{font-family:"Inter";font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--on-soft);
+  opacity:.8;animation:bob 2.4s ease-in-out infinite;margin-top:4px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-.scrollcue{position:absolute;bottom:9.5vh;left:50%;transform:translateX(-50%);z-index:6;font-family:"Inter";
-  font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--on-soft);opacity:.8;animation:bob 2.4s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
-
-/* sound toggle on stage */
-.snd{position:absolute;z-index:7;bottom:9.5vh;right:clamp(20px,4vw,48px);appearance:none;background:none;
-  border:1px solid rgba(255,255,255,.4);color:#fff;font-family:"Inter";font-size:.58rem;letter-spacing:.18em;
-  text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
+/* compact stage for short viewports (landscape phones) */
+@media (max-height:540px){
+  .stage{padding:60px clamp(16px,3vw,32px) 14px;gap:10px}
+  .hero-tag{font-size:clamp(1.3rem,5.5vh,1.9rem)}
+  .hero-sub,.scrollcue{display:none}
+  .filmbox{width:min(94vw, calc((100svh - 104px)*1.7778))}
+}
 
 /* ============ THE DAY — scroll-revealed beats ============ */
 .day{position:relative;z-index:2}
@@ -181,7 +171,6 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 <!-- ================= HERO FILM ================= -->
 <section class="stage" id="stage" data-bg="#1C1310" data-on="#FFFEFB">
   <div class="hero-copy">
-    <div class="hero-eyebrow" id="hEy">A day · voice-first</div>
     <div class="hero-tag" id="hTag">Just tell Stevens.</div>
     <div class="hero-sub" id="hSub">One day. Six words. The rest, handled. — Stevens.</div>
   </div>
@@ -191,11 +180,12 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
       <source src="stevens-film.mp4" type="video/mp4">
     </video>
     <div class="filmctrls">
-      <button class="vbtn" id="sndBtn" aria-label="Toggle sound">
-        <svg viewBox="0 0 24 24"><path d="M5 9v6h4l5 5V4L9 9H5z"/></svg><span id="sndLbl">Sound&nbsp;Off</span>
+      <button class="vbtn" id="sndBtn" aria-label="Unmute">
+        <svg class="ic-off" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+        <svg class="ic-on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
       </button>
       <button class="vbtn" id="fsBtn" aria-label="Fullscreen">
-        <svg viewBox="0 0 24 24"><path d="M4 9V4h5V2H2v7h2zm16 0h2V2h-7v2h5v5zM4 15H2v7h7v-2H4v-5zm18 0h-2v5h-5v2h7v-7z"/></svg><span>Full</span>
+        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
       </button>
     </div>
   </div>
@@ -298,8 +288,7 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
   gsap.registerPlugin(ScrollTrigger);
   // hero intro
   gsap.timeline()
-    .to('#hEy',{opacity:1,y:0,duration:1,ease:'power2.out',delay:.3})
-    .to('#hTag',{opacity:1,duration:1.1,ease:'power2.out'},'-=.5')
+    .to('#hTag',{opacity:1,duration:1.1,ease:'power2.out',delay:.3})
     .to('#hSub',{opacity:1,duration:1,ease:'power2.out'},'-=.6');
 
   // ambient follows each section
@@ -313,7 +302,7 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
       onEnter:()=>{el.classList.add('is-in');initInteractions(el);},
       onEnterBack:()=>el.classList.add('is-in')});
   });
-} else { document.querySelectorAll('.beat,.proof,.close,.hero-eyebrow,.hero-tag,.hero-sub')
+} else { document.querySelectorAll('.beat,.proof,.close,.hero-tag,.hero-sub')
   .forEach(e=>{e.style.opacity=1;e.classList.add('is-in');}); }
 
 /* interactions (init once) */
@@ -356,9 +345,9 @@ function initGlows(){
 /* video controls \u2014 sound on/off + fullscreen only (no scrubber, no seek) */
 (function(){
   const v=document.getElementById('film'), box=document.getElementById('filmbox');
-  const sb=document.getElementById('sndBtn'), sl=document.getElementById('sndLbl'), fb=document.getElementById('fsBtn');
+  const sb=document.getElementById('sndBtn'), fb=document.getElementById('fsBtn');
   if(!v) return;
-  function setMuted(m){v.muted=m; sl.innerHTML=m?'Sound&nbsp;Off':'Sound&nbsp;On';}
+  function setMuted(m){v.muted=m; sb.classList.toggle('unmuted',!m); sb.setAttribute('aria-label', m?'Unmute':'Mute');}
   setMuted(true);
   function toggleSound(){ setMuted(!v.muted); if(!v.muted) v.play().catch(()=>{}); }
   sb.addEventListener('click',e=>{e.stopPropagation();toggleSound();});
