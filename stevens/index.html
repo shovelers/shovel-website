@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stevens — Just tell Stevens.</title>
+<title>Stevens — Ask Stevens.</title>
 
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9K0YV6H99"></script>
@@ -42,7 +42,15 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
   padding:20px clamp(20px,4vw,48px);mix-blend-mode:difference}
 .brandmark{font-family:"Lora",serif;font-style:italic;font-weight:500;font-size:1.12rem;color:#fff}
 .getbtn{font-family:"Inter";font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;
-  text-decoration:none;border-bottom:1px solid rgba(255,255,255,.6);padding-bottom:2px}
+  text-decoration:none}
+.navlinks{display:flex;align-items:center;gap:clamp(14px,2.4vw,30px)}
+.navlink{font-family:"Inter";font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+  text-decoration:none;opacity:.78;transition:opacity .25s;white-space:nowrap}
+.navlink:hover{opacity:1}
+.navicon{display:flex;align-items:center}
+.navicon svg{display:block;width:17px;height:17px}
+@media(max-width:560px){.navicon svg{width:16px;height:16px}}
+@media(max-width:560px){.navlinks{gap:13px}.navlink,.getbtn{font-size:.58rem;letter-spacing:.1em}.brandmark{font-size:.98rem}}
 
 /* ============ HERO FILM STAGE ============ */
 .stage{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -181,12 +189,12 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 <body>
 <div class="grain"></div>
 <div class="progress" id="progress"></div>
-<div class="chrome"><div class="brandmark">Stevens</div><a class="getbtn" href="#close">Get&nbsp;Stevens</a></div>
+<div class="chrome"><div class="brandmark">Stevens</div><nav class="navlinks"><a class="navlink navicon" href="https://www.instagram.com/stevensthebutler/" target="_blank" rel="noopener" aria-label="Stevens on Instagram" title="Stevens on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg></a><a class="navlink" href="https://shovel.company/" target="_blank" rel="noopener">Shovel.company</a><a class="getbtn" href="#close">Get&nbsp;Stevens</a></nav></div>
 
 <!-- ================= HERO FILM ================= -->
 <section class="stage" id="stage" data-bg="#1C1310" data-on="#FFFEFB">
   <div class="hero-copy">
-    <div class="hero-tag" id="hTag">Just tell Stevens.</div>
+    <div class="hero-tag" id="hTag">Ask Stevens.</div>
     <div class="hero-sub" id="hSub">One day. Six words. The rest, handled. — Stevens.</div>
   </div>
   <div class="filmbox" id="filmbox">
@@ -274,7 +282,7 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 
 <!-- ================= CLOSE ================= -->
 <section class="close" data-bg="#F5E8D8" data-on="#2A1810" id="close">
-  <div class="tag">Just tell Stevens.</div>
+  <div class="tag">Ask Stevens.</div>
   <div class="cta-row">
     <a class="cta primary" href="#">Get Stevens</a>
     <a class="cta ghost" href="#">Talk to support</a>
