@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stevens — A calmer home, every day.</title>
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9K0YV6H99"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H9K0YV6H99');
+  </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital@1&display=swap">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* ── Stevens design-system tokens (reconstructed from the _ds token files) ── */
+  :root{
+    --canvas-dusk:#2A1E1A; --canvas-dawn:#F5E8D8;
+    --saffron-mist:#E8B888; --rose-clay:#C28A7A; --brass-glow:#B8945F;
+    --whisper-white:#FFFEFB; --ink-warm:#2A1810; --soft-slate:#6B5B52;
+    --text-on-dark:rgba(255,254,251,0.92);
+    --text-on-dark-secondary:rgba(250,244,236,0.60);
+    --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+    --font-signature:'Lora',Georgia,serif;
+    --radius-sm:10px; --radius-md:14px; --radius-lg:22px;
+    --glass-dark-fill:rgba(61,46,38,0.22);
+    --glass-dark-shadow:0 16px 32px rgba(58,31,26,0.30), inset 0 0 0 1px rgba(250,244,236,0.07);
+    --lantern-fill:rgba(46,33,27,0.74);
+    --lantern-shadow:inset 0 0 0 1px rgba(232,184,136,0.35), 0 10px 24px rgba(0,0,0,0.35);
+    --ring:380px; --avatar:112px;
+  }
+  html,body{margin:0;padding:0;background:#2A1E1A;}
+  *{box-sizing:border-box;}
+  ::selection{background:rgba(232,184,136,0.3);}
+
+  @keyframes stvOrbit{to{transform:rotate(360deg)}}
+  @keyframes stvCounter{to{transform:rotate(-360deg)}}
+  @keyframes stvFloatGlow{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.9}50%{transform:translate(-50%,-53%) scale(1.08);opacity:1}}
+  @keyframes stvCue{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(9px);opacity:1}}
+  @keyframes stvWave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+  @keyframes stvBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+  @keyframes stvDrift{0%{transform:translateY(0)}100%{transform:translateY(-26px)}}
+  @media (prefers-reduced-motion: reduce){
+    .stv-orbit-ring,.stv-orbit-counter,.stv-float-glow,.stv-cue,.stv-wave,.stv-av-body,.stv-particle{animation:none !important}
+  }
+
+  /* hover lift for pillar cards (was design-system style-hover) */
+  .stv-card-hover{transition:transform .4s cubic-bezier(.2,.8,.2,1);}
+  .stv-card-hover:hover{transform:translateY(-6px);}
+
+  /* ── AmbientCanvas substitute ── */
+  .stv-ambient{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+  .stv-ambient::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 4%, #3b2a22 0%, #2A1E1A 60%);}
+  .stv-particle{position:absolute;border-radius:50%;background:rgba(232,184,136,0.5);filter:blur(.5px);animation:stvDrift linear infinite alternate;}
+
+  /* ── StevensAvatar substitute (glass orb + brass spectacles) ── */
+  .stv-avatar{position:relative;width:var(--s,160px);height:calc(var(--s,160px)*1.34);display:flex;align-items:center;justify-content:center;}
+  .stv-av-glow{position:absolute;left:50%;top:50%;width:135%;height:135%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(232,184,136,0.22) 0%,rgba(0,0,0,0) 66%);pointer-events:none;}
+  .stv-av-body{position:relative;width:72%;height:92%;border-radius:50% 50% 46% 46% / 42% 42% 58% 58%;background:linear-gradient(180deg,rgba(250,244,236,0.17) 0%,rgba(250,244,236,0.03) 100%);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(250,244,236,0.40);box-shadow:0 16px 36px rgba(58,31,26,0.5);animation:stvBreathe 4s ease-in-out infinite;display:flex;justify-content:center;}
+  .stv-spectacles{position:absolute;top:24%;display:flex;gap:calc(var(--s,160px)*0.045);}
+  .stv-spectacles .lens{width:calc(var(--s,160px)*0.155);height:calc(var(--s,160px)*0.155);border:1.5px solid var(--brass-glow);border-radius:50%;box-shadow:0 0 12px rgba(184,148,95,0.45);}
+  .stv-spectacles .bridge{position:absolute;left:50%;top:calc(var(--s,160px)*0.07);transform:translateX(-50%);width:calc(var(--s,160px)*0.05);height:1.5px;background:var(--brass-glow);}
+
+  /* ── responsive (the original design export had no breakpoints) ── */
+  @media (max-width:760px){
+    #stv-nav{padding:14px 20px !important;}
+    .stv-nav-links{display:none !important;}
+    .stv-pillar-grid{grid-template-columns:1fr !important;}
+    .stv-2col{grid-template-columns:1fr !important;gap:44px !important;}
+    #stv-site{--ring:290px; --avatar:104px;}
+    section[data-screen-label]{padding-left:22px !important;padding-right:22px !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="stv-site" style="position:relative;background:var(--canvas-dusk);color:var(--whisper-white);font-family:var(--font-sans);overflow-x:hidden;">
+
+  <!-- ░░ NAV ░░ -->
+  <nav id="stv-nav" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid transparent;background:transparent;transition:background .4s ease,backdrop-filter .4s ease,border-color .4s ease;">
+    <div style="display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:var(--whisper-white);">
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--brass-glow);box-shadow:0 0 12px 2px rgba(232,184,136,0.6);"></span>
+      Stevens
+    </div>
+    <div style="display:flex;align-items:center;gap:32px;">
+      <span class="stv-nav-links" style="display:flex;align-items:center;gap:32px;">
+        <span style="font-size:14px;color:var(--text-on-dark-secondary);">The home</span>
+        <span style="font-size:14px;color:var(--text-on-dark-secondary);">The family</span>
+        <span style="font-size:14px;color:var(--text-on-dark-secondary);">Your agency</span>
+      </span>
+      <span style="display:inline-flex;align-items:center;height:38px;padding:0 20px;border-radius:var(--radius-md);font-size:13px;font-weight:600;color:var(--ink-warm);background:rgba(232,184,136,0.92);box-shadow:0 6px 16px rgba(58,31,26,0.4);cursor:pointer;">Get Stevens</span>
+    </div>
+  </nav>
+
+  <!-- ░░ HERO ░░ -->
+  <section data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:92px 24px 32px;text-align:center;overflow:hidden;">
+    <div class="stv-ambient" data-particles="14"></div>
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%,rgba(42,30,26,0) 30%,rgba(42,30,26,0.55) 100%);pointer-events:none;"></div>
+
+    <div style="position:relative;z-index:2;max-width:880px;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:24px;">Household intelligence</div>
+      <h1 data-reveal style="margin:0;font-size:clamp(40px,6vw,76px);line-height:1.02;letter-spacing:-0.02em;font-weight:600;color:var(--whisper-white);">A calmer home,<br>every day.</h1>
+      <p data-reveal style="max-width:560px;margin:28px auto 0;font-size:clamp(17px,1.6vw,20px);line-height:1.5;color:var(--text-on-dark-secondary);">Stevens is the quiet mind of your home. It remembers, it cares, and it handles the things that fill your day — for you, and for everyone you live with.</p>
+    </div>
+
+    <!-- avatar + orbiting shards -->
+    <div data-reveal style="position:relative;z-index:2;width:100%;max-width:620px;height:calc(var(--ring) + 92px);margin-top:6px;">
+      <div class="stv-float-glow" style="position:absolute;left:50%;top:50%;width:300px;height:300px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(232,184,136,0.28) 0%,rgba(232,184,136,0) 70%);animation:stvFloatGlow 9s ease-in-out infinite;pointer-events:none;"></div>
+
+      <div class="stv-orbit-ring" style="position:absolute;left:50%;top:50%;width:var(--ring);height:var(--ring);margin:calc(var(--ring) / -2) 0 0 calc(var(--ring) / -2);transform-origin:center;animation:stvOrbit 90s linear infinite;">
+        <div style="position:absolute;left:95%;top:50%;transform:translate(-50%,-50%);"><div class="stv-orbit-counter" style="animation:stvCounter 90s linear infinite;"><div style="display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:var(--radius-md);background:var(--lantern-fill);box-shadow:var(--lantern-shadow);white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:var(--saffron-mist);box-shadow:0 0 8px 1px rgba(232,184,136,0.8);"></span><span style="font-size:13px;color:var(--saffron-mist);font-weight:500;">Electricity bill, due Thursday</span></div></div></div>
+        <div style="position:absolute;left:64%;top:93%;transform:translate(-50%,-50%);"><div class="stv-orbit-counter" style="animation:stvCounter 90s linear infinite;"><div style="padding:11px 16px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(61,46,38,0.4),inset 0 -1px 0 0 rgba(232,184,136,0.2);white-space:nowrap;"><span style="font-size:13px;color:var(--text-on-dark);">Ask me about the trip to Goa</span></div></div></div>
+        <div style="position:absolute;left:14%;top:76%;transform:translate(-50%,-50%);"><div class="stv-orbit-counter" style="animation:stvCounter 90s linear infinite;"><div style="padding:11px 16px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(61,46,38,0.4),inset 0 -1px 0 0 rgba(232,184,136,0.2);white-space:nowrap;"><span style="font-size:13px;color:var(--text-on-dark);">Ask me what's in the fridge</span></div></div></div>
+        <div style="position:absolute;left:14%;top:24%;transform:translate(-50%,-50%);"><div class="stv-orbit-counter" style="animation:stvCounter 90s linear infinite;"><div style="display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:var(--radius-md);background:var(--lantern-fill);box-shadow:var(--lantern-shadow);white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:var(--saffron-mist);box-shadow:0 0 8px 1px rgba(232,184,136,0.8);"></span><span style="font-size:13px;color:var(--saffron-mist);font-weight:500;">Cook's salary, pending</span></div></div></div>
+        <div style="position:absolute;left:64%;top:7%;transform:translate(-50%,-50%);"><div class="stv-orbit-counter" style="animation:stvCounter 90s linear infinite;"><div style="padding:11px 16px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(61,46,38,0.4),inset 0 -1px 0 0 rgba(232,184,136,0.2);white-space:nowrap;"><span style="font-size:13px;color:var(--text-on-dark);">Diwali in 12 days</span></div></div></div>
+      </div>
+
+      <div class="stv-avatar" style="--s:var(--avatar);position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);z-index:3;">
+        <div class="stv-av-glow"></div>
+        <div class="stv-av-body"><div class="stv-spectacles"><span class="bridge"></span><span class="lens"></span><span class="lens"></span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ PILLARS ░░ -->
+  <section data-screen-label="Pillars" style="position:relative;padding:140px 40px;background:radial-gradient(120% 60% at 50% 0%,rgba(184,148,95,0.10) 0%,rgba(42,30,26,0) 60%),var(--canvas-dusk);">
+    <div style="max-width:1080px;margin:0 auto;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:18px;">What Stevens cares for</div>
+      <h2 data-reveal style="margin:0 0 64px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;max-width:680px;color:var(--whisper-white);">Health, wealth, and the people you love.</h2>
+
+      <div class="stv-pillar-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+        <div data-reveal class="stv-card-hover" style="display:flex;flex-direction:column;gap:16px;padding:32px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);">
+          <i data-lucide="heart-pulse" style="width:26px;height:26px;color:var(--saffron-mist);"></i>
+          <h3 style="margin:0;font-size:22px;font-weight:500;color:var(--whisper-white);">Health</h3>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:var(--text-on-dark-secondary);">Medicines on time, appointments remembered, a gentle nudge to pause. Stevens keeps the body's small admin from slipping.</p>
+          <div style="margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(42,30,26,0.5);font-size:13px;color:var(--saffron-mist);">"Time for Papa's evening walk."</div>
+        </div>
+
+        <div data-reveal class="stv-card-hover" style="display:flex;flex-direction:column;gap:16px;padding:32px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);transition-delay:.08s;">
+          <i data-lucide="wallet" style="width:26px;height:26px;color:var(--saffron-mist);"></i>
+          <h3 style="margin:0;font-size:22px;font-weight:500;color:var(--whisper-white);">Wealth</h3>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:var(--text-on-dark-secondary);">Bills, salaries, renewals, the quiet leaks. Stevens watches the household's money so nothing is forgotten or paid twice.</p>
+          <div style="margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(42,30,26,0.5);font-size:13px;color:var(--saffron-mist);">"Cook's salary is due. Tap to settle."</div>
+        </div>
+
+        <div data-reveal class="stv-card-hover" style="display:flex;flex-direction:column;gap:16px;padding:32px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);transition-delay:.16s;">
+          <i data-lucide="users-round" style="width:26px;height:26px;color:var(--saffron-mist);"></i>
+          <h3 style="margin:0;font-size:22px;font-weight:500;color:var(--whisper-white);">Relationships</h3>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:var(--text-on-dark-secondary);">Birthdays, the right gift, the dinner you keep meaning to plan. Stevens holds the threads that keep a family close.</p>
+          <div style="margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(42,30,26,0.5);font-size:13px;color:var(--saffron-mist);">"Anjali's birthday is in a week."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ FAMILY ░░ -->
+  <section data-screen-label="Family" style="position:relative;padding:140px 40px;background:var(--canvas-dusk);">
+    <div class="stv-2col" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+      <div data-reveal>
+        <div style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--rose-clay);margin-bottom:18px;">One mind for the whole family</div>
+        <h2 style="margin:0 0 24px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;color:var(--whisper-white);">Stevens knows<br>your household.</h2>
+        <p style="margin:0 0 20px;font-size:18px;line-height:1.6;color:var(--text-on-dark-secondary);">Not a single user's assistant — the family's. Stevens serves each person and the home as a whole. Calls are shared like a room everyone can step into.</p>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:28px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(194,138,122,0.9);font-size:14px;font-weight:600;color:var(--canvas-dusk);box-shadow:0 0 0 4px rgba(194,138,122,0.25);">P</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(184,148,95,0.9);font-size:14px;font-weight:600;color:var(--canvas-dusk);box-shadow:0 0 0 4px rgba(184,148,95,0.22);">K</span>
+          <span style="font-size:14px;color:var(--text-on-dark-secondary);">Pratyusha and Kiran, planning together</span>
+        </div>
+      </div>
+
+      <div data-reveal style="display:flex;justify-content:center;">
+        <!-- StevensCard · kind=confirm -->
+        <div style="display:flex;flex-direction:column;gap:14px;width:340px;padding:24px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px);box-shadow:var(--glass-dark-shadow);">
+          <div style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--saffron-mist);">Confirm · shared</div>
+          <div style="font-size:19px;font-weight:500;line-height:1.25;color:var(--whisper-white);">Should this be visible to Kiran as well?</div>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:var(--text-on-dark-secondary);">You're booking the Goa stay. Shared keeps you both in the loop.</p>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <span style="flex:1;display:inline-flex;align-items:center;justify-content:center;height:44px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--ink-warm);background:rgba(232,184,136,0.92);cursor:pointer;">Share with Kiran</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--saffron-mist);background:transparent;box-shadow:inset 0 0 0 1px rgba(232,184,136,0.4);cursor:pointer;">Just me</span>
+          </div>
+          <span style="align-self:flex-end;font-family:var(--font-signature);font-style:italic;font-size:12px;color:rgba(250,244,236,0.55);">— Stevens.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ APP / PHASE ONE ░░ -->
+  <section data-screen-label="App" style="position:relative;padding:140px 40px;background:radial-gradient(100% 70% at 50% 100%,rgba(184,148,95,0.12) 0%,rgba(42,30,26,0) 60%),var(--canvas-dusk);">
+    <div class="stv-2col" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+      <div data-reveal style="display:flex;justify-content:center;order:2;">
+        <!-- phone -->
+        <div style="position:relative;width:288px;height:592px;border-radius:46px;padding:6px;background:#15100d;box-shadow:0 40px 90px rgba(58,31,26,0.6),inset 0 0 0 1px rgba(184,148,95,0.22);">
+          <div style="position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;">
+            <div class="stv-ambient" data-particles="6"></div>
+            <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 16px;">
+              <div style="width:100%;display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--whisper-white);"><span>9:41</span><span style="display:inline-block;width:46px;height:16px;border-radius:9px;background:#0f0b09;"></span></div>
+              <div style="flex:0 0 auto;margin-top:18px;"><div class="stv-avatar" style="--s:104px;"><div class="stv-av-glow"></div><div class="stv-av-body"><div class="stv-spectacles"><span class="bridge"></span><span class="lens"></span><span class="lens"></span></div></div></div></div>
+              <div class="stv-wave" style="display:flex;align-items:flex-end;gap:3px;height:22px;margin-top:-6px;">
+                <span style="width:3px;height:100%;border-radius:2px;background:var(--brass-glow);animation:stvWave 1s ease-in-out infinite;"></span>
+                <span style="width:3px;height:100%;border-radius:2px;background:var(--brass-glow);animation:stvWave 1s ease-in-out .15s infinite;"></span>
+                <span style="width:3px;height:100%;border-radius:2px;background:var(--brass-glow);animation:stvWave 1s ease-in-out .3s infinite;"></span>
+                <span style="width:3px;height:100%;border-radius:2px;background:var(--brass-glow);animation:stvWave 1s ease-in-out .15s infinite;"></span>
+                <span style="width:3px;height:100%;border-radius:2px;background:var(--brass-glow);animation:stvWave 1s ease-in-out infinite;"></span>
+              </div>
+              <div style="margin-top:auto;width:100%;display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--glass-dark-shadow);">
+                <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-on-dark-secondary);">Tomorrow · dinner</span>
+                <span style="font-size:18px;font-weight:500;color:var(--whisper-white);">Three for tomorrow.</span>
+                <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--text-on-dark);"><span>Dal makhani</span><span style="color:var(--text-on-dark-secondary);">30 min</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--text-on-dark);"><span>Paneer butter masala</span><span style="color:var(--text-on-dark-secondary);">35 min</span></div>
+                <span style="align-self:flex-end;font-family:var(--font-signature);font-style:italic;font-size:12px;color:rgba(250,244,236,0.55);">— Stevens.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-reveal style="order:1;">
+        <div style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:18px;">Available now</div>
+        <h2 style="margin:0 0 24px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;color:var(--whisper-white);">It begins as an app.</h2>
+        <p style="margin:0 0 32px;font-size:18px;line-height:1.6;color:var(--text-on-dark-secondary);">Phase one of a larger intelligence. You talk, Stevens answers in voice, and glass cards appear only to give you something to tap. No feed, no tabs, no noise.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 22px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(184,148,95,0.4);cursor:pointer;"><i data-lucide="apple" style="width:20px;height:20px;color:var(--whisper-white);"></i><span style="font-size:14px;font-weight:600;color:var(--whisper-white);">App Store</span></span>
+          <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 22px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(184,148,95,0.4);cursor:pointer;"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" style="color:var(--whisper-white)"><path d="M6 18a1 1 0 0 0 1 1h1v3.2a1.3 1.3 0 0 0 2.6 0V19h2.8v3.2a1.3 1.3 0 0 0 2.6 0V19h1a1 1 0 0 0 1-1V9.5H6V18zM3.3 9.5A1.3 1.3 0 0 0 2 10.8v5.4a1.3 1.3 0 0 0 2.6 0v-5.4A1.3 1.3 0 0 0 3.3 9.5zm17.4 0a1.3 1.3 0 0 0-1.3 1.3v5.4a1.3 1.3 0 0 0 2.6 0v-5.4a1.3 1.3 0 0 0-1.3-1.3zM15.6 4.6l1.2-1.8a.27.27 0 0 0-.45-.3l-1.23 1.85a6.6 6.6 0 0 0-5.26 0L8.65 2.5a.27.27 0 1 0-.45.3l1.2 1.8A6.1 6.1 0 0 0 6 9.5h12a6.1 6.1 0 0 0-2.4-4.9zM9.5 7.5a.7.7 0 1 1 .7-.7.7.7 0 0 1-.7.7zm5 0a.7.7 0 1 1 .7-.7.7.7 0 0 1-.7.7z"/></svg><span style="font-size:14px;font-weight:600;color:var(--whisper-white);">Google Play</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ AGENCY ░░ -->
+  <section data-screen-label="Agency" style="position:relative;padding:140px 40px 120px;background:var(--canvas-dusk);">
+    <div style="max-width:760px;margin:0 auto;text-align:center;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:18px;">Your data, your agency</div>
+      <h2 data-reveal style="margin:0 0 24px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;color:var(--whisper-white);">You stay in control.</h2>
+      <p data-reveal style="margin:0 auto 48px;max-width:560px;font-size:18px;line-height:1.6;color:var(--text-on-dark-secondary);">Stevens acts only on what you choose to share. Every access is opt-in, stored in a private vault for your household alone, and revocable at any time.</p>
+
+      <div data-reveal style="display:flex;flex-direction:column;gap:2px;max-width:420px;margin:0 auto;text-align:left;padding:24px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid rgba(250,244,236,0.08);"><span style="font-size:15px;color:var(--whisper-white);">Notifications</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(232,184,136,0.9);position:relative;"><span style="position:absolute;right:2px;top:2px;width:20px;height:20px;border-radius:50%;background:var(--whisper-white);"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid rgba(250,244,236,0.08);"><span style="font-size:15px;color:var(--whisper-white);">Calendar</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(250,244,236,0.12);position:relative;"><span style="position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:rgba(250,244,236,0.5);"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;"><span style="font-size:15px;color:var(--whisper-white);">Contacts</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(250,244,236,0.12);position:relative;"><span style="position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:rgba(250,244,236,0.5);"></span></span></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(250,244,236,0.08);"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:rgba(232,184,136,0.9);color:var(--canvas-dusk);font-size:13px;">✓</span><span style="font-size:14px;color:var(--text-on-dark-secondary);">I accept the Stevens Data Charter</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ DOWNLOAD FOOTER ░░ -->
+  <section data-screen-label="Footer" style="position:relative;padding:130px 40px 80px;text-align:center;overflow:hidden;background:linear-gradient(180deg,#2A1E1A 0%,#1c1310 100%);">
+    <div style="position:absolute;left:50%;top:0;width:600px;height:300px;transform:translateX(-50%);background:radial-gradient(50% 60% at 50% 0%,rgba(232,184,136,0.18) 0%,rgba(232,184,136,0) 70%);pointer-events:none;"></div>
+    <div data-reveal style="position:relative;z-index:2;">
+      <div style="display:flex;justify-content:center;margin-bottom:28px;"><div class="stv-avatar" style="--s:96px;"><div class="stv-av-glow"></div><div class="stv-av-body"><div class="stv-spectacles"><span class="bridge"></span><span class="lens"></span><span class="lens"></span></div></div></div></div>
+      <h2 style="margin:0 0 16px;font-size:clamp(32px,5vw,56px);line-height:1.05;letter-spacing:-0.02em;font-weight:600;color:var(--whisper-white);">Bring Stevens home.</h2>
+      <p style="margin:0 auto 36px;max-width:440px;font-size:17px;line-height:1.5;color:var(--text-on-dark-secondary);">A quieter, more cared-for life — for you and the people you live with.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px;border-radius:var(--radius-md);background:rgba(232,184,136,0.92);box-shadow:0 8px 24px rgba(58,31,26,0.5);cursor:pointer;"><i data-lucide="apple" style="width:20px;height:20px;color:var(--ink-warm);"></i><span style="font-size:14px;font-weight:600;color:var(--ink-warm);">Download for iOS</span></span>
+        <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(184,148,95,0.4);cursor:pointer;"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" style="color:var(--whisper-white)"><path d="M6 18a1 1 0 0 0 1 1h1v3.2a1.3 1.3 0 0 0 2.6 0V19h2.8v3.2a1.3 1.3 0 0 0 2.6 0V19h1a1 1 0 0 0 1-1V9.5H6V18zM3.3 9.5A1.3 1.3 0 0 0 2 10.8v5.4a1.3 1.3 0 0 0 2.6 0v-5.4A1.3 1.3 0 0 0 3.3 9.5zm17.4 0a1.3 1.3 0 0 0-1.3 1.3v5.4a1.3 1.3 0 0 0 2.6 0v-5.4a1.3 1.3 0 0 0-1.3-1.3zM15.6 4.6l1.2-1.8a.27.27 0 0 0-.45-.3l-1.23 1.85a6.6 6.6 0 0 0-5.26 0L8.65 2.5a.27.27 0 1 0-.45.3l1.2 1.8A6.1 6.1 0 0 0 6 9.5h12a6.1 6.1 0 0 0-2.4-4.9zM9.5 7.5a.7.7 0 1 1 .7-.7.7.7 0 0 1-.7.7zm5 0a.7.7 0 1 1 .7-.7.7.7 0 0 1-.7.7z"/></svg><span style="font-size:14px;font-weight:600;color:var(--whisper-white);">Download for Android</span></span>
+      </div>
+      <div style="margin-top:64px;padding-top:28px;border-top:1px solid rgba(250,244,236,0.08);display:flex;align-items:center;justify-content:space-between;max-width:1080px;margin-left:auto;margin-right:auto;">
+        <span style="font-size:13px;color:var(--text-on-dark-secondary);">Stevens — household intelligence</span>
+        <span style="font-family:var(--font-signature);font-style:italic;font-size:16px;color:var(--text-on-dark-secondary);">— Stevens.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  // Lucide icons (retry until the CDN script is ready)
+  (function drawIcons(){
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    else setTimeout(drawIcons, 120);
+  })();
+
+  // AmbientCanvas particles
+  document.querySelectorAll('.stv-ambient[data-particles]').forEach(function(amb){
+    var n = parseInt(amb.getAttribute('data-particles'),10) || 0;
+    for (var i=0;i<n;i++){
+      var p = document.createElement('span');
+      p.className='stv-particle';
+      var sz = (Math.random()*2.4+1).toFixed(1);
+      p.style.width = sz+'px'; p.style.height = sz+'px';
+      p.style.left = (Math.random()*100)+'%';
+      p.style.top = (Math.random()*100)+'%';
+      p.style.opacity = (Math.random()*0.4+0.15).toFixed(2);
+      p.style.animationDuration = (Math.random()*8+7).toFixed(1)+'s';
+      p.style.animationDelay = (-Math.random()*8).toFixed(1)+'s';
+      amb.appendChild(p);
+    }
+  });
+
+  // Scroll-reveal: above-the-fold visible immediately; below-the-fold animates in.
+  var els = [].slice.call(document.querySelectorAll('#stv-site [data-reveal]'));
+  var vh0 = window.innerHeight || 800;
+  var hidden = [];
+  els.forEach(function(el){
+    var r = el.getBoundingClientRect();
+    if (r.top > vh0 * 0.82){
+      el.style.transition = 'opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1)';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(28px)';
+      el.style.willChange = 'opacity, transform';
+      hidden.push(el);
+    }
+  });
+  function reveal(){
+    var vh = window.innerHeight || 800;
+    for (var i=hidden.length-1;i>=0;i--){
+      var el = hidden[i];
+      if (el.getBoundingClientRect().top < vh * 0.88){
+        el.style.opacity='1'; el.style.transform='none'; hidden.splice(i,1);
+      }
+    }
+  }
+  window.addEventListener('scroll', reveal, {passive:true});
+  window.addEventListener('resize', reveal);
+  reveal();
+
+  // Nav background on scroll
+  var nav = document.getElementById('stv-nav');
+  function onScroll(){
+    var y = window.scrollY || 0, on = y > 40;
+    if (!nav) return;
+    nav.style.background = on ? 'rgba(28,19,16,0.72)' : 'transparent';
+    nav.style.backdropFilter = on ? 'blur(20px)' : 'none';
+    nav.style.webkitBackdropFilter = on ? 'blur(20px)' : 'none';
+    nav.style.borderBottomColor = on ? 'rgba(184,148,95,0.18)' : 'transparent';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+
+</body>
+</html>
