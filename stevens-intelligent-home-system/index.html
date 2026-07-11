@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stevens — Intelligent Home System</title>
+<meta name="description" content="A calmer home, every day. Stevens is an ambient, voice-first household intelligence — watching over the home, listening when you call, and lifting the load your family carries.">
+<meta property="og:title" content="Stevens — Intelligent Home System">
+<meta property="og:description" content="A calmer home, every day. An ambient, voice-first household intelligence for the whole family.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shovel.company/stevens-intelligent-home-system/">
+<meta name="theme-color" content="#2A1E1A">
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@1,400;1,500&display=swap">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+    :root{
+      /* colour */
+      --canvas-dawn:#F5E8D8; --canvas-dusk:#2A1E1A; --saffron-mist:#E8B888;
+      --rose-clay:#C28A7A; --brass-glow:#B8945F; --smoke-glass:#3D2E26;
+      --burgundy-shadow:#3A1F1A; --ink-warm:#2A1810; --soft-slate:#6B5B52;
+      --ivory-glass:#FAF4EC; --whisper-white:#FFFEFB;
+      --ivory-glass-rgb:250 244 236; --smoke-glass-rgb:61 46 38; --burgundy-shadow-rgb:58 31 26;
+      --saffron-mist-rgb:232 184 136; --brass-glow-rgb:184 148 95; --rose-clay-rgb:194 138 122;
+      --whisper-white-rgb:255 254 251; --ink-warm-rgb:42 24 16;
+      --text-primary:var(--ink-warm); --text-secondary:var(--soft-slate);
+      --text-on-dark:var(--whisper-white); --text-on-dark-secondary:rgba(var(--ivory-glass-rgb)/0.65);
+      /* type */
+      --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+      --font-signature:'Lora',ui-serif,Georgia,'Times New Roman',serif;
+      /* radius + space */
+      --space-6:24px; --space-10:40px;
+      --radius-sm:8px; --radius-md:16px; --radius-lg:24px; --radius-xl:32px; --radius-pill:9999px;
+      /* materials */
+      --glass-blur:24px;
+      --glass-dark-fill:rgba(var(--smoke-glass-rgb)/0.22);
+      --glass-dark-shadow:
+        inset 0 0 0 1px rgba(var(--smoke-glass-rgb)/0.4),
+        inset 0 0 24px 0 rgba(var(--saffron-mist-rgb)/0.08),
+        inset 0 -1px 0 0 rgba(var(--saffron-mist-rgb)/0.2),
+        0 16px 32px 0 rgba(var(--burgundy-shadow-rgb)/0.3);
+      --canvas-clear-night:
+        radial-gradient(195px 422px at 100% 100%, rgba(var(--saffron-mist-rgb)/0.22) 0%, rgba(var(--saffron-mist-rgb)/0) 100%),
+        var(--canvas-dusk);
+    }
+    @keyframes stvDrift{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-26px);opacity:.9}}
+
+
+    html,body{margin:0;padding:0;background:#2A1E1A;}
+    *{box-sizing:border-box;}
+    ::selection{background:rgba(232,184,136,0.3);}
+    @keyframes stvCue{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(9px);opacity:1}}
+    @keyframes stvWave{0%,100%{transform:scaleY(.32)}50%{transform:scaleY(1)}}
+    @keyframes stvOrbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes stvRingGlow{0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1)}50%{opacity:.8;transform:translate(-50%,-50%) scale(1.05)}}
+    @keyframes stvLift{0%,100%{opacity:.5}50%{opacity:.9}}
+    @keyframes stvBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+    @keyframes stvHalo{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}35%{opacity:.7}100%{transform:translate(-50%,-50%) scale(1.35);opacity:0}}
+    @keyframes stvFloorGlow{0%,100%{opacity:.55}50%{opacity:.9}}
+    @keyframes stvSpin{to{transform:rotate(360deg)}}
+    @keyframes stvMsgIn{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    @media (prefers-reduced-motion: reduce){
+      .stv-cue,.stv-wave,.stv-orbfloat,.stv-ringglow,.stv-lift,.stv-bob,.stv-halo-ring,.stv-spin{animation:none !important}
+    }
+    /* ── Responsive ── */
+    @media (max-width:1000px){
+      .hero-grid{grid-template-columns:1fr !important;gap:20px !important;max-width:560px !important;}
+      .family-grid{grid-template-columns:1fr !important;gap:36px !important;max-width:520px !important;}
+    }
+    @media (max-width:820px){
+      #orbit-wrap{height:auto !important;}
+      #orbit-stage{position:static !important;width:100% !important;height:auto !important;transform:none !important;display:flex !important;flex-direction:column;align-items:center;gap:16px;}
+      #orbit-stage .o-bloom{display:none !important;}
+      #orbit-stage .o-center{position:static !important;left:auto !important;top:auto !important;transform:none !important;order:-1;margin-bottom:8px;}
+      #orbit-stage .o-card{position:static !important;left:auto !important;top:auto !important;transform:none !important;width:100% !important;max-width:440px;}
+    }
+    @media (max-width:680px){
+      .nav-link{display:none !important;}
+      #stv-nav{padding:16px 20px !important;}
+      #stv-site section{padding-left:20px !important;padding-right:20px !important;}
+    }
+  
+</style>
+</head>
+<body>
+<div id="stv-site" style="position:relative;background:var(--canvas-dusk);color:var(--whisper-white);font-family:var(--font-sans);overflow-x:hidden;">
+
+  <!-- ░░ NAV ░░ -->
+  <nav id="stv-nav" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid transparent;background:transparent;transition:background .4s ease,backdrop-filter .4s ease,border-color .4s ease;">
+    <div style="display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:var(--whisper-white);">
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--brass-glow);box-shadow:0 0 12px 2px rgba(232,184,136,0.6);"></span>
+      Stevens
+    </div>
+    <div style="display:flex;align-items:center;gap:32px;">
+      <span class="nav-link" style="font-size:14px;color:var(--text-on-dark-secondary);">The home</span>
+      <span class="nav-link" style="font-size:14px;color:var(--text-on-dark-secondary);">The family</span>
+      <span class="nav-link" style="font-size:14px;color:var(--text-on-dark-secondary);">Your agency</span>
+      <span style="display:inline-flex;align-items:center;height:38px;padding:0 20px;border-radius:var(--radius-md);font-size:13px;font-weight:600;color:var(--ink-warm);background:rgba(232,184,136,0.92);box-shadow:0 6px 16px rgba(58,31,26,0.4);cursor:pointer;">Get Stevens</span>
+    </div>
+  </nav>
+
+  <!-- ░░ HERO — THE HARDWARE ░░ -->
+  <section data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:118px 24px 56px;text-align:center;overflow:hidden;">
+    <div id="hero-ambient" style="position:absolute;inset:0;width:100%;height:100%;background:var(--canvas-clear-night);overflow:hidden;pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%,rgba(42,30,26,0) 28%,rgba(42,30,26,0.6) 100%);pointer-events:none;"></div>
+
+    <div style="position:relative;z-index:2;max-width:900px;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:22px;">Intelligent Home System</div>
+      <h1 data-reveal style="margin:0;font-size:clamp(38px,5.6vw,72px);line-height:1.03;letter-spacing:-0.02em;font-weight:600;color:var(--whisper-white);">A calmer home,<br>everyday.</h1>
+      <p data-reveal style="max-width:592px;margin:26px auto 0;font-size:clamp(16px,1.55vw,19px);line-height:1.55;color:var(--text-on-dark-secondary);">Watching over the house, listening when you call, and lifting the load your family carries.</p>
+    </div>
+
+    <!-- interactive Ballie-style room (seamless, no visible frame) -->
+    <div data-reveal class="hero-grid" style="position:relative;z-index:2;width:100%;max-width:1060px;margin:22px auto 0;display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:center;text-align:left;padding:18px 10px;background:radial-gradient(125% 135% at 62% 56%,rgba(56,43,35,0.88) 0%,rgba(46,34,28,0.5) 44%,rgba(42,30,26,0) 78%);">
+
+      <!-- question list -->
+      <div style="position:relative;z-index:3;padding:4px 4px;">
+        <div style="font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:14px;">Ask Stevens</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+        <button data-q="0" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">What did I spend on Uber last month?</button>
+        <button data-q="1" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">What&#39;s important for me today?</button>
+        <button data-q="2" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">Where&#39;s Simba right now?</button>
+        <button data-q="3" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">Send my blood reports to Dr Anita.</button>
+        <button data-q="4" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">How is the house doing?</button>
+        <button data-q="5" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">Show me what you captured today.</button>
+        </div>
+        <div id="answer-cap" style="margin-top:16px;font-size:11px;line-height:1.5;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-on-dark-secondary);min-height:34px;">Tap a question &mdash; watch Stevens answer</div>
+      </div>
+
+      <!-- 3D room stage (transparent — blends into the shared surface) -->
+      <div id="hero-room" style="position:relative;z-index:1;height:452px;perspective:1200px;overflow:visible;background:transparent;">
+
+        <!-- wall projection -->
+        <div id="wall-proj" style="position:absolute;left:6%;top:9%;width:47%;opacity:0;transition:opacity .6s ease;transform:perspective(700px) rotateY(11deg);transform-origin:left center;">
+          <div id="wp-panel" style="display:none;padding:14px;border-radius:14px;background:rgba(20,14,11,0.72);box-shadow:0 0 34px rgba(160,190,232,0.28),inset 0 0 0 1px rgba(200,180,150,0.25);">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#cdbfa9;margin-bottom:9px;">Home &middot; now</div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:22px;gap:3px;margin-bottom:10px;">
+              <div style="grid-column:1/3;grid-row:1/3;background:rgba(232,184,136,0.4);border-radius:4px;"></div>
+              <div style="grid-column:3/5;background:rgba(160,190,232,0.4);border-radius:4px;"></div>
+              <div style="grid-column:5/7;grid-row:1/4;background:rgba(194,138,122,0.4);border-radius:4px;"></div>
+              <div style="grid-column:3/5;grid-row:2/4;background:rgba(184,220,180,0.35);border-radius:4px;"></div>
+              <div style="grid-column:1/3;background:rgba(230,200,150,0.3);border-radius:4px;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#e7dccb;margin-bottom:4px;"><span>Living room</span><span style="color:#E8B888;">24&deg;</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#e7dccb;"><span>Energy today</span><span style="color:#9fd3a0;">62%</span></div>
+          </div>
+          <div id="wp-photo" style="display:none;padding:13px;border-radius:14px;background:rgba(20,14,11,0.74);box-shadow:0 0 38px rgba(232,184,136,0.32),inset 0 0 0 1px rgba(200,180,150,0.26);">
+            <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#E8B888;margin-bottom:10px;">Captured today &middot; Baby Arya</div>
+            <div style="display:flex;gap:9px;">
+              <div style="flex:1;">
+                <div style="position:relative;height:104px;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(200,180,150,0.2);">
+                  <div style="position:absolute;inset:0;background:linear-gradient(180deg,#f3ddc4 0%,#e7c3a2 100%);"></div>
+                  <div style="position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:46px;height:52px;border-radius:50% 50% 48% 48%;background:#f6cda3;box-shadow:inset -4px -3px 6px rgba(180,120,80,0.4);"></div>
+                  <div style="position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:56px;height:34px;border-radius:50% 50% 0 0;background:#3a2a20;"></div>
+                  <div style="position:absolute;left:42%;top:50%;width:5px;height:5px;border-radius:50%;background:#3a2a20;box-shadow:12px 0 0 #3a2a20;"></div>
+                  <div style="position:absolute;left:50%;top:62%;transform:translateX(-50%);width:20px;height:10px;border-radius:0 0 10px 10px;background:#c8524a;"></div>
+                </div>
+                <div style="font-size:10px;color:#cdbfa9;margin-top:5px;text-align:center;">First big smile</div>
+              </div>
+              <div style="flex:1;">
+                <div style="position:relative;height:104px;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(200,180,150,0.2);">
+                  <div style="position:absolute;inset:0;background:linear-gradient(180deg,#d9c7b0 0%,#b79a7c 100%);"></div>
+                  <div style="position:absolute;left:0;bottom:0;width:100%;height:40px;background:#8a5f48;"></div>
+                  <div style="position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:56px;height:44px;border-radius:48% 48% 50% 50%;background:#f6cda3;transform-origin:center;rotate:-14deg;box-shadow:inset -4px -3px 6px rgba(180,120,80,0.4);"></div>
+                  <div style="position:absolute;left:47%;bottom:40px;width:4px;height:4px;border-radius:50%;background:#3a2a20;box-shadow:11px 2px 0 #3a2a20;"></div>
+                  <div style="position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:14px;height:12px;border-radius:50%;background:#c8524a;"></div>
+                  <div style="position:absolute;left:63%;bottom:44px;width:9px;height:9px;border-radius:50%;background:#f6cda3;"></div>
+                </div>
+                <div style="font-size:10px;color:#cdbfa9;margin-top:5px;text-align:center;">Goofball on the couch</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right wall projection (attention list) -->
+        <div id="wall-right" style="position:absolute;right:5%;top:12%;width:44%;opacity:0;transition:opacity .6s ease;transform:perspective(760px) rotateY(-13deg);transform-origin:right center;">
+          <div style="padding:16px;border-radius:14px;background:rgba(20,14,11,0.74);box-shadow:0 0 38px rgba(232,184,136,0.34),inset 0 0 0 1px rgba(200,180,150,0.28);">
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#E8B888;margin-bottom:12px;">3 things for your attention</div>
+            <div style="display:flex;flex-direction:column;gap:11px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:rgba(232,184,136,0.9);color:#1b120b;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;">1</span><span style="font-size:13px;line-height:1.4;color:#f0e6d6;">Last day to renew your medical insurance</span></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:rgba(232,184,136,0.9);color:#1b120b;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;">2</span><span style="font-size:13px;line-height:1.4;color:#f0e6d6;">2 deliveries from Amazon coming today</span></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;"><span style="flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:rgba(232,184,136,0.9);color:#1b120b;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;">3</span><span style="font-size:13px;line-height:1.4;color:#f0e6d6;">Bank has revised the interest rate on your savings account</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WhatsApp share (right side) -->
+        <div id="wa-panel" style="position:absolute;right:4%;top:16%;width:262px;display:none;opacity:0;transition:opacity .5s ease;transform:perspective(760px) rotateY(-13deg);transform-origin:right center;z-index:4;">
+          <div style="border-radius:16px;overflow:hidden;background:#0f1613;box-shadow:0 0 40px rgba(37,211,102,0.28),inset 0 0 0 1px rgba(200,210,200,0.18);">
+            <div style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#1f2c26;">
+              <span style="width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#c78a7a,#9c6456);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;">A</span>
+              <div style="display:flex;flex-direction:column;line-height:1.1;"><span style="font-size:13px;font-weight:600;color:#eaf3ee;">Dr Anita</span><span style="font-size:10px;color:#8fb3a2;">online</span></div>
+              <span style="margin-left:auto;font-size:15px;color:#25D366;">&#9990;</span>
+            </div>
+            <div style="padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-height:150px;background:linear-gradient(180deg,#0f1613,#0c120f);">
+              <div class="wa-msg" style="align-self:flex-end;max-width:90%;background:#075E54;border-radius:12px 12px 4px 12px;padding:9px 11px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">
+                <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;margin-bottom:7px;border-radius:8px;background:rgba(255,255,255,0.1);">
+                  <span style="font-size:15px;">&#128196;</span>
+                  <div style="display:flex;flex-direction:column;line-height:1.15;"><span style="font-size:11px;font-weight:600;color:#eaf3ee;">Kiran_Lab_Report.pdf</span><span style="font-size:9.5px;color:#a7c6b8;">2 pages &middot; PDF</span></div>
+                </div>
+                <div style="font-size:12px;line-height:1.4;color:#eaf3ee;">Dr, sharing Kiran's lab reports that came in today.</div>
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:4px;"><span style="font-size:9px;color:#a7c6b8;">9:41 AM</span><span style="font-size:10px;color:#34B7F1;">&#10003;&#10003;</span></div>
+              </div>
+              <div style="align-self:flex-end;font-size:10px;color:#7fae9a;">Sent by Stevens</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- floor plane -->
+        <div style="position:absolute;left:50%;bottom:-70px;width:170%;height:470px;transform:translateX(-50%) rotateX(60deg);transform-origin:bottom center;background:radial-gradient(60% 80% at 50% 34%,rgba(184,148,95,0.16) 0%,rgba(42,30,26,0) 62%);">
+          <div id="floor-proj" style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);opacity:0;transition:opacity .5s ease;text-align:center;">
+            <div id="fp-text">
+              <div id="fp-title" style="font-size:40px;font-weight:600;letter-spacing:-0.01em;color:#FFF3DE;text-shadow:0 0 26px rgba(232,184,136,0.9);">&#8377;4,820</div>
+              <div id="fp-sub" style="font-size:15px;font-weight:500;letter-spacing:0.04em;color:#E8B888;text-shadow:0 0 16px rgba(232,184,136,0.7);">Uber &middot; June</div>
+            </div>
+            <div id="fp-simba" style="display:none;flex-direction:column;align-items:center;gap:12px;">
+              <div style="position:relative;width:280px;height:150px;border-radius:16px;overflow:hidden;box-shadow:0 0 40px rgba(232,184,136,0.5),inset 0 0 0 1px rgba(200,180,150,0.3);">
+                <div style="position:absolute;inset:0;background:linear-gradient(180deg,#b79b78 0%,#a2855f 55%,#8a6f4c 100%);"></div>
+                <div style="position:absolute;left:0;bottom:0;width:100%;height:26px;background:repeating-linear-gradient(90deg,#7c6144 0 10px,#6d5539 10px 17px);"></div>
+                <div style="position:absolute;left:34px;bottom:20px;width:96px;height:52px;border-radius:14px 14px 6px 6px;background:#5c4a34;box-shadow:inset 0 6px 10px rgba(255,240,220,0.15);"></div>
+                <div style="position:absolute;left:30px;bottom:20px;width:8px;height:44px;border-radius:3px;background:#4a3a28;"></div>
+                <div style="position:absolute;right:30px;bottom:20px;width:8px;height:44px;border-radius:3px;background:#4a3a28;"></div>
+                <div style="position:absolute;left:58px;bottom:22px;width:48px;height:24px;border-radius:12px 12px 8px 8px;background:#3a2a20;"></div>
+                <div style="position:absolute;left:60px;bottom:38px;width:16px;height:14px;border-radius:50%;background:#3a2a20;"></div>
+                <div style="position:absolute;left:62px;bottom:48px;width:5px;height:6px;background:#3a2a20;transform:rotate(-18deg);"></div>
+                <div style="position:absolute;left:71px;bottom:48px;width:5px;height:6px;background:#3a2a20;transform:rotate(18deg);"></div>
+                <div style="position:absolute;left:63px;bottom:40px;width:3px;height:3px;border-radius:50%;background:#E8B888;box-shadow:8px 0 0 #E8B888;"></div>
+                <div style="position:absolute;right:8px;top:7px;font-size:9px;color:rgba(20,14,11,0.65);">Living room</div>
+              </div>
+              <div style="font-size:17px;line-height:1.45;font-weight:500;max-width:360px;color:#FFF3DE;text-shadow:0 0 20px rgba(232,184,136,0.8);">I saw him just 2 minutes ago &mdash; under the wooden armchair in the living room.</div>
+            </div>
+            <div id="fp-halo" style="display:none;position:relative;width:340px;height:200px;">
+              <div class="stv-halo-ring" style="position:absolute;left:50%;top:50%;width:300px;height:180px;border-radius:50%;box-shadow:0 0 40px 6px rgba(160,190,232,0.5),inset 0 0 30px rgba(232,184,136,0.4);transform:translate(-50%,-50%);animation:stvHalo 3s ease-out infinite;"></div>
+              <div class="stv-halo-ring" style="position:absolute;left:50%;top:50%;width:300px;height:180px;border-radius:50%;box-shadow:0 0 40px 6px rgba(232,184,136,0.5);transform:translate(-50%,-50%);animation:stvHalo 3s ease-out 1.5s infinite;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- the ball -->
+        <div id="ball" style="position:absolute;left:50%;bottom:74px;margin-left:-80px;width:160px;transition:transform 1s cubic-bezier(.34,.1,.2,1);transform:translateX(0) translateY(0) scale(1);z-index:2;">
+          <div class="stv-bob" style="position:relative;animation:stvBob 4.2s ease-in-out infinite;">
+            <div style="position:absolute;left:50%;bottom:-16px;width:132px;height:26px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(58,31,26,0.6) 0%,rgba(58,31,26,0) 70%);"></div>
+            <div style="position:relative;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 37% 28%,#f4dcb2 0%,#dcb47e 34%,#b8945f 58%,#6d5230 100%);box-shadow:inset -14px -16px 34px rgba(58,31,26,0.55),inset 10px 12px 26px rgba(255,250,235,0.35),0 22px 44px rgba(58,31,26,0.5);overflow:hidden;">
+              <div id="ball-roll" style="position:absolute;inset:0;transition:transform 1s cubic-bezier(.34,.1,.2,1);">
+                <div style="position:absolute;left:50%;top:0;width:2px;height:100%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(58,31,26,0) 0%,rgba(58,31,26,0.32) 50%,rgba(58,31,26,0) 100%);"></div>
+                <div style="position:absolute;left:0;top:50%;width:100%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(58,31,26,0) 0%,rgba(58,31,26,0.28) 50%,rgba(58,31,26,0) 100%);"></div>
+              </div>
+              <div style="position:absolute;left:24%;top:20%;width:44px;height:26px;border-radius:50%;background:rgba(255,251,240,0.4);filter:blur(3px);"></div>
+              <!-- visor -->
+              <!-- Stevens specs: brass spectacles = twin digital screens -->
+              <div id="ball-visor" style="position:absolute;left:50%;top:53%;width:96px;height:34px;transform:translateX(-50%);transition:transform 1s cubic-bezier(.34,.1,.2,1);">
+                <!-- bridge -->
+                <div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:16px;height:4px;border-radius:3px;background:linear-gradient(180deg,#e7c78f,#a07c48);box-shadow:0 1px 2px rgba(58,31,26,0.5);"></div>
+                <!-- temple bars -->
+                <div style="position:absolute;left:-9px;top:13px;width:12px;height:3px;border-radius:2px;background:linear-gradient(90deg,#7a5c33,#c9a672);"></div>
+                <div style="position:absolute;right:-9px;top:13px;width:12px;height:3px;border-radius:2px;background:linear-gradient(270deg,#7a5c33,#c9a672);"></div>
+                <!-- left lens screen -->
+                <div style="position:absolute;left:4px;top:0;width:38px;height:32px;border-radius:12px;background:#141019;box-shadow:inset 0 0 0 2.5px rgba(184,148,95,0.85),0 2px 6px rgba(0,0,0,0.45),0 0 14px rgba(232,184,136,0.35);overflow:hidden;">
+                  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:11px;border-radius:7px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 10px rgba(232,184,136,0.9);"></div>
+                </div>
+                <!-- right lens screen -->
+                <div style="position:absolute;right:4px;top:0;width:38px;height:32px;border-radius:12px;background:#141019;box-shadow:inset 0 0 0 2.5px rgba(184,148,95,0.85),0 2px 6px rgba(0,0,0,0.45),0 0 14px rgba(232,184,136,0.35);overflow:hidden;">
+                  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:11px;border-radius:7px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 10px rgba(232,184,136,0.9);"></div>
+                </div>
+              </div>
+            </div>
+            <!-- top cap -->
+            <div style="position:absolute;left:50%;top:-9px;transform:translateX(-50%);width:34px;height:16px;border-radius:9px;background:linear-gradient(180deg,#c9a672,#7a5c33);box-shadow:0 2px 5px rgba(58,31,26,0.5);"></div>
+            <!-- feet -->
+            <div style="position:absolute;left:30px;bottom:-4px;width:24px;height:14px;border-radius:50%;background:#4a3826;"></div>
+            <div style="position:absolute;right:30px;bottom:-4px;width:24px;height:14px;border-radius:50%;background:#4a3826;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ EMBEDDED IN YOUR FAMILY ░░ -->
+  <section data-screen-label="Embedded" style="position:relative;padding:104px 40px;background:radial-gradient(120% 60% at 50% 0%,rgba(184,148,95,0.10) 0%,rgba(42,30,26,0) 60%),var(--canvas-dusk);">
+    <div style="max-width:1120px;margin:0 auto;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:18px;text-align:center;">Embedded in your family</div>
+      <h2 data-reveal style="margin:0 auto 60px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;max-width:680px;color:var(--whisper-white);text-align:center;">Everyone just talks to it.</h2>
+
+      <div data-reveal id="orbit-wrap" style="position:relative;width:100%;height:720px;margin:0 auto 0;">
+      <div id="orbit-stage" style="position:absolute;left:50%;top:0;transform:translateX(-50%);width:820px;height:720px;transform-origin:top center;">
+
+        <!-- centre bloom -->
+        <div class="o-bloom" style="position:absolute;left:50%;top:50%;width:440px;height:440px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(232,184,136,0.10) 0%,rgba(232,184,136,0) 70%);pointer-events:none;"></div>
+
+        <!-- centre ball with Stevens brass spectacles -->
+        <div class="o-center" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:200px;z-index:2;">
+        <div class="stv-orbfloat" style="animation:stvOrbFloat 6s ease-in-out infinite;">
+          <div style="position:relative;width:200px;">
+            <div class="stv-bob" style="position:relative;animation:stvBob 4.2s ease-in-out infinite;">
+              <div style="position:absolute;left:50%;bottom:-16px;width:150px;height:28px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(58,31,26,0.55) 0%,rgba(58,31,26,0) 70%);"></div>
+              <div style="position:relative;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 37% 28%,#f4dcb2 0%,#dcb47e 34%,#b8945f 58%,#6d5230 100%);box-shadow:inset -16px -18px 40px rgba(58,31,26,0.55),inset 12px 14px 30px rgba(255,250,235,0.35),0 26px 52px rgba(58,31,26,0.5);overflow:hidden;">
+                <div style="position:absolute;left:50%;top:0;width:2px;height:100%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(58,31,26,0) 0%,rgba(58,31,26,0.3) 50%,rgba(58,31,26,0) 100%);"></div>
+                <div style="position:absolute;left:0;top:50%;width:100%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(58,31,26,0) 0%,rgba(58,31,26,0.26) 50%,rgba(58,31,26,0) 100%);"></div>
+                <div style="position:absolute;left:24%;top:20%;width:54px;height:32px;border-radius:50%;background:rgba(255,251,240,0.4);filter:blur(3px);"></div>
+                <!-- Stevens specs: brass spectacles = twin digital screens -->
+                <div style="position:absolute;left:50%;top:53%;width:120px;height:42px;transform:translateX(-50%);">
+                  <div style="position:absolute;left:50%;top:15px;transform:translateX(-50%);width:20px;height:5px;border-radius:3px;background:linear-gradient(180deg,#e7c78f,#a07c48);box-shadow:0 1px 2px rgba(58,31,26,0.5);"></div>
+                  <div style="position:absolute;left:-11px;top:16px;width:15px;height:4px;border-radius:2px;background:linear-gradient(90deg,#7a5c33,#c9a672);"></div>
+                  <div style="position:absolute;right:-11px;top:16px;width:15px;height:4px;border-radius:2px;background:linear-gradient(270deg,#7a5c33,#c9a672);"></div>
+                  <div style="position:absolute;left:5px;top:0;width:48px;height:40px;border-radius:15px;background:#141019;box-shadow:inset 0 0 0 3px rgba(184,148,95,0.85),0 2px 6px rgba(0,0,0,0.45),0 0 16px rgba(232,184,136,0.35);overflow:hidden;">
+                    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:28px;height:14px;border-radius:8px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 12px rgba(232,184,136,0.9);"></div>
+                  </div>
+                  <div style="position:absolute;right:5px;top:0;width:48px;height:40px;border-radius:15px;background:#141019;box-shadow:inset 0 0 0 3px rgba(184,148,95,0.85),0 2px 6px rgba(0,0,0,0.45),0 0 16px rgba(232,184,136,0.35);overflow:hidden;">
+                    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:28px;height:14px;border-radius:8px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 12px rgba(232,184,136,0.9);"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="position:absolute;left:50%;top:-11px;transform:translateX(-50%);width:42px;height:19px;border-radius:11px;background:linear-gradient(180deg,#c9a672,#7a5c33);box-shadow:0 2px 5px rgba(58,31,26,0.5);"></div>
+              <div style="position:absolute;left:38px;bottom:-4px;width:28px;height:16px;border-radius:50%;background:#4a3826;"></div>
+              <div style="position:absolute;right:38px;bottom:-4px;width:28px;height:16px;border-radius:50%;background:#4a3826;"></div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:14px;font-size:11px;font-weight:600;letter-spacing:0.26em;color:var(--saffron-mist);">STEVENS</div>
+        </div>
+        </div>
+
+        <!-- 6 cards, elliptical order (clockwise from top-right) -->
+
+        <div class="o-card" style="position:absolute;left:645px;top:130px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="plane" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Travel</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(194,138,122,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">A</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Aarav</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"What time is my flight?"</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">6E-204 &#183; 4:35 PM. Leave by 2:15.</span></div>
+        </div>
+
+        <div class="o-card" style="position:absolute;left:700px;top:360px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="phone-call" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Care</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(184,148,95,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">M</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Meera</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"Call Mom at 7 about her medicines."</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">I&#39;ll call at 7:00 and confirm.</span></div>
+        </div>
+
+        <div class="o-card" style="position:absolute;left:645px;top:590px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="mail" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Inbox</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(194,138,122,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">A</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Aarav</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"Reply to support with our address."</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">Drafted and sent from your inbox.</span></div>
+        </div>
+
+        <div class="o-card" style="position:absolute;left:175px;top:590px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="list-checks" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Your day</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(184,148,95,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">M</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Meera</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"My important to-dos for today?"</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">School fee, CA call, groceries.</span></div>
+        </div>
+
+        <div class="o-card" style="position:absolute;left:120px;top:360px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="indian-rupee" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Money</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(194,138,122,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">A</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Aarav</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"My total Uber spend last month?"</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">&#8377;4,820 &#183; 19 rides in June.</span></div>
+        </div>
+
+        <div class="o-card" style="position:absolute;left:175px;top:130px;transform:translate(-50%,-50%);width:236px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);z-index:3;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;"><i data-lucide="receipt" style="width:16px;height:16px;color:var(--brass-glow);"></i><span style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--soft-slate);">Errands</span></div>
+            <span style="display:inline-flex;align-items:center;gap:7px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(184,148,95,0.9);font-size:11px;font-weight:600;color:var(--canvas-dusk);">M</span><span style="font-size:12px;color:var(--text-on-dark-secondary);">Meera</span></span>
+          </div>
+          <p style="margin:0;font-size:16px;line-height:1.35;font-weight:500;color:var(--whisper-white);">"Share my food receipts with our CA."</p>
+          <div style="display:flex;gap:9px;"><span style="color:var(--brass-glow);font-size:13px;line-height:1.5;">&#8594;</span><span style="font-size:13px;line-height:1.5;color:var(--text-on-dark-secondary);">7 receipts sent to your CA.</span></div>
+        </div>
+
+      </div>
+      </div>
+
+      <p data-reveal style="margin:44px auto 0;font-size:15px;line-height:1.6;color:var(--soft-slate);max-width:640px;text-align:center;">The physical and the mental load — errands run, calls made, money tracked, paperwork filed — carried quietly, so nobody in the house has to hold it all in their head. <span style="font-family:var(--font-signature);font-style:italic;color:var(--text-on-dark-secondary);">— Stevens.</span></p>
+    </div>
+  </section>
+
+  <!-- ░░ FAMILY ░░ -->
+  <section data-screen-label="Family" style="position:relative;padding:110px 40px;background:var(--canvas-dusk);">
+    <div class="family-grid" style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+      <div data-reveal>
+        <div style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--rose-clay);margin-bottom:18px;">One mind for the whole family</div>
+        <h2 style="margin:0 0 24px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;color:var(--whisper-white);">Stevens knows<br>your household.</h2>
+        <p style="margin:0 0 20px;font-size:18px;line-height:1.6;color:var(--text-on-dark-secondary);">Not a single user's assistant — the family's. Stevens serves each person and the home as a whole. Calls are shared like a room everyone can step into.</p>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:28px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(194,138,122,0.9);font-size:14px;font-weight:600;color:var(--canvas-dusk);box-shadow:0 0 0 4px rgba(194,138,122,0.25);">P</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:rgba(184,148,95,0.9);font-size:14px;font-weight:600;color:var(--canvas-dusk);box-shadow:0 0 0 4px rgba(184,148,95,0.22);">K</span>
+          <span style="font-size:14px;color:var(--text-on-dark-secondary);">Pratyusha and Kiran, planning together</span>
+        </div>
+      </div>
+
+      <div data-reveal style="display:flex;justify-content:center;">
+        <div style="width:340px;display:flex;flex-direction:column;gap:14px;padding:24px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);">
+          <div style="font-size:16px;font-weight:600;line-height:1.35;color:var(--whisper-white);">Should this be visible to Kiran as well?</div>
+          <p style="margin:0;font-size:14px;line-height:1.5;color:var(--text-on-dark-secondary);">You're booking the Goa stay. Shared keeps you both in the loop.</p>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <span style="flex:1;display:inline-flex;align-items:center;justify-content:center;height:44px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--ink-warm);background:rgba(232,184,136,0.92);cursor:pointer;">Share with Kiran</span>
+            <span style="display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--saffron-mist);background:transparent;box-shadow:inset 0 0 0 1px rgba(232,184,136,0.4);cursor:pointer;">Just me</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ░░ AGENCY ░░ -->
+  <section data-screen-label="Agency" style="position:relative;padding:110px 40px 110px;background:var(--canvas-dusk);">
+    <div style="max-width:760px;margin:0 auto;text-align:center;">
+      <div data-reveal style="font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:18px;">Your data, your agency</div>
+      <h2 data-reveal style="margin:0 0 24px;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.015em;font-weight:600;color:var(--whisper-white);">You stay in control.</h2>
+      <p data-reveal style="margin:0 auto 48px;max-width:560px;font-size:18px;line-height:1.6;color:var(--text-on-dark-secondary);">Stevens acts only on what you choose to share. Every access is opt-in, stored in a private vault for your household alone, and revocable at any time.</p>
+
+      <div data-reveal style="display:flex;flex-direction:column;gap:2px;max-width:420px;margin:0 auto;text-align:left;padding:24px;border-radius:var(--radius-lg);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:var(--glass-dark-shadow);">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid rgba(250,244,236,0.08);"><span style="font-size:15px;color:var(--whisper-white);">Notifications</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(232,184,136,0.9);position:relative;"><span style="position:absolute;right:2px;top:2px;width:20px;height:20px;border-radius:50%;background:var(--whisper-white);"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid rgba(250,244,236,0.08);"><span style="font-size:15px;color:var(--whisper-white);">Calendar</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(250,244,236,0.12);position:relative;"><span style="position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:rgba(250,244,236,0.5);"></span></span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px;"><span style="font-size:15px;color:var(--whisper-white);">Contacts</span><span style="width:42px;height:24px;border-radius:12px;background:rgba(250,244,236,0.12);position:relative;"><span style="position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:rgba(250,244,236,0.5);"></span></span></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(250,244,236,0.08);"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:rgba(232,184,136,0.9);color:var(--canvas-dusk);font-size:13px;">✓</span><span style="font-size:14px;color:var(--text-on-dark-secondary);">I accept the Stevens Data Charter</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ DOWNLOAD FOOTER ░░ -->
+  <section data-screen-label="Footer" style="position:relative;padding:130px 40px 80px;text-align:center;overflow:hidden;background:linear-gradient(180deg,#2A1E1A 0%,#1c1310 100%);">
+    <div style="position:absolute;left:50%;top:0;width:600px;height:300px;transform:translateX(-50%);background:radial-gradient(50% 60% at 50% 0%,rgba(232,184,136,0.18) 0%,rgba(232,184,136,0) 70%);pointer-events:none;"></div>
+    <div data-reveal style="position:relative;z-index:2;">
+      <div style="display:flex;justify-content:center;margin-bottom:28px;"><div class="stv-bob" style="position:relative;width:96px;height:96px;animation:stvBob 4.2s ease-in-out infinite;">
+        <div style="position:absolute;left:50%;bottom:-12px;width:78px;height:16px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(58,31,26,0.5) 0%,rgba(58,31,26,0) 70%);"></div>
+        <div style="position:relative;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 37% 28%,#f4dcb2 0%,#dcb47e 34%,#b8945f 58%,#6d5230 100%);box-shadow:inset -8px -9px 20px rgba(58,31,26,0.55),inset 6px 7px 16px rgba(255,250,235,0.35),0 14px 28px rgba(58,31,26,0.5);overflow:hidden;">
+          <div style="position:absolute;left:24%;top:20%;width:28px;height:16px;border-radius:50%;background:rgba(255,251,240,0.4);filter:blur(3px);"></div>
+          <div style="position:absolute;left:50%;top:53%;width:62px;height:22px;transform:translateX(-50%);">
+            <div style="position:absolute;left:50%;top:8px;transform:translateX(-50%);width:10px;height:3px;border-radius:2px;background:linear-gradient(180deg,#e7c78f,#a07c48);"></div>
+            <div style="position:absolute;left:3px;top:0;width:25px;height:20px;border-radius:8px;background:#141019;box-shadow:inset 0 0 0 1.6px rgba(184,148,95,0.85),0 0 8px rgba(232,184,136,0.35);overflow:hidden;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:14px;height:7px;border-radius:4px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 6px rgba(232,184,136,0.9);"></div></div>
+            <div style="position:absolute;right:3px;top:0;width:25px;height:20px;border-radius:8px;background:#141019;box-shadow:inset 0 0 0 1.6px rgba(184,148,95,0.85),0 0 8px rgba(232,184,136,0.35);overflow:hidden;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:14px;height:7px;border-radius:4px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 6px rgba(232,184,136,0.9);"></div></div>
+          </div>
+          <div style="position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:20px;height:10px;border-radius:6px;background:linear-gradient(180deg,#c9a672,#7a5c33);"></div>
+        </div>
+      </div></div>
+      <h2 style="margin:0 0 16px;font-size:clamp(32px,5vw,56px);line-height:1.05;letter-spacing:-0.02em;font-weight:600;color:var(--whisper-white);">Bring Stevens home.</h2>
+      <p style="margin:0 auto 36px;max-width:440px;font-size:17px;line-height:1.5;color:var(--text-on-dark-secondary);">A quieter, more cared-for life — for you and the people you live with.</p>
+      <div style="display:flex;gap:14px;justify-content:center;">
+        <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px;border-radius:var(--radius-md);background:rgba(232,184,136,0.92);box-shadow:0 8px 24px rgba(58,31,26,0.5);cursor:pointer;"><i data-lucide="apple" style="width:20px;height:20px;color:var(--ink-warm);"></i><span style="font-size:14px;font-weight:600;color:var(--ink-warm);">Download for iOS</span></span>
+        <span style="display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px;border-radius:var(--radius-md);background:var(--glass-dark-fill);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px rgba(184,148,95,0.4);cursor:pointer;"><i data-lucide="play" style="width:20px;height:20px;color:var(--whisper-white);"></i><span style="font-size:14px;font-weight:600;color:var(--whisper-white);">Download for Android</span></span>
+      </div>
+      <div style="margin-top:64px;padding-top:28px;border-top:1px solid rgba(250,244,236,0.08);display:flex;align-items:center;justify-content:space-between;max-width:1080px;margin-left:auto;margin-right:auto;">
+        <span style="font-size:13px;color:var(--text-on-dark-secondary);">Stevens — household intelligence</span>
+        <span style="font-family:var(--font-signature);font-style:italic;font-size:16px;color:var(--text-on-dark-secondary);">— Stevens.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var _iconTimer,_reveal,_fitOrbit,_orbTimers,_heroAuto,_heroT,_onScroll;
+
+    // Hero ambient particles (~14 drifting warm motes)
+    var _amb=document.getElementById('hero-ambient');
+    if(_amb && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      for(var _pi=0;_pi<14;_pi++){var _d=document.createElement('span');var _sz=(2+Math.random()*3).toFixed(1);
+        _d.style.cssText='position:absolute;left:'+(Math.random()*100).toFixed(1)+'%;top:'+(Math.random()*100).toFixed(1)+'%;width:'+_sz+'px;height:'+_sz+'px;border-radius:50%;background:rgba(232,184,136,'+(0.15+Math.random()*0.3).toFixed(2)+');filter:blur(0.5px);animation:stvDrift '+(14+Math.random()*16).toFixed(1)+'s ease-in-out '+(Math.random()*8).toFixed(1)+'s infinite;';
+        _amb.appendChild(_d);}
+    }
+
+
+    // Lucide icons (retry until the CDN script is ready)
+    const drawIcons = () => {
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+      else _iconTimer = setTimeout(drawIcons, 120);
+    };
+    drawIcons();
+
+    // Scroll-reveal: above-the-fold stays visible immediately; below-the-fold
+    // hides then animates in on scroll. This keeps the design from ever being
+    // stuck hidden (and renders fully on first paint).
+    const els = [...document.querySelectorAll('#stv-site [data-reveal]')];
+    const vh0 = window.innerHeight || document.documentElement.clientHeight || 800;
+    const hidden = [];
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top > vh0 * 0.82) {
+        el.style.transition = 'opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1)';
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(28px)';
+        el.style.willChange = 'opacity, transform';
+        hidden.push(el);
+      }
+    });
+    _reveal = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+      for (let i = hidden.length - 1; i >= 0; i--) {
+        const el = hidden[i];
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.88) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          hidden.splice(i, 1);
+        }
+      }
+    };
+    window.addEventListener('scroll', _reveal, { passive: true });
+    window.addEventListener('resize', _reveal);
+    _reveal();
+
+    // Fit the orbit composition to its container (no clipping at any width)
+    const owrap = document.getElementById('orbit-wrap');
+    const ostage = document.getElementById('orbit-stage');
+    if (owrap && ostage) {
+      _fitOrbit = () => {
+        const s = Math.min(1, owrap.clientWidth / 820);
+        ostage.style.transform = 'translateX(-50%) scale(' + s + ')';
+        owrap.style.height = (720 * s) + 'px';
+      };
+      window.addEventListener('resize', _fitOrbit);
+      _fitOrbit();
+    }
+
+    // Interactive Ballie-style hero: click a question, Stevens moves & projects
+    _orbTimers = [];
+    const heroRoom = document.getElementById('hero-room');
+    if (heroRoom) {
+      const ball = document.getElementById('ball');
+      const roll = document.getElementById('ball-roll');
+      const visor = document.getElementById('ball-visor');
+      const fp = document.getElementById('floor-proj');
+      const fpText = document.getElementById('fp-text');
+      const fpHalo = document.getElementById('fp-halo');
+      const fpSimba = document.getElementById('fp-simba');
+      const fpTitle = document.getElementById('fp-title');
+      const fpSub = document.getElementById('fp-sub');
+      const wp = document.getElementById('wall-proj');
+      const wallRight = document.getElementById('wall-right');
+      const waPanel = document.getElementById('wa-panel');
+      const wpPanel = document.getElementById('wp-panel');
+      const wpPhoto = document.getElementById('wp-photo');
+      const cap = document.getElementById('answer-cap');
+      const btns = Array.prototype.slice.call(document.querySelectorAll('[data-q]'));
+      const S = [
+        {x:-150,y:0,s:.8,vs:-12, floor:'text', ft:'\u20b94,820', fs:'Uber \u00b7 June', wall:'', cap:'Stevens steps back and projects the total in front.'},
+        {x:150,y:0,s:.8,vs:14, floor:'', wall:'attention', cap:'Stevens turns to the wall and shows what needs you.'},
+        {x:-192,y:0,s:.82,vs:-14, floor:'simba', wall:'', cap:'Stevens turns to the corner and shows where Simba is.'},
+        {x:-46,y:0,s:1,vs:6, floor:'', wall:'', side:'wa', cap:'Stevens shares the reports with Dr Anita.'},
+        {x:170,y:8,s:.9,vs:-8, floor:'', wall:'panel', cap:'Stevens rolls aside and projects the home on the wall.'},
+        {x:170,y:8,s:.9,vs:-8, floor:'', wall:'photo', cap:'Stevens shows the moments he captured today.'}
+      ];
+      let rollDeg = 0, cur = -1;
+      const render = (i) => {
+        const st = S[i];
+        if (cur !== -1) rollDeg += (st.x < S[cur].x ? -300 : 300);
+        cur = i;
+        ball.style.transform = 'translateX(' + st.x + 'px) translateY(' + st.y + 'px) scale(' + st.s + ')';
+        if (roll) roll.style.transform = 'rotate(' + rollDeg + 'deg)';
+        if (visor) visor.style.transform = 'translateX(calc(-50% + ' + st.vs + 'px))';
+        fp.style.opacity = st.floor ? '1' : '0';
+        fpText.style.display = st.floor === 'text' ? 'block' : 'none';
+        fpHalo.style.display = st.floor === 'halo' ? 'block' : 'none';
+        if (fpSimba) fpSimba.style.display = st.floor === 'simba' ? 'flex' : 'none';
+        if (st.floor === 'text') { fpTitle.textContent = st.ft; fpSub.textContent = st.fs; }
+        wp.style.opacity = st.wall === 'panel' || st.wall === 'photo' ? '1' : '0';
+        if (wallRight) wallRight.style.opacity = st.wall === 'attention' ? '1' : '0';
+        if (waPanel) {
+          if (st.side === 'wa') {
+            waPanel.style.display = 'block';
+            waPanel.style.opacity = '1';
+            const m = waPanel.querySelector('.wa-msg');
+            if (m) { m.style.animation = 'none'; void m.offsetWidth; m.style.animation = 'stvMsgIn .6s cubic-bezier(.2,.8,.2,1) .2s both'; }
+          } else {
+            waPanel.style.opacity = '0';
+            waPanel.style.display = 'none';
+          }
+        }
+        wpPanel.style.display = st.wall === 'panel' ? 'block' : 'none';
+        wpPhoto.style.display = st.wall === 'photo' ? 'block' : 'none';
+        btns.forEach((b, bi) => {
+          const on = bi === i;
+          b.style.background = on ? 'rgba(232,184,136,0.15)' : 'transparent';
+          b.style.color = on ? '#FFFEFB' : 'var(--text-on-dark-secondary)';
+          b.style.boxShadow = on ? 'inset 0 0 0 1px rgba(232,184,136,0.5)' : 'inset 0 0 0 1px rgba(184,148,95,0.16)';
+        });
+      };
+      btns.forEach((b, i) => b.addEventListener('click', () => {
+        _heroAuto = false;
+        if (_heroT) { clearTimeout(_heroT); _heroT = null; }
+        render(i);
+      }));
+      render(0);
+      _heroAuto = true;
+      const advance = () => { if (!_heroAuto) return; render((cur + 1) % S.length); _heroT = setTimeout(advance, 4200); };
+      _heroT = setTimeout(advance, 4200);
+    }
+
+    // Nav background on scroll
+    const nav = document.getElementById('stv-nav');
+    _onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      if (!nav) return;
+      const on = y > 40;
+      nav.style.background = on ? 'rgba(28,19,16,0.72)' : 'transparent';
+      nav.style.backdropFilter = on ? 'blur(20px)' : 'none';
+      nav.style.webkitBackdropFilter = on ? 'blur(20px)' : 'none';
+      nav.style.borderBottomColor = on ? 'rgba(184,148,95,0.18)' : 'transparent';
+    };
+    window.addEventListener('scroll', _onScroll, { passive: true });
+    _onScroll();
+  
+});
+</script>
+</body>
+</html>
