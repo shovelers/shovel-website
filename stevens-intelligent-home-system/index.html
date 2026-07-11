@@ -135,6 +135,7 @@
 
       <!-- 3D room stage (transparent — blends into the shared surface) -->
       <div id="hero-room" style="position:relative;z-index:1;height:452px;perspective:1200px;overflow:visible;background:transparent;">
+      <div id="hero-stage" style="position:absolute;inset:0;">
 
         <!-- wall projection -->
         <div id="wall-proj" style="position:absolute;left:6%;top:9%;width:47%;opacity:0;transition:opacity .6s ease;transform:perspective(700px) rotateY(11deg);transform-origin:left center;">
@@ -278,6 +279,7 @@
           </div>
         </div>
 
+      </div>
       </div>
     </div>
   </section>
@@ -464,7 +466,7 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var _iconTimer,_reveal,_fitOrbit,_orbTimers,_heroAuto,_heroT,_onScroll;
+  var _iconTimer,_reveal,_fitOrbit,_fitHeroRoom,_orbTimers,_heroAuto,_heroT,_onScroll;
 
     // Hero ambient particles (~14 drifting warm motes)
     var _amb=document.getElementById('hero-ambient');
@@ -525,6 +527,34 @@ document.addEventListener('DOMContentLoaded', function () {
       };
       window.addEventListener('resize', _fitOrbit);
       _fitOrbit();
+    }
+
+    // Fit the interactive hero room to its container on mobile (scale to fit) so
+    // the moving ball + wall/floor projections never crop. Desktop untouched.
+    const heroStage = document.getElementById('hero-stage');
+    const heroRoomEl = document.getElementById('hero-room');
+    if (heroStage && heroRoomEl) {
+      const HR_DESIGN = 580;
+      _fitHeroRoom = () => {
+        if (window.innerWidth <= 680) {
+          const avail = (heroRoomEl.clientWidth || HR_DESIGN) - 8;
+          const s = Math.min(1, avail / HR_DESIGN);
+          heroStage.style.left = '50%'; heroStage.style.right = 'auto';
+          heroStage.style.top = '0'; heroStage.style.bottom = 'auto';
+          heroStage.style.width = HR_DESIGN + 'px'; heroStage.style.height = '452px';
+          heroStage.style.transformOrigin = 'top center';
+          heroStage.style.transform = 'translateX(-50%) scale(' + s + ')';
+          heroRoomEl.style.height = (452 * s) + 'px';
+        } else {
+          heroStage.style.left = '0'; heroStage.style.right = '0';
+          heroStage.style.top = '0'; heroStage.style.bottom = '0';
+          heroStage.style.width = 'auto'; heroStage.style.height = 'auto';
+          heroStage.style.transformOrigin = ''; heroStage.style.transform = 'none';
+          heroRoomEl.style.height = '';
+        }
+      };
+      window.addEventListener('resize', _fitHeroRoom);
+      _fitHeroRoom();
     }
 
     // Interactive Ballie-style hero: click a question, Stevens moves & projects
