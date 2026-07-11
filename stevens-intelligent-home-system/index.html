@@ -81,6 +81,9 @@
       .nav-link{display:none !important;}
       #stv-nav{padding:16px 20px !important;}
       #stv-site section{padding-left:20px !important;padding-right:20px !important;}
+      /* Pack the hero questions into a 2-column grid on mobile (shorter). */
+      .hero-q-list{display:grid !important;grid-template-columns:1fr 1fr;gap:8px;}
+      .hero-q-list [data-q]{height:100%;}
     }
   
 </style>
@@ -119,7 +122,7 @@
       <!-- question list -->
       <div style="position:relative;z-index:3;padding:4px 4px;">
         <div style="font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--saffron-mist);margin-bottom:14px;">Ask Stevens</div>
-        <div style="display:flex;flex-direction:column;gap:9px;">
+        <div class="hero-q-list" style="display:flex;flex-direction:column;gap:9px;">
         <button data-q="0" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">What did I spend on Uber last month?</button>
         <button data-q="1" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">What&#39;s important for me today?</button>
         <button data-q="2" style="all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:12px 15px;border-radius:14px;font-size:14.5px;line-height:1.35;color:var(--text-on-dark-secondary);background:transparent;box-shadow:inset 0 0 0 1px rgba(184,148,95,0.16);transition:background .3s,color .3s,box-shadow .3s;">Where&#39;s Simba right now?</button>
