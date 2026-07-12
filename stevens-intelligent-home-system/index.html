@@ -81,9 +81,22 @@
       .nav-link{display:none !important;}
       #stv-nav{padding:16px 20px !important;}
       #stv-site section{padding-left:20px !important;padding-right:20px !important;}
-      /* Pack the hero questions into a 2-column grid on mobile (shorter). */
-      .hero-q-list{display:grid !important;grid-template-columns:1fr 1fr;gap:8px;}
-      .hero-q-list [data-q]{height:100%;}
+      /* Mobile hero: Stevens (the room) on top, questions as a horizontal
+         shard rail below — swipe left/right, or let it auto-advance. */
+      #hero-room{order:-1;}
+      /* Let the grid tracks stay viewport-width so the rail scrolls (not stretches). */
+      .hero-grid > *{min-width:0 !important;}
+      .hero-q-list{
+        display:flex !important;flex-direction:row !important;flex-wrap:nowrap !important;
+        gap:12px;overflow-x:auto;overflow-y:visible;scroll-snap-type:x proximity;
+        padding:2px 2px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+      }
+      .hero-q-list::-webkit-scrollbar{display:none;}
+      .hero-q-list [data-q]{
+        flex:0 0 auto !important;width:210px !important;min-height:86px;
+        scroll-snap-align:center;white-space:normal;
+        display:flex !important;align-items:center;
+      }
     }
   
 </style>
@@ -534,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const heroStage = document.getElementById('hero-stage');
     const heroRoomEl = document.getElementById('hero-room');
     if (heroStage && heroRoomEl) {
-      const HR_DESIGN = 580;
+      const HR_DESIGN = 460;
       _fitHeroRoom = () => {
         if (window.innerWidth <= 680) {
           const avail = (heroRoomEl.clientWidth || HR_DESIGN) - 8;
@@ -590,7 +603,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const st = S[i];
         if (cur !== -1) rollDeg += (st.x < S[cur].x ? -300 : 300);
         cur = i;
-        ball.style.transform = 'translateX(' + st.x + 'px) translateY(' + st.y + 'px) scale(' + st.s + ')';
+        const _mf = window.innerWidth <= 680 ? 0.75 : 1; // shorter ball travel on mobile (fits the scaled room)
+        ball.style.transform = 'translateX(' + (st.x * _mf) + 'px) translateY(' + st.y + 'px) scale(' + st.s + ')';
         if (roll) roll.style.transform = 'rotate(' + rollDeg + 'deg)';
         if (visor) visor.style.transform = 'translateX(calc(-50% + ' + st.vs + 'px))';
         fp.style.opacity = st.floor ? '1' : '0';
@@ -619,6 +633,11 @@ document.addEventListener('DOMContentLoaded', function () {
           b.style.color = on ? '#FFFEFB' : 'var(--text-on-dark-secondary)';
           b.style.boxShadow = on ? 'inset 0 0 0 1px rgba(232,184,136,0.5)' : 'inset 0 0 0 1px rgba(184,148,95,0.16)';
         });
+        // On mobile the questions are a horizontal rail — glide the active one to centre.
+        if (window.innerWidth <= 680) {
+          const _c = btns[i].parentElement;
+          if (_c) _c.scrollTo({ left: btns[i].offsetLeft - (_c.clientWidth - btns[i].offsetWidth) / 2, behavior: 'smooth' });
+        }
       };
       btns.forEach((b, i) => b.addEventListener('click', () => {
         _heroAuto = false;
