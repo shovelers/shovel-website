@@ -83,7 +83,16 @@
       #stv-site section{padding-left:20px !important;padding-right:20px !important;}
       /* Mobile hero: Stevens (the room) on top, questions as a horizontal
          shard rail below — swipe left/right, or let it auto-advance. */
-      #hero-room{order:-1;}
+      /* Fork the room for mobile: hide the scaled 3D desktop room and show a
+         flat, readable 2D version (#hero-m) — Stevens + one big panel per state. */
+      #hero-room{display:none !important;}
+      #hero-m{display:flex !important;order:-1;width:100%;box-sizing:border-box;padding:8px 0 4px;justify-content:center;align-items:center;}
+      #hero-m.hm-top{flex-direction:column-reverse;gap:16px;}
+      #hero-m.hm-side{flex-direction:row;gap:12px;}
+      #hm-ball{flex:0 0 auto;}
+      #hero-m.hm-side #hm-ball{transform:scale(.82);margin:0 -8px 0 -6px;}
+      #hm-panel{flex:1 1 auto;min-width:0;display:flex;justify-content:center;align-items:center;}
+      #hm-panel > *{max-width:100%;width:100%;}
       /* Let the grid tracks stay viewport-width so the rail scrolls (not stretches). */
       .hero-grid > *{min-width:0 !important;}
       .hero-q-list{
@@ -293,6 +302,25 @@
         </div>
 
       </div>
+      </div>
+
+      <!-- Mobile-only flat 2D room (rendered by JS; desktop room hidden <=680px) -->
+      <div id="hero-m" style="display:none;order:-1;">
+        <div id="hm-ball" style="position:relative;width:122px;height:122px;flex:0 0 auto;">
+          <div style="position:absolute;left:50%;bottom:-10px;width:98px;height:18px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(58,31,26,0.5) 0%,rgba(58,31,26,0) 70%);"></div>
+          <div style="position:relative;width:122px;height:122px;border-radius:50%;background:radial-gradient(circle at 37% 28%,#f4dcb2 0%,#dcb47e 34%,#b8945f 58%,#6d5230 100%);box-shadow:inset -10px -11px 24px rgba(58,31,26,0.55),inset 8px 9px 18px rgba(255,250,235,0.35),0 14px 30px rgba(58,31,26,0.5);overflow:hidden;">
+            <div style="position:absolute;left:24%;top:20%;width:36px;height:20px;border-radius:50%;background:rgba(255,251,240,0.4);filter:blur(3px);"></div>
+            <div style="position:absolute;left:50%;top:53%;width:80px;height:29px;transform:translateX(-50%);">
+              <div style="position:absolute;left:50%;top:11px;transform:translateX(-50%);width:13px;height:4px;border-radius:3px;background:linear-gradient(180deg,#e7c78f,#a07c48);"></div>
+              <div style="position:absolute;left:-8px;top:12px;width:12px;height:3px;border-radius:2px;background:linear-gradient(90deg,#7a5c33,#c9a672);"></div>
+              <div style="position:absolute;right:-8px;top:12px;width:12px;height:3px;border-radius:2px;background:linear-gradient(270deg,#7a5c33,#c9a672);"></div>
+              <div style="position:absolute;left:3px;top:0;width:32px;height:27px;border-radius:11px;background:#141019;box-shadow:inset 0 0 0 2.2px rgba(184,148,95,0.85),0 0 12px rgba(232,184,136,0.35);overflow:hidden;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:19px;height:10px;border-radius:6px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 9px rgba(232,184,136,0.9);"></div></div>
+              <div style="position:absolute;right:3px;top:0;width:32px;height:27px;border-radius:11px;background:#141019;box-shadow:inset 0 0 0 2.2px rgba(184,148,95,0.85),0 0 12px rgba(232,184,136,0.35);overflow:hidden;"><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:19px;height:10px;border-radius:6px;background:radial-gradient(60% 100% at 50% 40%,#F6DCB4 0%,#E8B888 55%,#7a5327 100%);box-shadow:0 0 9px rgba(232,184,136,0.9);"></div></div>
+            </div>
+            <div style="position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:20px;height:10px;border-radius:6px;background:linear-gradient(180deg,#c9a672,#7a5c33);"></div>
+          </div>
+        </div>
+        <div id="hm-panel"></div>
       </div>
     </div>
   </section>
@@ -599,6 +627,39 @@ document.addEventListener('DOMContentLoaded', function () {
         {x:170,y:8,s:.9,vs:-8, floor:'', wall:'photo', cap:'Stevens shows the moments he captured today.'}
       ];
       let rollDeg = 0, cur = -1;
+      // ── Mobile fork: flat 2D room. Reuse each projection's content at 100%
+      //    (legible), Stevens + one big panel, per the two layouts.
+      const heroM = document.getElementById('hero-m');
+      const hmPanel = document.getElementById('hm-panel');
+      const cloneFlat = (el, disp) => {
+        const c = el.cloneNode(true);
+        c.removeAttribute('id');
+        c.style.display = disp || 'block';
+        c.style.opacity = '1'; c.style.transform = 'none'; c.style.position = 'static';
+        c.style.left = c.style.right = c.style.top = c.style.bottom = 'auto';
+        c.style.margin = '0 auto';
+        return c;
+      };
+      const uberCard = () => {
+        const d = document.createElement('div');
+        d.style.cssText = 'padding:22px 20px;border-radius:16px;background:rgba(20,14,11,0.72);box-shadow:0 0 34px rgba(232,184,136,0.22),inset 0 0 0 1px rgba(200,180,150,0.22);text-align:center;';
+        d.innerHTML = '<div style="font-size:42px;font-weight:600;letter-spacing:-0.01em;color:#FFF3DE;">&#8377;4,820</div><div style="font-size:14px;font-weight:500;letter-spacing:0.04em;color:#E8B888;margin-top:4px;">Uber &#183; June &#183; 19 rides</div>';
+        return d;
+      };
+      const MOB = [
+        { layout: 'hm-top',  node: uberCard },
+        { layout: 'hm-top',  node: () => cloneFlat(wallRight.firstElementChild) },
+        { layout: 'hm-top',  node: () => cloneFlat(fpSimba, 'flex') },
+        { layout: 'hm-side', node: () => cloneFlat(waPanel.firstElementChild) },
+        { layout: 'hm-top',  node: () => cloneFlat(wpPanel) },
+        { layout: 'hm-side', node: () => cloneFlat(wpPhoto) },
+      ];
+      const renderMobile = (i) => {
+        if (!heroM || !hmPanel) return;
+        heroM.className = MOB[i].layout;
+        hmPanel.innerHTML = '';
+        try { hmPanel.appendChild(MOB[i].node()); } catch (e) { /* noop */ }
+      };
       const render = (i) => {
         const st = S[i];
         if (cur !== -1) rollDeg += (st.x < S[cur].x ? -300 : 300);
@@ -635,6 +696,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         // On mobile the questions are a horizontal rail — glide the active one to centre.
         if (window.innerWidth <= 680) {
+          renderMobile(i);
           const _c = btns[i].parentElement;
           if (_c) _c.scrollTo({ left: btns[i].offsetLeft - (_c.clientWidth - btns[i].offsetWidth) / 2, behavior: 'smooth' });
         }
@@ -644,6 +706,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (_heroT) { clearTimeout(_heroT); _heroT = null; }
         render(i);
       }));
+      window.addEventListener('resize', () => { if (window.innerWidth <= 680) renderMobile(cur < 0 ? 0 : cur); });
       render(0);
       _heroAuto = true;
       const advance = () => { if (!_heroAuto) return; render((cur + 1) % S.length); _heroT = setTimeout(advance, 4200); };
