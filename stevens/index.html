@@ -74,6 +74,35 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 #fsBtn .ic-fsx{display:none}
 #fsBtn.infs .ic-fsx{display:block}
 #fsBtn.infs .ic-fs{display:none}
+/* volume — YouTube's pattern: the speaker and the slider share one pill, and the
+   track only unfurls on hover/focus, so the resting state stays a single button */
+.volgroup{display:flex;align-items:center;height:42px;border-radius:21px;overflow:hidden;
+  background:rgba(28,19,16,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.4);transition:background .25s}
+.volgroup:hover{background:rgba(184,148,95,.42)}
+.volgroup .vbtn{background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;flex:none}
+.volgroup .vbtn:hover{background:none}
+/* flex-shrink:0 matters — as a shrinkable item the track collapses back to zero
+   however wide it is told to be, because the pill sizes itself to the button first */
+.volwrap{display:flex;align-items:center;flex:0 0 auto;width:0;padding:0;overflow:hidden;
+  transition:width .28s cubic-bezier(.4,0,.2,1),padding .28s cubic-bezier(.4,0,.2,1)}
+/* border-box: the open width must carry the track AND its padding, or the track
+   overruns the content box and the pill clips it against the right edge */
+.volgroup:hover .volwrap,.volgroup:focus-within .volwrap{width:104px;padding:0 15px}
+.vol{appearance:none;-webkit-appearance:none;width:74px;height:14px;background:transparent;cursor:pointer;display:block}
+.vol:focus{outline:none}
+.vol:focus-visible{outline:2px solid var(--saffron);outline-offset:6px;border-radius:8px}
+.vol::-webkit-slider-runnable-track{height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--saffron),var(--brass) var(--vpct,50%),rgba(255,255,255,.26) var(--vpct,50%))}
+.vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;
+  background:var(--whisper);border:0;margin-top:-4px;box-shadow:0 1px 4px rgba(0,0,0,.55)}
+.vol::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.26)}
+.vol::-moz-range-progress{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--saffron),var(--brass))}
+.vol::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--whisper);box-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* the slider is a refinement, not a necessity — on small screens the mute
+   toggle and replay carry it, and the row stays inside the film */
+/* touch has no hover — the speaker toggle carries it, the slider stays folded */
+@media (max-width:640px){.volgroup:hover .volwrap,.volgroup:focus-within .volwrap{width:0;padding:0}}
 
 .hero-copy{position:relative;z-index:5;text-align:center;padding:0 24px;transform:translateZ(0)}
 .hero-tag{font-family:"Inter";font-weight:600;letter-spacing:-.03em;font-size:clamp(2.2rem,4.6vw,4rem);line-height:.98;opacity:0}
@@ -203,9 +232,18 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
       <source src="stevens-film.mp4" type="video/mp4">
     </video>
     <div class="filmctrls">
+      <div class="volgroup">
       <button class="vbtn" id="sndBtn" aria-label="Unmute">
         <svg class="ic-off" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
         <svg class="ic-on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </button>
+        <div class="volwrap">
+          <input class="vol" id="volSlider" type="range" min="0" max="100" step="1" value="50"
+                 aria-label="Volume" title="Volume">
+        </div>
+      </div>
+      <button class="vbtn" id="replayBtn" aria-label="Play from the beginning" title="Play from the beginning">
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
       </button>
       <button class="vbtn" id="fsBtn" aria-label="Fullscreen">
         <svg class="ic-fs" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
@@ -328,25 +366,44 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
 } else { document.querySelectorAll('.beat,.proof,.close,.hero-tag,.hero-sub')
   .forEach(e=>{e.style.opacity=1;e.classList.add('is-in');}); }
 
-/* interactions (init once) */
-const done={};
+/* interactions (bound once) + a reset per section, so a proof re-arms itself
+   after you scroll clear of it — you can try it again on the way back without
+   reloading the page. Listeners stay bound; only the state is rewound. */
+const done={}, resetters={};
 function initInteractions(el){
   if(el.id==='ask'&&!done.ask){done.ask=1;
     const listen=document.getElementById('listen'),reply=document.getElementById('askReply');
+    let t=null;
     document.querySelectorAll('#ask .pill').forEach(pill=>pill.addEventListener('click',()=>{
       document.querySelectorAll('#ask .pill').forEach(p=>p.classList.remove('spent'));
       reply.classList.remove('show');listen.classList.add('show');
-      setTimeout(()=>{listen.classList.remove('show');
+      clearTimeout(t);
+      t=setTimeout(()=>{listen.classList.remove('show');
         reply.innerHTML=pill.dataset.reply+'<span class="sig">— Stevens.</span>';
         reply.classList.add('show');pill.classList.add('spent');
         document.body.style.setProperty('--bg','#EFD9B5');},1150);
     }));
+    resetters.ask=()=>{clearTimeout(t);
+      document.querySelectorAll('#ask .pill').forEach(p=>p.classList.remove('spent'));
+      listen.classList.remove('show');reply.classList.remove('show');reply.innerHTML='';};
   }
-  if(el.id==='family'&&!done.fam){done.fam=1;initGlows();}
+  if(el.id==='family'&&!done.fam){done.fam=1;resetters.family=initGlows();}
   if(el.id==='trust'&&!done.trust){done.trust=1;
     const b=document.getElementById('forgetBtn'),c=document.getElementById('memchip'),r=document.getElementById('forgetReply');
-    b.addEventListener('click',()=>{c.classList.add('gone');b.classList.add('spent');setTimeout(()=>r.style.opacity='1',500);});
+    let t=null;
+    b.addEventListener('click',()=>{c.classList.add('gone');b.classList.add('spent');
+      clearTimeout(t);t=setTimeout(()=>r.style.opacity='1',500);});
+    resetters.trust=()=>{clearTimeout(t);c.classList.remove('gone');b.classList.remove('spent');r.style.opacity='';};
   }
+}
+
+/* Rewind a proof once it has fully left the viewport — never while any part of
+   it is still visible, so a reset can't happen under the reader's eyes. */
+if('IntersectionObserver' in window){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(!en.isIntersecting && resetters[en.target.id]) resetters[en.target.id](); });
+  },{threshold:0});
+  ['ask','family','trust'].forEach(id=>{const el=document.getElementById(id); if(el) obs.observe(el);});
 }
 function initGlows(){
   const field=document.getElementById('glowfield'),A=document.getElementById('glowA'),B=document.getElementById('glowB');
@@ -363,18 +420,65 @@ function initGlows(){
       let nx=e.clientX-fr.left-75;nx=Math.max(0,Math.min(fr.width-150,nx));g.style.left=nx+'px';g.style.right='auto';check();});
     g.addEventListener('pointerup',()=>{drag=null;});
   });
+  /* send the two lights back to their corners so the gesture can be made again */
+  return function reset(){
+    drag=null;merged=false;
+    A.style.transition=B.style.transition='none';
+    A.style.left='';A.style.right='';B.style.left='';B.style.right='';
+    line.classList.remove('show');fh.style.opacity='';
+    void A.offsetWidth;                       // commit the jump before motion is re-enabled
+    A.style.transition=B.style.transition='';
+  };
 }
 
 /* video controls \u2014 sound on/off + fullscreen only (no scrubber, no seek) */
 (function(){
   const v=document.getElementById('film'), box=document.getElementById('filmbox');
   const sb=document.getElementById('sndBtn'), fb=document.getElementById('fsBtn');
+  const rb=document.getElementById('replayBtn'), vs=document.getElementById('volSlider');
   if(!v) return;
-  function setMuted(m){v.muted=m; sb.classList.toggle('unmuted',!m); sb.setAttribute('aria-label', m?'Unmute':'Mute');}
+
+  /* Autoplay is only allowed muted, so the film starts silent and the volume
+     sits at half — the level it will play at the moment sound is switched on. */
+  const DEFAULT_VOL=0.5;
+  v.volume=DEFAULT_VOL;
+  function paintSlider(){ if(vs) vs.style.setProperty('--vpct',(v.muted?0:v.volume*100)+'%'); }
+  function setMuted(m){v.muted=m; sb.classList.toggle('unmuted',!m); sb.setAttribute('aria-label', m?'Unmute':'Mute'); paintSlider();}
   setMuted(true);
-  function toggleSound(){ setMuted(!v.muted); if(!v.muted) v.play().catch(()=>{}); }
+  if(vs) vs.value=String(Math.round(DEFAULT_VOL*100));
+  paintSlider();
+
+  function toggleSound(){
+    // unmuting at zero would be silent and read as broken — give it a level back
+    if(v.muted && v.volume===0){ v.volume=DEFAULT_VOL; if(vs) vs.value=String(DEFAULT_VOL*100); }
+    setMuted(!v.muted); if(!v.muted) v.play().catch(()=>{});
+  }
   sb.addEventListener('click',e=>{e.stopPropagation();toggleSound();});
-  v.addEventListener('click',toggleSound);                 // tap the film toggles sound (mweb gesture)
+
+  /* Clicking the film plays/pauses it, the way every video player behaves.
+     A deliberate pause is remembered, so scrolling away and back doesn't
+     override the choice and start it up again. */
+  let userPaused=false;
+  v.addEventListener('click',()=>{
+    if(v.paused){ userPaused=false; v.play().catch(()=>{}); }
+    else { userPaused=true; v.pause(); }
+  });
+
+  /* dragging the slider is itself an intent to hear it, so it unmutes */
+  if(vs) vs.addEventListener('input',e=>{
+    e.stopPropagation();
+    v.volume=vs.value/100;
+    if(v.volume>0 && v.muted) setMuted(false); else if(v.volume===0 && !v.muted) setMuted(true);
+    paintSlider(); if(!v.muted) v.play().catch(()=>{});
+  });
+  if(vs) vs.addEventListener('click',e=>e.stopPropagation());
+
+  /* By the time most people find the sound control they are seconds in — replay
+     lets them hear it from the top without reloading the page. */
+  if(rb) rb.addEventListener('click',e=>{
+    e.stopPropagation(); userPaused=false; v.currentTime=0; v.play().catch(()=>{});
+    rb.animate([{transform:'rotate(0)'},{transform:'rotate(-360deg)'}],{duration:520,easing:'cubic-bezier(.4,0,.2,1)'});
+  });
   const inFS=()=>document.fullscreenElement||document.webkitFullscreenElement||null;
   fb.addEventListener('click',e=>{e.stopPropagation();
     if(inFS()){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); return; }   // toggle: tap again exits
@@ -388,8 +492,25 @@ function initGlows(){
     fb.setAttribute('aria-label', fs?'Exit fullscreen':'Fullscreen');
   }));
   // reduced-motion: don't autoplay; poster shows, tap to play
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches){ v.removeAttribute('autoplay'); v.pause();
+  const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduceMotion){ v.removeAttribute('autoplay'); v.pause();
     v.addEventListener('click',()=>{ if(v.paused) v.play().catch(()=>{}); },{once:true}); }
+
+  /* The film plays only while it is actually on screen. Scrolling past it stops
+     the audio and the decode work; scrolling back resumes where it left off
+     (resume, not restart — replay is the button for starting over). Fullscreen
+     is exempt: the box can report as off-screen while filling the display. */
+  if('IntersectionObserver' in window && !reduceMotion){
+    new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        if(inFS()) return;
+        if(en.isIntersecting){ if(!userPaused) v.play().catch(()=>{}); }
+        else if(!v.paused) v.pause();
+      });
+    },{threshold:0.25}).observe(box);
+  }
+  // a backgrounded tab should not keep playing audio either
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden && !v.paused) v.pause(); });
 })();
 </script>
 </body>
