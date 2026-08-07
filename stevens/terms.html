@@ -9,18 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
-  <script>
-    // In-app embed mode (?embed=1): hide site navigation and keep the mode
-    // sticky across the legal pages' internal links.
-    if (location.search.indexOf('embed') !== -1) {
-      document.documentElement.className += ' embed';
-      addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('a[href^="/stevens/"]').forEach(function (a) {
-          a.href += (a.href.indexOf('?') === -1 ? '?' : '&') + 'embed=1';
-        });
-      });
-    }
-  </script>
+  <script src="/stevens/legal-embed.js"></script>
   <style>
     :root {
       --cream: #FFFEFB;
@@ -89,9 +78,7 @@
       h2 { font-size: 18px; margin: 34px 0 10px; }
       .callout { padding: 14px 16px; }
     }
-    /* In-app embed mode: the app provides its own chrome. */
-    .embed .crumb { display: none; }
-    .embed .page { padding-top: 28px; }
+    /* Embed-mode styles live in legal-embed.js, applied only inside the app. */
   </style>
 </head>
 <body>
