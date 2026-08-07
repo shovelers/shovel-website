@@ -8,7 +8,19 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
+  <script>
+    // In-app embed mode (?embed=1): hide site navigation and keep the mode
+    // sticky across the legal pages' internal links.
+    if (location.search.indexOf('embed') !== -1) {
+      document.documentElement.className += ' embed';
+      addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('a[href^="/stevens/"]').forEach(function (a) {
+          a.href += (a.href.indexOf('?') === -1 ? '?' : '&') + 'embed=1';
+        });
+      });
+    }
+  </script>
   <style>
     :root {
       --cream: #FFFEFB;
@@ -24,7 +36,7 @@
     body {
       background: var(--cream);
       color: var(--ink-soft);
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Geist', -apple-system, sans-serif;
       font-weight: 400;
       line-height: 1.65;
       font-size: 16px;
@@ -44,17 +56,17 @@
     }
     .crumb:hover { color: var(--ink-soft); }
     h1 {
-      font-family: 'Lora', Georgia, serif;
-      font-weight: 500;
-      font-size: 40px;
+      font-family: 'Geist', -apple-system, sans-serif;
+      font-weight: 600;
+      font-size: 38px;
       line-height: 1.15;
+      letter-spacing: -0.02em;
       margin: 18px 0 6px;
       color: var(--ink);
     }
     .meta { color: var(--slate); font-size: 14px; margin-bottom: 32px; }
     .lede {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 19px;
+      font-size: 18px;
       line-height: 1.6;
       color: var(--ink-soft);
       border-left: 3px solid var(--brass);
@@ -62,9 +74,9 @@
       margin-bottom: 44px;
     }
     h2 {
-      font-family: 'Lora', Georgia, serif;
-      font-weight: 500;
-      font-size: 24px;
+      font-family: 'Geist', -apple-system, sans-serif;
+      font-weight: 600;
+      font-size: 22px;
       margin: 44px 0 12px;
       color: var(--ink);
     }
@@ -96,8 +108,16 @@
     td:first-child { font-weight: 500; color: var(--ink); white-space: nowrap; }
     @media (max-width: 560px) {
       td:first-child { white-space: normal; }
-      h1 { font-size: 32px; }
+      body { font-size: 15px; line-height: 1.6; }
+      h1 { font-size: 26px; }
+      h2 { font-size: 18px; margin: 34px 0 10px; }
+      .lede { font-size: 15px; margin-bottom: 32px; }
+      table { font-size: 13px; }
+      th, td { padding: 8px 10px; }
     }
+    /* In-app embed mode: the app provides its own chrome. */
+    .embed .crumb { display: none; }
+    .embed .page { padding-top: 28px; }
     .footer {
       margin-top: 64px;
       padding-top: 24px;
