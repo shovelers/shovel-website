@@ -22,8 +22,9 @@
   style.textContent = [
     '.embed .crumb{display:none}',
     '.embed .page{padding-top:28px}',
-    '.embed .copyable{color:var(--brass);font-weight:500;',
-    '  border-bottom:1px dashed currentColor;cursor:pointer}',
+    '.embed .copyable{font:inherit;color:var(--brass);font-weight:500;',
+    '  background:none;border:0;padding:0;border-bottom:1px dashed currentColor;',
+    '  cursor:pointer;-webkit-appearance:none}',
     '.embed .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);',
     '  max-width:80%;background:var(--ink);color:#fff;padding:10px 16px;',
     '  border-radius:10px;font-size:14px;line-height:1.4;text-align:center;',
@@ -43,7 +44,7 @@
     toastEl.textContent = message;
     toastEl.classList.add('on');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 1900);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 2600);
   }
 
   function copy(text) {
@@ -72,14 +73,18 @@
   }
 
   function makeCopyable(a, address) {
-    var span = document.createElement('span');
-    span.className = 'copyable';
-    span.textContent = a.textContent;
-    span.addEventListener('click', function () {
+    // A real <button>, not a styled <span>: WebKit only guarantees click
+    // events on natively interactive elements, and this runs inside the
+    // app's WebView.
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copyable';
+    btn.textContent = a.textContent;
+    btn.addEventListener('click', function () {
       copy(address);
       toast('Copied ' + address);
     });
-    a.parentNode.replaceChild(span, a);
+    a.parentNode.replaceChild(btn, a);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
