@@ -18,6 +18,13 @@
 
   document.documentElement.className += ' embed';
 
+  // The app tells us its polarity (?shade=dark|light) so a legal page opened
+  // at night is part of the app rather than a bright rectangle inside it.
+  // The whole page is themed by redefining the same custom properties the
+  // stylesheets already read — no second stylesheet to keep in sync.
+  var dark = /[?&]shade=dark/.test(location.search);
+  if (dark) document.documentElement.className += ' shade-dark';
+
   var style = document.createElement('style');
   style.textContent = [
     '.embed .crumb{display:none}',
@@ -30,6 +37,11 @@
     '  border-radius:10px;font-size:14px;line-height:1.4;text-align:center;',
     '  opacity:0;transition:opacity .18s ease;pointer-events:none;z-index:99}',
     '.embed .toast.on{opacity:1}',
+    // Dark shade: the app's night palette, mapped onto this page's tokens.
+    '.embed.shade-dark{--cream:#241A14;--wash:#33271E;--ink:#FFFEFB;',
+    '  --ink-soft:#FFFEFB;--slate:#C7B29A;--brass:#B8945F;--rule:#4A3A2C}',
+    '.embed.shade-dark body{background:var(--cream);color:var(--ink-soft)}',
+    '.embed.shade-dark .toast{background:#000;color:#fff}',
   ].join('');
   document.head.appendChild(style);
 
