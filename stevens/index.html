@@ -209,6 +209,20 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
 .crafted{margin-top:30px;font-family:"Lora",serif;font-style:italic;color:var(--on-soft);opacity:0;transition:opacity .9s .6s}
 .is-in .crafted{opacity:1}.crafted a{color:var(--brass);text-decoration:none;border-bottom:1px solid rgba(184,148,95,.4)}
 .fine{margin-top:18px;font-size:.72rem;color:var(--on-soft)}
+.legal{margin-top:26px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 22px}
+.legal a{font-size:.78rem;color:var(--on-soft);text-decoration:none;border-bottom:1px solid rgba(184,148,95,.35);
+  padding-bottom:2px;transition:color .2s,border-color .2s}
+.legal a:hover{color:var(--brass);border-bottom-color:var(--brass)}
+.legal-co{margin-top:16px;font-size:.68rem;color:var(--on-soft);opacity:.7}
+@media (max-width:560px){
+  /* Stack, and give each link a real tap target — the inline underline
+     becomes text-decoration so the rule stays tight to the text while the
+     padding grows the hit area. */
+  .legal{flex-direction:column;gap:2px}
+  .legal a{font-size:.85rem;padding:12px 10px;border-bottom:none;
+    text-decoration:underline;text-decoration-color:rgba(184,148,95,.45);text-underline-offset:4px}
+  .legal-co{margin-top:18px}
+}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important}
   .said,.svo,.time,h2,.pills,.tag,.cta-row,.builders,.crafted{opacity:1!important;transform:none!important;filter:none!important}}
@@ -334,6 +348,12 @@ body{background:var(--bg);color:var(--on);font-family:"Inter",system-ui,sans-ser
   </div>
   <div class="crafted">Crafted with love at <a href="https://shovel.company" target="_blank" rel="noopener">Shovel</a>.</div>
   <div class="fine">Built in India, for Indian families. Your data lives in your vault — yours to delete, anytime.</div>
+  <nav class="legal" aria-label="Legal">
+    <a href="/stevens/terms">Terms of Service</a>
+    <a href="/stevens/privacy">Privacy Policy</a>
+    <a href="/stevens/delete-account">Delete your account</a>
+  </nav>
+  <div class="legal-co">© 2026 Shovel Labs LLP · Bengaluru, India</div>
 </section>
 
 <script>
