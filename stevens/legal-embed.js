@@ -22,8 +22,8 @@
   // at night is part of the app rather than a bright rectangle inside it.
   // The whole page is themed by redefining the same custom properties the
   // stylesheets already read — no second stylesheet to keep in sync.
-  var dark = /[?&]shade=dark/.test(location.search);
-  if (dark) document.documentElement.className += ' shade-dark';
+  var m = /[?&]shade=(dark|light)/.exec(location.search);
+  if (m) document.documentElement.className += ' shade-' + m[1];
 
   var style = document.createElement('style');
   style.textContent = [
@@ -42,6 +42,10 @@
     '  --ink-soft:#FFFEFB;--slate:#C7B29A;--brass:#B8945F;--rule:#4A3A2C}',
     '.embed.shade-dark body{background:var(--cream);color:var(--ink-soft)}',
     '.embed.shade-dark .toast{background:#000;color:#fff}',
+    // Light shade: the ground matches the sheet the card is drawn on, so the
+    // header band and the page below it read as one surface instead of two.
+    '.embed.shade-light{--cream:#F3E7D6;--wash:#FEFAF4;--rule:#E0CDB2}',
+    '.embed.shade-light body{background:var(--cream)}',
   ].join('');
   document.head.appendChild(style);
 
