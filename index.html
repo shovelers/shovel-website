@@ -673,6 +673,18 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
 
 .stevens__body p { margin: 0 0 18px; }
 
+/* Product-to-company attribution. Stated plainly and in one place so the
+   Stevens ↔ Shovel Labs relationship is verifiable from the page itself —
+   app stores and WhatsApp Business both check for exactly this. */
+.stevens__attribution {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule, rgba(0,0,0,.15));
+  font-size: 14px;
+  line-height: 1.65;
+}
+.stevens__attribution a { color: inherit; text-underline-offset: 3px; }
+
 .stevens__spec-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -2129,6 +2141,7 @@ button { font: inherit; border: 0; background: 0; cursor: pointer; color: inheri
           <p>The electricity bill due Friday. The web check-in you haven't done. What's running low in the kitchen. Whose birthday is Thursday. The orthopedic you keep meaning to call.</p>
           <p>The micro-transactions you run — together they are exhausting.</p>
           <p>Stevens holds them for you. It watches the household quietly, keeps track of what matters, and acts on your behalf.</p>
+          <p class="stevens__attribution"><strong>Stevens</strong> is a personal agent built by <strong>Shovel Labs LLP</strong>, Bengaluru, India. Read more at <a href="/stevens/">shovel.company/stevens</a>.</p>
         </div>
 
         <dl class="stevens__spec-grid reveal delay-4">
