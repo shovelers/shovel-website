@@ -1,10 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-  <rect width="180" height="180" rx="40" fill="#1C1310"/>
-  <path d="M85 84 Q90 77 95 84" fill="none" stroke="#B8945F" stroke-width="7" stroke-linecap="round"/>
-  <path d="M25 90 L14 91.5" fill="none" stroke="#B8945F" stroke-width="7" stroke-linecap="round"/>
-  <path d="M155 90 L166 91.5" fill="none" stroke="#B8945F" stroke-width="7" stroke-linecap="round"/>
-  <circle cx="56" cy="90" r="27" fill="#E8B888" stroke="#B8945F" stroke-width="8"/>
-  <circle cx="124" cy="90" r="27" fill="#E8B888" stroke="#B8945F" stroke-width="8"/>
-  <circle cx="56" cy="90" r="4.5" fill="#1C1310"/>
-  <circle cx="124" cy="90" r="4.5" fill="#1C1310"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Stevens">
+  <defs>
+    <linearGradient id="stevensFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4E200"/>
+      <stop offset=".5" stop-color="#FFC000"/>
+      <stop offset="1" stop-color="#FF7A18"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#stevensFace)"/>
+  <!-- glasses: cream frames over the gradient, with the bridge -->
+  <g fill="#FFFFFF" fill-opacity="0.18" stroke="#F5EAC8" stroke-width="6">
+    <rect x="28" y="52" width="56" height="72" rx="24"/>
+    <rect x="96" y="52" width="56" height="72" rx="24"/>
+  </g>
+  <line x1="84" y1="88" x2="96" y2="88" stroke="#16120C" stroke-width="5" stroke-linecap="round"/>
+  <!-- eyes -->
+  <g fill="#16120C">
+    <rect x="46" y="68" width="20" height="40" rx="10"/>
+    <rect x="114" y="68" width="20" height="40" rx="10"/>
+  </g>
+  <circle cx="61" cy="77" r="4.5" fill="#FFFFFF"/>
+  <circle cx="129" cy="77" r="4.5" fill="#FFFFFF"/>
 </svg>
