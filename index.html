@@ -5,7 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
 <title>Shovel Company — Issue 01: Tools.</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!-- Light + dark favicon. Chrome does not apply a prefers-color-scheme rule
+     inside an SVG favicon, so the black mark used to disappear into a dark tab
+     strip. Two links cover Firefox/Safari; the script covers Chrome and keeps
+     it in step when the OS theme changes. -->
+<link rel="icon" id="fav-light" type="image/svg+xml" media="(prefers-color-scheme: light)" href="favicon.svg">
+<link rel="icon" id="fav-dark"  type="image/svg+xml" media="(prefers-color-scheme: dark)"  href="favicon-dark.svg">
+<script>
+  (function () {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    function paint() {
+      var want = mq.matches ? 'fav-dark' : 'fav-light';
+      ['fav-light', 'fav-dark'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.media = (id === want) ? 'all' : 'not all';
+      });
+    }
+    paint();
+    mq.addEventListener ? mq.addEventListener('change', paint) : mq.addListener(paint);
+  })();
+</script>
 <meta name="description" content="Shovel Company. Infrastructure, personal agents, and applied knowledge. Issue 01.">
 
 <!-- Google Analytics (GA4) -->
