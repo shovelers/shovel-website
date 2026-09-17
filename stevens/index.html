@@ -271,6 +271,34 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media (prefers-reduced-motion:reduce){*{animation:none!important}
   .said,.svo,.time,h2,.pills,.tag,.cta-row,.builders,.crafted{opacity:1!important;transform:none!important;filter:none!important}}
 @media(max-width:640px){.builders{flex-direction:column;gap:22px}}
+/* ============ THE BIG PICTURE ============ */
+.bigpic{padding:14vh clamp(26px,6vw,90px) 12vh;border-bottom:1px solid var(--rule);position:relative;z-index:2}
+.bp-wrap{width:min(1320px,100%);margin:0 auto}
+.bp-title{font-family:var(--heading);font-weight:700;font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.06;
+  letter-spacing:-.04em;max-width:26ch;background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
+.bp-mark{font-family:var(--heading);font-weight:750;font-size:clamp(1.5rem,2.6vw,2.15rem);letter-spacing:-.04em;
+  color:var(--ink);margin-top:20px}
+.bp-band{margin:clamp(28px,5vw,54px) 0 0}
+/* the prop is drawn on an ivory ground a shade warmer than the page — darken
+   clamps that ground to the paper exactly, where multiply would tint it */
+.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken}
+.bp-labels{position:relative;min-height:92px;margin-top:4px}
+/* each label takes a share of the band rather than its own text width — the
+   tightest pair of elements is 13% apart, so an 11% box wraps instead of colliding */
+.bp-l{position:absolute;left:var(--x);top:0;transform:translateX(-50%);width:11%;
+  text-align:center;display:flex;flex-direction:column;gap:7px}
+.bp-l .k{font:500 .62rem/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bp-l .n{font-family:var(--body);font-weight:500;font-size:clamp(.84rem,1vw,1.02rem);line-height:1.25;letter-spacing:-.015em;color:var(--ink)}
+/* narrow: the band can no longer carry aligned labels, so they become a list */
+@media (max-width:900px){
+  .bp-labels{position:static;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-top:26px}
+  .bp-l{position:static;transform:none;width:auto;max-width:none;text-align:left;gap:5px}
+}
+@media (max-width:560px){
+  .bigpic{padding:11vh clamp(20px,5vw,32px) 10vh}
+  .bp-labels{grid-template-columns:1fr;gap:16px}
+}
 </style>
 </head>
 <body>
@@ -282,7 +310,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <section class="stage" id="stage" data-bg="#FAF6EE" data-on="#151715">
   <div class="hero-copy">
     <div class="hero-tag" id="hTag">Ask Stevens.</div>
-    <div class="hero-sub" id="hSub">You ask. It&rsquo;s done. — Stevens.</div>
+    <div class="hero-sub" id="hSub">Personal intelligence for household</div>
   </div>
   <div class="filmbox" id="filmbox">
     <video id="film" autoplay muted loop playsinline preload="auto" poster="stevens-film-poster-v2.jpg"
@@ -308,6 +336,25 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
         <svg class="ic-fsx" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
       </button>
     </div>
+  </div>
+</section>
+
+<!-- ================= THE BIG PICTURE ================= -->
+<section class="bigpic" data-bg="#FAF6EE" data-on="#151715" id="bigpicture">
+  <div class="bp-wrap">
+    <h2 class="bp-title">Ambient intelligence for the whole household.</h2>
+    <div class="bp-mark">Stevens.</div>
+    <figure class="bp-band">
+      <img src="big-picture-household.webp" width="2000" height="666" loading="lazy"
+           alt="A household and their dog beside the ambient hardware, the personal-intelligence chip, the app and voice surface, and the model factory that trains and evaluates it">
+      <div class="bp-labels">
+        <div class="bp-l" style="--x:14.5%"><span class="k">The household</span><span class="n">Shared context</span></div>
+        <div class="bp-l" style="--x:37.5%"><span class="k">Hardware</span><span class="n">Ambient presence</span></div>
+        <div class="bp-l" style="--x:53.5%"><span class="k">Model</span><span class="n">Personal intelligence</span></div>
+        <div class="bp-l" style="--x:66.5%"><span class="k">App + voice</span><span class="n">Multi-player surfaces</span></div>
+        <div class="bp-l" style="--x:88%"><span class="k">Model factory</span><span class="n">Training &amp; evaluation</span></div>
+      </div>
+    </figure>
   </div>
 </section>
 
