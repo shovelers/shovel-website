@@ -58,8 +58,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .chrome{position:fixed;z-index:110;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
   height:64px;padding:0 clamp(20px,4vw,48px);
   background:color-mix(in srgb,var(--paper) 88%,transparent);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--ink)}
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.chrome::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--rule);
+  opacity:1;transition:opacity .45s ease;pointer-events:none}
+body.scrolled .chrome::after{opacity:0}
 .brandmark{font-family:var(--heading);font-weight:700;letter-spacing:-.02em;font-size:1rem;color:var(--ink)}
 .getbtn{font-family:var(--mono);font-weight:500;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink);text-decoration:none}
@@ -76,8 +78,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 /* ============ HERO FILM STAGE ============ */
 .stage{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:clamp(16px,2.8vh,30px);padding:96px clamp(20px,4vw,48px) 40px;
-  background:radial-gradient(120% 90% at 50% 34%,#FFFDF7,var(--paper) 72%);
-  border-bottom:1px solid var(--rule)}
+  background:radial-gradient(120% 90% at 50% 34%,#FFFDF7,var(--paper) 72%)}
 
 /* the film — true 16:9 at every viewport; width is bounded by available height so the aspect never breaks */
 .filmbox{position:relative;z-index:2;width:min(92vw, calc((100svh - 300px)*1.7778), 1240px);aspect-ratio:16/9;
@@ -146,7 +147,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 /* ============ INTERACTIVE PROOFS ============ */
 .proof{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:16vh clamp(26px,6vw,90px);position:relative;border-bottom:1px solid var(--rule)}
+  text-align:center;padding:16vh clamp(26px,6vw,90px);position:relative}
 .proof h2{font-family:var(--heading);font-weight:700;font-size:clamp(1.9rem,4.4vw,3.4rem);line-height:1.08;
   letter-spacing:-.035em;color:var(--ink);max-width:22ch;opacity:0;transform:translateY(18px)}
 .proof h2 .accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
@@ -191,7 +192,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   h2,.tag,.builders,.crafted{opacity:1!important;transform:none!important;filter:none!important}}
 @media(max-width:640px){.builders{flex-direction:column;gap:22px}}
 /* ============ THE BIG PICTURE ============ */
-.bigpic{padding:14vh clamp(26px,6vw,90px) 12vh;border-bottom:1px solid var(--rule);position:relative;z-index:2}
+.bigpic{padding:14vh clamp(26px,6vw,90px) 12vh;position:relative;z-index:2}
 .bp-wrap{width:min(1320px,100%);margin:0 auto}
 .bp-title{font-family:var(--heading);font-weight:700;font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.06;
   letter-spacing:-.04em;max-width:22ch;margin:0 auto;text-align:center;background:var(--grad);
@@ -218,7 +219,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   .bp-labels{grid-template-columns:1fr;gap:16px}
 }
 /* ============ COUNSEL AND ACTION ============ */
-.cns{padding:9vh clamp(26px,6vw,90px) 8vh;border-bottom:1px solid var(--rule);position:relative;z-index:2}
+.cns{padding:9vh clamp(26px,6vw,90px) 8vh;position:relative;z-index:2}
 .cns-wrap{width:min(1320px,100%);margin:0 auto}
 .cns-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
   line-height:1.06;text-align:center;margin:0 auto;max-width:20ch;background:var(--grad);-webkit-background-clip:text;
@@ -271,7 +272,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 }
 
 /* ============ THE MODEL ============ */
-.thy{padding:6vh clamp(26px,6vw,90px) 5vh;border-bottom:1px solid var(--rule);text-align:center}
+.thy{padding:6vh clamp(26px,6vw,90px) 5vh;text-align:center}
 .thy-wrap{width:min(1320px,100%);margin:0 auto}
 .thy-eyebrow{font:500 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--violet);display:block}
 .thy-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
@@ -293,7 +294,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 @media (max-width:560px){.specs{grid-template-columns:1fr 1fr}}
 
 /* ============ WHAT IS YOURS ============ */
-.vlt{padding:7vh clamp(26px,6vw,90px) 6vh;border-bottom:1px solid var(--rule);text-align:center}
+.vlt{padding:7vh clamp(26px,6vw,90px) 6vh;text-align:center}
 .vlt-wrap{width:min(1100px,100%);margin:0 auto}
 .vlt-art{width:min(380px,100%);max-height:29vh;object-fit:contain;margin:0 auto;mix-blend-mode:darken}
 .vlt-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
@@ -465,7 +466,10 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 <script>
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const prog=document.getElementById('progress');
-addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';},{passive:true});
+const chromeRule=()=>document.body.classList.toggle('scrolled',document.documentElement.scrollTop>24);
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  chromeRule();},{passive:true});
+chromeRule();
 
 function setAmbient(el){
   const s=document.body.style;
