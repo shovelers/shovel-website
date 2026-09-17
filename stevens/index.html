@@ -198,10 +198,10 @@ body.scrolled .chrome::after{opacity:0}
   letter-spacing:-.04em;max-width:22ch;margin:0 auto;text-align:center;background:var(--grad);
   -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
   padding-bottom:.06em;text-wrap:balance}
-.bp-band{margin:clamp(28px,5vw,54px) 0 0}
+.bp-band{margin:clamp(18px,3.2vw,38px) auto 0;width:100%;max-width:min(100%,calc(42vh * 3.003))}
 /* the prop is drawn on an ivory ground a shade warmer than the page — darken
    clamps that ground to the paper exactly, where multiply would tint it */
-.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken;max-height:46vh;object-fit:contain}
+.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken}
 .bp-labels{position:relative;min-height:92px;margin-top:4px}
 /* each label takes a share of the band rather than its own text width — the
    tightest pair of elements is 13% apart, so an 11% box wraps instead of colliding */
