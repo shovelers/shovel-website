@@ -236,7 +236,21 @@ body.scrolled .chrome::after{opacity:0}
 .cns-you{max-width:min(94%,26em);background:#121412;color:#E9E7E2;-webkit-text-fill-color:#E9E7E2;
   padding:13px 19px;border-radius:18px;
   border-bottom-right-radius:6px;font-size:16px;line-height:1.42;box-shadow:0 14px 30px rgba(21,23,21,.26)}
-.cns-talk{display:flex;flex-direction:column;gap:13px;align-items:flex-start;min-width:0}
+.cns-talk{display:flex;flex-direction:column;gap:13px;align-items:flex-start;min-width:0;
+  position:relative;isolation:isolate}
+/* the column reserves its height before the exchange plays, so it reads as empty until the
+   first line fires. an ambient wash in the brand colours holds the space from first paint. */
+.cns-talk::before{content:"";position:absolute;inset:-7% -5%;z-index:-1;border-radius:30px;pointer-events:none;
+  background:
+    radial-gradient(58% 52% at 20% 26%,rgba(85,123,188,.20),transparent 70%),
+    radial-gradient(54% 48% at 80% 32%,rgba(123,83,170,.18),transparent 72%),
+    radial-gradient(60% 54% at 62% 78%,rgba(209,105,140,.16),transparent 70%),
+    radial-gradient(52% 48% at 16% 82%,rgba(227,140,87,.14),transparent 72%);
+  filter:blur(8px);animation:cnsglow 15s ease-in-out infinite alternate}
+@keyframes cnsglow{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:.72}
+  50%{transform:translate3d(1.6%,-1.4%,0) scale(1.05);opacity:1}
+  100%{transform:translate3d(-1.4%,1.2%,0) scale(1.02);opacity:.8}}
 .cns-it{font-family:var(--heading);font-weight:600;font-size:clamp(18px,1.75vw,26px);line-height:1.24;
   letter-spacing:-.02em;color:var(--ink)}
 .cns-opt{display:grid;gap:10px;margin-top:13px}
@@ -323,7 +337,8 @@ body.scrolled .chrome::after{opacity:0}
   .rec{grid-template-columns:1fr;gap:10px;margin-top:18px}.rec .plus{display:none}
   .rec .card{padding:15px}.rec .card h3{font-size:17px;margin:6px 0 4px}.rec .card p{font-size:13.5px}
   .rec .together{font-size:13px}}
-@media (prefers-reduced-motion:reduce){.stp{opacity:1;transform:none}.vxs{display:none}.vxw i,.vxo,.vxo::after{animation:none}}
+@media (prefers-reduced-motion:reduce){.stp{opacity:1;transform:none}.vxs{display:none}.vxw i,.vxo,.vxo::after{animation:none}
+  .cns-talk::before{animation:none;opacity:.85}}
 </style>
 </head>
 <body>
