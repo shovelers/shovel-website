@@ -192,7 +192,7 @@ body.scrolled .chrome::after{opacity:0}
   h2,.tag,.builders,.crafted{opacity:1!important;transform:none!important;filter:none!important}}
 @media(max-width:640px){.builders{flex-direction:column;gap:22px}}
 /* ============ THE BIG PICTURE ============ */
-.bigpic{padding:14vh clamp(26px,6vw,90px) 12vh;position:relative;z-index:2}
+.bigpic{padding:11vh clamp(26px,6vw,90px) 9vh;position:relative;z-index:2}
 .bp-wrap{width:min(1320px,100%);margin:0 auto}
 .bp-title{font-family:var(--heading);font-weight:700;font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.06;
   letter-spacing:-.04em;max-width:22ch;margin:0 auto;text-align:center;background:var(--grad);
@@ -201,7 +201,7 @@ body.scrolled .chrome::after{opacity:0}
 .bp-band{margin:clamp(28px,5vw,54px) 0 0}
 /* the prop is drawn on an ivory ground a shade warmer than the page — darken
    clamps that ground to the paper exactly, where multiply would tint it */
-.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken}
+.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken;max-height:46vh;object-fit:contain}
 .bp-labels{position:relative;min-height:92px;margin-top:4px}
 /* each label takes a share of the band rather than its own text width — the
    tightest pair of elements is 13% apart, so an 11% box wraps instead of colliding */
