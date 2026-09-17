@@ -231,9 +231,10 @@ body.scrolled .chrome::after{opacity:0}
   -webkit-mask-image:radial-gradient(ellipse 80% 78% at 50% 52%,#000 54%,transparent 100%);
   mask-image:radial-gradient(ellipse 80% 78% at 50% 52%,#000 54%,transparent 100%)}
 .cns-bubbles{grid-area:1/1;align-self:end;justify-self:stretch;display:flex;flex-direction:column;
-  align-items:flex-end;gap:10px;padding:0 2% 3%}
+  align-items:flex-end;gap:10px;padding:0 2% 3%;position:relative;z-index:2;isolation:isolate}
 /* solid, never transparent — the photograph must not read through the words */
-.cns-you{max-width:min(94%,26em);background:#121412;color:#FFFFFF;padding:13px 19px;border-radius:18px;
+.cns-you{max-width:min(94%,26em);background:#121412;color:#E9E7E2;-webkit-text-fill-color:#E9E7E2;
+  padding:13px 19px;border-radius:18px;
   border-bottom-right-radius:6px;font-size:16px;line-height:1.42;box-shadow:0 14px 30px rgba(21,23,21,.26)}
 .cns-talk{display:flex;flex-direction:column;gap:13px;align-items:flex-start;min-width:0}
 .cns-it{font-family:var(--heading);font-weight:600;font-size:clamp(18px,1.75vw,26px);line-height:1.24;
@@ -272,33 +273,39 @@ body.scrolled .chrome::after{opacity:0}
 }
 
 /* ============ THE MODEL ============ */
-.thy{padding:6vh clamp(26px,6vw,90px) 5vh;text-align:center}
+.thy{padding:7vh clamp(26px,6vw,90px) 6vh;text-align:center;position:relative;z-index:2}
 .thy-wrap{width:min(1320px,100%);margin:0 auto}
 .thy-eyebrow{font:500 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--violet);display:block}
 .thy-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
-  line-height:1.06;text-align:center;margin:14px auto 0;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
+  line-height:1.06;text-align:center;margin:10px auto 0;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
   background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
-.thy-sub{font-family:var(--body);font-size:clamp(.96rem,1.25vw,1.1rem);line-height:1.45;color:var(--muted);
-  max-width:46ch;margin:14px auto 0}
-.thy-film{margin:clamp(18px,2.2vw,26px) auto 0;width:min(700px,100%);border-radius:20px;overflow:hidden;
-  background:#0E0F0E;outline:1px solid var(--rule)}
-.thy-film video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
-.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,26px);
-  margin-top:clamp(20px,2.6vw,32px);text-align:left}
-.spec{border-top:1px solid var(--ink);padding-top:15px}
-.spec h3{font-family:var(--heading);font-weight:650;font-size:18px;letter-spacing:-.02em;color:var(--ink)}
-.spec p{font-size:14.5px;line-height:1.45;color:var(--muted);margin-top:6px}
+.thy-sub{font-family:var(--body);font-size:clamp(.94rem,1.15vw,1.05rem);line-height:1.45;color:var(--muted);
+  max-width:46ch;margin:12px auto 0}
+/* the film sits on the paper the way the counsel photograph does */
+.thy-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(24px,3.4vw,60px);align-items:center;
+  margin-top:clamp(18px,2.4vw,34px)}
+.thy-scene{position:relative;display:grid;min-height:0}
+.thy-art{grid-area:1/1;width:100%;max-height:50vh;object-fit:contain;mix-blend-mode:darken;
+  -webkit-mask-image:radial-gradient(ellipse 84% 82% at 50% 50%,#000 58%,transparent 100%);
+  mask-image:radial-gradient(ellipse 84% 82% at 50% 50%,#000 58%,transparent 100%)}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:clamp(13px,1.5vw,20px) clamp(18px,2vw,30px);text-align:left}
+.spec{border-top:1px solid var(--rule);padding-top:13px}
+.spec h3{font-family:var(--heading);font-weight:650;font-size:clamp(15px,1.15vw,17px);letter-spacing:-.02em;color:var(--ink)}
+.spec p{font-size:clamp(13px,.95vw,14px);line-height:1.42;color:var(--muted);margin-top:5px}
 @media (max-width:900px){.thy{padding:5vh clamp(20px,5vw,32px) 4vh}
-  .specs{grid-template-columns:1fr 1fr;gap:14px 18px;margin-top:20px}
-  .spec{padding-top:11px}.spec h3{font-size:15.5px}.spec p{font-size:13px;line-height:1.38;margin-top:4px}}
+  .thy-grid{grid-template-columns:1fr;gap:18px;margin-top:16px}
+  .thy-art{max-height:32vh}
+  .specs{gap:12px 16px}
+  .spec{padding-top:10px}.spec h3{font-size:15px}.spec p{font-size:13px;line-height:1.38;margin-top:4px}}
 @media (max-width:560px){.specs{grid-template-columns:1fr 1fr}}
 
 /* ============ WHAT IS YOURS ============ */
-.vlt{padding:7vh clamp(26px,6vw,90px) 6vh;text-align:center}
+.vlt{padding:6vh clamp(26px,6vw,90px) 5vh;text-align:center}
 .vlt-wrap{width:min(1100px,100%);margin:0 auto}
-.vlt-art{width:min(380px,100%);max-height:29vh;object-fit:contain;margin:0 auto;mix-blend-mode:darken}
+.vlt-art{width:min(520px,100%);max-height:30vh;object-fit:contain;margin:clamp(14px,2vw,24px) auto 0;
+  mix-blend-mode:darken}
 .vlt-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
-  line-height:1.06;margin:clamp(18px,2.4vw,30px) auto 0;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
+  line-height:1.06;margin:0 auto;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
   background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
 .vlt-lede{font-family:var(--body);font-size:clamp(.98rem,1.35vw,1.15rem);line-height:1.45;color:var(--ink);
   max-width:46ch;margin:16px auto 0}
@@ -311,7 +318,7 @@ body.scrolled .chrome::after{opacity:0}
 .rec .plus{font-family:var(--heading);font-size:34px;color:var(--muted);text-align:center}
 .rec .together{grid-column:1/-1;text-align:center;font-size:15px;color:var(--muted)}
 @media (max-width:900px){.vlt{padding:5vh clamp(20px,5vw,32px) 4vh}
-  .vlt-art{max-height:19vh}
+  .vlt-art{width:min(400px,100%);max-height:21vh}
   .vlt-lede{font-size:15px;margin-top:12px}.vlt-muted{font-size:13.5px;margin-top:10px}
   .rec{grid-template-columns:1fr;gap:10px;margin-top:18px}.rec .plus{display:none}
   .rec .card{padding:15px}.rec .card h3{font-size:17px;margin:6px 0 4px}.rec .card p{font-size:13.5px}
@@ -410,18 +417,20 @@ body.scrolled .chrome::after{opacity:0}
     <span class="thy-eyebrow">Thymos</span>
     <h2 class="thy-title">The intelligence that powers it.</h2>
     <p class="thy-sub">A speech-to-speech personal intelligence, built for the household and small enough to live in the room with you.</p>
-    <div class="thy-film">
-      <video id="modelfilm" muted playsinline preload="metadata" poster="model-chip.webp" aria-label="The household hardware opening to the intelligence core inside">
-        <source src="model-reveal.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="specs">
-      <div class="spec"><h3>The brain listens</h3><p>Audio reaches reasoning directly.</p></div>
-      <div class="spec"><h3>Full-duplex speech</h3><p>Listen, wait, respond, interrupt.</p></div>
-      <div class="spec"><h3>Expressive, multilingual</h3><p>Tone, timing, improvisation, code-switching.</p></div>
-      <div class="spec"><h3>Compact student model</h3><p>Teacher-trained capabilities, local context.</p></div>
-      <div class="spec"><h3>Private data store</h3><p>Local-first, user-held, scoped access.</p></div>
-      <div class="spec"><h3>Model and device, co-designed</h3><p>Memory, latency, power, inference cost.</p></div>
+    <div class="thy-grid">
+      <div class="thy-scene">
+        <video class="thy-art" id="modelfilm" muted playsinline preload="metadata" width="1176" height="784" poster="model-chip.webp" aria-label="The household hardware opening to the intelligence core inside">
+          <source src="model-reveal.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="specs">
+        <div class="spec"><h3>The brain listens</h3><p>Audio reaches reasoning directly.</p></div>
+        <div class="spec"><h3>Full-duplex speech</h3><p>Listen, wait, respond, interrupt.</p></div>
+        <div class="spec"><h3>Expressive, multilingual</h3><p>Tone, timing, improvisation, code-switching.</p></div>
+        <div class="spec"><h3>Compact student model</h3><p>Teacher-trained capabilities, local context.</p></div>
+        <div class="spec"><h3>Private data store</h3><p>Local-first, user-held, scoped access.</p></div>
+        <div class="spec"><h3>Model and device, co-designed</h3><p>Memory, latency, power, inference cost.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -429,9 +438,9 @@ body.scrolled .chrome::after{opacity:0}
 <!-- ================= WHAT IS YOURS ================= -->
 <section class="vlt" data-bg="#FAF6EE" data-on="#151715" id="yours">
   <div class="vlt-wrap">
-    <img class="vlt-art" src="vault-records.webp" width="1200" height="900"  alt="The household's records held inside a glass enclosure, with the intelligence connecting people, devices and specialists" loading="lazy">
     <h2 class="vlt-title">It protects what matters.</h2>
-    <p class="vlt-lede">Counsel this close is only possible if what it knows stays yours. Your records live on your hardware, held by you. Nothing leaves without you, and nothing can be turned against you.</p>
+    <img class="vlt-art" src="vault-records.webp" width="1200" height="900"  alt="The household's records held inside a glass enclosure, with the intelligence connecting people, devices and specialists" loading="lazy">
+    <p class="vlt-lede">Nothing leaves without you, and nothing can be turned against you.</p>
     <p class="vlt-muted">Inside the house, privacy is structural too. Each person&rsquo;s records are their own; what is shared is shared by choice, for as long as you choose.</p>
     <div class="rec">
       <div class="card"><span class="k">Yours</span><h3>Your records</h3><p>Tastes &middot; plans &middot; history &middot; what you told it in confidence.</p></div>
