@@ -228,11 +228,16 @@ body.scrolled .chrome::after{opacity:0}
 @media (max-width:639px){.bp-band img{mix-blend-mode:normal;aspect-ratio:1122/1402}}
 /* three groups beneath the artwork, matching the three groups inside it —
    no absolute positioning, so nothing can drift or collide at any width */
-.bp-labels{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--stack-art-copy) clamp(20px,3vw,48px);
+.bp-labels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px clamp(20px,3vw,48px);
   margin-top:var(--stack-art-copy)}
-.bp-l{display:flex;flex-direction:column;gap:5px;text-align:left}
-.bp-l .k{font:600 13px/1.4 var(--body);letter-spacing:.01em;color:var(--muted)}
-.bp-l .n{font-family:var(--body);font-weight:500;font-size:clamp(.84rem,1vw,1.02rem);line-height:1.25;letter-spacing:-.015em;color:var(--ink)}
+/* one row, used by the household groups and by the model features: a hairline
+   above, 20px of air each side of it, the heading and its line 8px apart. */
+.bp-l,.spec{display:flex;flex-direction:column;gap:8px;text-align:left;
+  border-top:1px solid var(--rule);padding-top:20px}
+.bp-l .n,.spec h3{font-family:var(--heading);font-weight:700;font-size:18px;line-height:1.3;
+  letter-spacing:-.02em;color:var(--ink)}
+.bp-l .k,.spec p{font-family:var(--body);font-weight:400;font-size:15px;line-height:1.5;
+  color:var(--muted);margin:0}
 @media (max-width:760px){.bp-labels{grid-template-columns:1fr}}
 @media (max-width:560px){
   /* rhythm comes from --sec-y/--gutter */
@@ -323,15 +328,12 @@ body.scrolled .chrome::after{opacity:0}
   transition:color .2s ease,border-color .2s ease,background .2s ease}
 .thy-replay:hover,.thy-replay:focus-visible{color:var(--ink);border-color:var(--muted);background:#fff;outline:none}
 .thy-replay svg{width:13px;height:13px;fill:currentColor}
-.specs{display:grid;grid-template-columns:1fr 1fr;gap:clamp(13px,1.5vw,20px) clamp(18px,2vw,30px);text-align:left}
-.spec{border-top:1px solid var(--rule);padding-top:13px}
-.spec h3{font-family:var(--heading);font-weight:650;font-size:clamp(18px,1.4vw,21px);line-height:1.25;letter-spacing:-.02em;color:var(--ink)}
-.spec p{font-size:clamp(15px,1.05vw,16px);line-height:1.47;color:var(--muted);margin-top:6px}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:20px clamp(18px,2vw,30px);text-align:left}
 @media (max-width:900px){
   .thy-grid{grid-template-columns:1fr;gap:18px;margin-top:16px}
   .thy-art{max-height:32vh}.thy-scene{max-width:min(100%,calc(32vh * 1.5))}
   .specs{gap:12px 16px}
-  .spec{padding-top:12px}}
+}
 @media (max-width:560px){.specs{grid-template-columns:1fr;gap:0}
   .spec{padding-top:12px;margin-top:12px}}
 
@@ -408,9 +410,9 @@ body.scrolled .chrome::after{opacity:0}
            alt="A household and their dog beside the ambient hardware, the personal-intelligence chip, the app and voice surface, and the model factory that trains and evaluates it">
       </picture>
       <div class="bp-labels">
-        <div class="bp-l"><span class="k">Shared context</span><span class="n">One household</span></div>
-        <div class="bp-l"><span class="k">Hardware, app and voice</span><span class="n">Multiplayer surfaces</span></div>
-        <div class="bp-l"><span class="k">Private, trained and evaluated</span><span class="n">Personal intelligence</span></div>
+        <div class="bp-l"><span class="n">One household</span><span class="k">Shared context</span></div>
+        <div class="bp-l"><span class="n">Multiplayer surfaces</span><span class="k">Hardware, app and voice</span></div>
+        <div class="bp-l"><span class="n">Personal intelligence</span><span class="k">Private, trained and evaluated</span></div>
       </div>
     </figure>
   </div>
@@ -497,6 +499,8 @@ body.scrolled .chrome::after{opacity:0}
 <!-- ================= CLOSE ================= -->
 <section class="close" data-bg="#FAF6EE" data-on="#151715" id="close">
   <div class="close-wrap">
+  <!-- PEOPLE — hidden 20 Sep. Uncomment to restore; the .tag, .builders
+       and .bd rules are still in the stylesheet, untouched.
   <h2 class="tag">People</h2>
   <div class="builders">
     <div class="bd"><h3>Shobhit Srivastava</h3><div class="role">Founder &amp; CEO</div>
@@ -506,6 +510,8 @@ body.scrolled .chrome::after{opacity:0}
       <p>Product and design rooted in care and craft — privacy and identity as first principles, software that propels people forward.</p>
       <a href="https://www.linkedin.com/in/smritisri/" target="_blank" rel="noopener">linkedin →</a></div>
   </div>
+  -->
+
   <div class="crafted">Crafted with love at <a href="https://shovel.company" target="_blank" rel="noopener">Shovel</a>.</div>
   <div class="fine">Built in India, for Indian families. Your data lives in your vault — yours to delete, anytime.</div>
   <nav class="legal" aria-label="Legal">
