@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;750&family=Inter:wght@400;500;600;650&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<noscript><style>.hero-tag,.hero-sub,.close,.stp{opacity:1!important;transform:none!important}</style></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
@@ -127,7 +128,7 @@ body.scrolled .chrome::after{opacity:0}
 @media (max-width:640px){.volgroup:hover .volwrap,.volgroup:focus-within .volwrap{width:0;padding:0}}
 
 .hero-copy{position:relative;z-index:5;text-align:center;padding:0 24px;transform:translateZ(0)}
-.hero-tag{font-family:var(--heading);font-weight:750;letter-spacing:-.045em;font-size:clamp(2.4rem,5.4vw,4.6rem);
+.hero-tag{margin:0;font-family:var(--heading);font-weight:750;letter-spacing:-.045em;font-size:clamp(2.4rem,5.4vw,4.6rem);
   line-height:1;opacity:0;background:var(--grad);-webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em}
 .hero-sub{font-family:var(--body);font-weight:400;font-size:clamp(.95rem,1.5vw,1.2rem);letter-spacing:-.01em;
@@ -145,13 +146,7 @@ body.scrolled .chrome::after{opacity:0}
   .filmbox{width:min(94vw, calc((100svh - 104px)*1.7778))}
 }
 
-/* ============ INTERACTIVE PROOFS ============ */
-.proof{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:16vh clamp(26px,6vw,90px);position:relative}
-.proof h2{font-family:var(--heading);font-weight:700;font-size:clamp(1.9rem,4.4vw,3.4rem);line-height:1.08;
-  letter-spacing:-.035em;color:var(--ink);max-width:22ch;opacity:0;transform:translateY(18px)}
-.proof h2 .accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-  -webkit-text-fill-color:transparent}
+/* ============ SECTION REVEAL ============ */
 .is-in h2{opacity:1;transform:none;transition:opacity 1s,transform 1s}
 
 /* ============ CLOSE ============ */
@@ -194,10 +189,12 @@ body.scrolled .chrome::after{opacity:0}
 /* ============ THE BIG PICTURE ============ */
 .bigpic{padding:11vh clamp(26px,6vw,90px) 9vh;position:relative;z-index:2}
 .bp-wrap{width:min(1320px,100%);margin:0 auto}
-.bp-title{font-family:var(--heading);font-weight:700;font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.06;
-  letter-spacing:-.04em;max-width:22ch;margin:0 auto;text-align:center;background:var(--grad);
-  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-  padding-bottom:.06em;text-wrap:balance}
+/* one section-heading rule; sections vary only in measure and leading margin */
+.bp-title,.cns-title,.thy-title,.vlt-title{font-family:var(--heading);font-weight:700;
+  font-size:clamp(2rem,4.4vw,3.3rem);line-height:1.06;letter-spacing:-.04em;margin:0 auto;text-align:center;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
+.bp-title{max-width:22ch}
 .bp-band{margin:clamp(18px,3.2vw,38px) auto 0;width:100%;max-width:min(100%,calc(42vh * 3.003))}
 /* the prop is drawn on an ivory ground a shade warmer than the page — darken
    clamps that ground to the paper exactly, where multiply would tint it */
@@ -221,9 +218,7 @@ body.scrolled .chrome::after{opacity:0}
 /* ============ COUNSEL AND ACTION ============ */
 .cns{padding:9vh clamp(26px,6vw,90px) 8vh;position:relative;z-index:2}
 .cns-wrap{width:min(1320px,100%);margin:0 auto}
-.cns-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
-  line-height:1.06;text-align:center;margin:0 auto;max-width:20ch;background:var(--grad);-webkit-background-clip:text;
-  background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
+.cns-title{max-width:20ch}
 .cns-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(24px,3.4vw,60px);align-items:center;
   margin-top:clamp(24px,3.2vw,44px)}
 .cns-scene{position:relative;display:grid;min-height:0}
@@ -236,6 +231,7 @@ body.scrolled .chrome::after{opacity:0}
 .cns-you{max-width:min(94%,26em);background:#121412;color:#E9E7E2;-webkit-text-fill-color:#E9E7E2;
   padding:13px 19px;border-radius:18px;
   border-bottom-right-radius:6px;font-size:16px;line-height:1.42;box-shadow:0 14px 30px rgba(21,23,21,.26)}
+.cns-talk .cns-you{align-self:flex-end;max-width:min(88%,22em)}
 .cns-talk{display:flex;flex-direction:column;gap:13px;align-items:flex-start;min-width:0;
   position:relative;isolation:isolate}
 /* the column reserves its height before the exchange plays, so it reads as empty until the
@@ -273,8 +269,11 @@ body.scrolled .chrome::after{opacity:0}
 .vxw i:nth-child(2){animation-delay:.1s}.vxw i:nth-child(3){animation-delay:.2s}
 .vxw i:nth-child(4){animation-delay:.3s}.vxw i:nth-child(5){animation-delay:.15s}.vxw i:nth-child(6){animation-delay:.25s}
 @keyframes vxwave{0%,100%{height:5px}50%{height:15px}}
-.stp{opacity:0;transform:translateY(10px);transition:opacity .55s ease,transform .55s ease}
-.stp.on{opacity:1;transform:none}
+/* readable on first paint. the timed sequence opts in by adding .seq, so a script
+   failure, a blocked CDN or a print capture still shows the whole exchange. */
+.stp{opacity:1;transform:none;transition:opacity .55s ease,transform .55s ease}
+.cns-grid.seq .stp{opacity:0;transform:translateY(10px)}
+.cns-grid.seq .stp.on{opacity:1;transform:none}
 .vxd{display:inline-flex;align-items:center;gap:9px;font:500 10px/1.4 var(--mono);letter-spacing:.14em;
   text-transform:uppercase;color:var(--violet)}
 .vxdot{width:8px;height:8px;border-radius:50%;background:var(--violet);flex:none}
@@ -290,9 +289,7 @@ body.scrolled .chrome::after{opacity:0}
 .thy{padding:7vh clamp(26px,6vw,90px) 6vh;text-align:center;position:relative;z-index:2}
 .thy-wrap{width:min(1320px,100%);margin:0 auto}
 .thy-eyebrow{font:500 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--violet);display:block}
-.thy-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
-  line-height:1.06;text-align:center;margin:10px auto 0;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
-  background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
+.thy-title{max-width:18ch;margin:10px auto 0}
 /* the film sits on the paper the way the counsel photograph does */
 .thy-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(24px,3.4vw,60px);align-items:center;
   margin-top:clamp(18px,2.4vw,34px)}
@@ -315,16 +312,15 @@ body.scrolled .chrome::after{opacity:0}
   .thy-art{max-height:32vh}.thy-scene{max-width:min(100%,calc(32vh * 1.5))}
   .specs{gap:12px 16px}
   .spec{padding-top:10px}.spec h3{font-size:15px}.spec p{font-size:13px;line-height:1.38;margin-top:4px}}
-@media (max-width:560px){.specs{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.specs{grid-template-columns:1fr;gap:0}
+  .spec{padding-top:12px;margin-top:12px}}
 
 /* ============ WHAT IS YOURS ============ */
 .vlt{padding:6vh clamp(26px,6vw,90px) 5vh;text-align:center}
 .vlt-wrap{width:min(1100px,100%);margin:0 auto}
 .vlt-art{width:min(600px,100%);max-height:36vh;object-fit:contain;margin:clamp(14px,2vw,24px) auto 0;
   mix-blend-mode:darken}
-.vlt-title{font-family:var(--heading);font-weight:700;letter-spacing:-.04em;font-size:clamp(2rem,4.4vw,3.3rem);
-  line-height:1.06;margin:0 auto;max-width:18ch;background:var(--grad);-webkit-background-clip:text;
-  background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
+.vlt-title{max-width:18ch}
 .vlt-lede{font-family:var(--body);font-size:clamp(.98rem,1.35vw,1.15rem);line-height:1.45;color:var(--ink);
   max-width:46ch;margin:16px auto 0}
 .vlt-muted{font-size:15px;line-height:1.5;color:var(--muted);max-width:46ch;margin:14px auto 0}
@@ -343,8 +339,8 @@ body.scrolled .chrome::after{opacity:0}
 <!-- ================= HERO FILM ================= -->
 <section class="stage" id="stage" data-bg="#FAF6EE" data-on="#151715">
   <div class="hero-copy">
-    <div class="hero-tag" id="hTag">Ask Stevens.</div>
-    <div class="hero-sub" id="hSub">Personal intelligence for household</div>
+    <h1 class="hero-tag" id="hTag">Ask Stevens.</h1>
+    <div class="hero-sub" id="hSub">Personal intelligence for households</div>
   </div>
   <div class="filmbox" id="filmbox">
     <video id="film" autoplay muted loop playsinline preload="auto" poster="stevens-film-poster-v2.jpg"
@@ -426,7 +422,6 @@ body.scrolled .chrome::after{opacity:0}
         <img class="cns-art" src="counsel-cafe.webp" width="1200" height="900"  alt="An afternoon coffee beside an Amsterdam canal" loading="lazy">
         <div class="cns-bubbles">
           <div class="stp cns-you" data-at="1900" data-status="Listening" data-status-at="500">I&rsquo;m near Centraal, finishing a coffee. What should I do next?</div>
-          <div class="stp cns-you" data-at="11100" data-status="Listening" data-status-at="9900">Both.</div>
         </div>
       </div>
       <div class="cns-talk">
@@ -439,6 +434,7 @@ body.scrolled .chrome::after{opacity:0}
           </div>
         </div>
         <div class="stp cns-it" data-at="8300">The cruise fits before a 17:00 museum slot. Hold both?</div>
+        <div class="stp cns-you" data-at="11100" data-status="Listening" data-status-at="9900">Both.</div>
         <div class="stp cns-it" data-at="14500" data-status="Booking" data-status-at="12500">Held. Both are in your wallet.</div>
         <div class="stp vxd" data-at="15700"><span class="vxdot"></span>Booked &middot; in your wallet</div>
       </div>
@@ -597,9 +593,9 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
 })();
 </script>
 <script>
-/* the voice exchange — runs when the fold is on screen, stops when you scroll
-   past, restarts from the top on return. The chip holds from one state to the
-   next rather than blinking out. */
+/* the voice exchange — the full exchange is in the markup and readable on first
+   paint. when the fold comes into view the sequence takes over once, plays through,
+   and then leaves everything visible. it never re-hides what it has already shown. */
 (function(){
   var root=document.getElementById('cnsx'),status=document.getElementById('cnsstatus');
   if(!root||!status) return;
@@ -617,16 +613,13 @@ if(window.gsap&&window.ScrollTrigger&&!reduce){
     });
     timers.push(setTimeout(function(){status.classList.remove('on');},end+1100));
   }
-  function enter(){if(started)return;started=true;play();}
-  function leave(){if(!started)return;started=false;reset();}
+  function enter(){if(started)return;started=true;root.classList.add('seq');play();}
   if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){
-    steps.forEach(function(s){s.classList.add('on');});status.remove();return;
+    status.remove();return;
   }
-  new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?enter():leave();});},{threshold:.35}).observe(root);
-  function measure(){var r=root.getBoundingClientRect();
-    (r.top<innerHeight*.75&&r.bottom>innerHeight*.25)?enter():leave();}
-  addEventListener('scroll',measure,{passive:true});addEventListener('resize',measure,{passive:true});
-  setTimeout(measure,400);
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){enter();io.disconnect();}});},{threshold:.35});
+  io.observe(root);
 })();
 /* the model film plays once when it comes into view */
 (function(){
