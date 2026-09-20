@@ -220,22 +220,20 @@ body.scrolled .chrome::after{opacity:0}
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-fill-color:transparent;padding-bottom:.06em;text-wrap:balance}
 .bp-title{max-width:24ch}
-.bp-band{margin:clamp(18px,3.2vw,38px) auto 0;width:100%;max-width:min(100%,calc(42vh * 3.003))}
-/* the prop is drawn on an ivory ground a shade warmer than the page — darken
-   clamps that ground to the paper exactly, where multiply would tint it */
-.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken}
-.bp-labels{position:relative;min-height:92px;margin-top:4px}
-/* each label takes a share of the band rather than its own text width — the
-   tightest pair of elements is 13% apart, so an 11% box wraps instead of colliding */
-.bp-l{position:absolute;left:var(--x);top:0;transform:translateX(-50%);width:11%;
-  text-align:center;display:flex;flex-direction:column;gap:7px}
+.bp-band{margin:var(--stack-lede-art) auto 0;width:100%}
+/* the desktop panorama is drawn on an ivory ground a shade warmer than the page —
+   darken clamps it to the paper. the portrait was exported on the page's own
+   paper, so it needs no blend and keeps the white hardware at full brightness. */
+.bp-band img{width:100%;height:auto;display:block;mix-blend-mode:darken;aspect-ratio:2000/666}
+@media (max-width:639px){.bp-band img{mix-blend-mode:normal;aspect-ratio:1122/1402}}
+/* three groups beneath the artwork, matching the three groups inside it —
+   no absolute positioning, so nothing can drift or collide at any width */
+.bp-labels{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--stack-art-copy) clamp(20px,3vw,48px);
+  margin-top:var(--stack-art-copy)}
+.bp-l{display:flex;flex-direction:column;gap:5px;text-align:left}
 .bp-l .k{font:600 13px/1.4 var(--body);letter-spacing:.01em;color:var(--muted)}
 .bp-l .n{font-family:var(--body);font-weight:500;font-size:clamp(.84rem,1vw,1.02rem);line-height:1.25;letter-spacing:-.015em;color:var(--ink)}
-/* narrow: the band can no longer carry aligned labels, so they become a list */
-@media (max-width:900px){
-  .bp-labels{position:static;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-top:26px}
-  .bp-l{position:static;transform:none;width:auto;max-width:none;text-align:left;gap:5px}
-}
+@media (max-width:760px){.bp-labels{grid-template-columns:1fr}}
 @media (max-width:560px){
   /* rhythm comes from --sec-y/--gutter */
   .bp-labels{grid-template-columns:1fr;gap:16px}
@@ -340,8 +338,9 @@ body.scrolled .chrome::after{opacity:0}
 /* ============ WHAT IS YOURS ============ */
 .vlt{padding:var(--sec-y) var(--gutter) 0}
 .vlt-wrap{width:var(--rail);margin:0 auto}
-.vlt-art{width:100%;object-fit:contain;margin:0;
-  mix-blend-mode:darken}
+/* exported on the page's own paper, so no blend mode and no clamped highlights */
+.vlt-art{width:100%;height:auto;object-fit:contain;margin:0;aspect-ratio:1536/1024}
+@media (max-width:639px){.vlt-art{aspect-ratio:1122/1402}}
 .vlt-title{max-width:20ch}
 /* artwork and copy are a deliberate pair on desktop, and both paragraphs share the
    copy column's left edge instead of centring themselves inside the rail */
@@ -401,14 +400,17 @@ body.scrolled .chrome::after{opacity:0}
   <div class="bp-wrap">
     <h2 class="bp-title">Ambient intelligence for the whole household.</h2>
     <figure class="bp-band">
-      <img src="big-picture-household.webp" width="2000" height="666"  loading="lazy"
+      <picture>
+        <source media="(max-width:639px)" type="image/webp"
+                srcset="household-mobile-480.webp 480w, household-mobile-800.webp 800w, household-mobile-1122.webp 1122w"
+                sizes="100vw">
+        <img src="big-picture-household.webp" width="2000" height="666"  loading="lazy"
            alt="A household and their dog beside the ambient hardware, the personal-intelligence chip, the app and voice surface, and the model factory that trains and evaluates it">
+      </picture>
       <div class="bp-labels">
-        <div class="bp-l" style="--x:14.5%"><span class="k">The household</span><span class="n">Shared context</span></div>
-        <div class="bp-l" style="--x:37.5%"><span class="k">Hardware</span><span class="n">Ambient presence</span></div>
-        <div class="bp-l" style="--x:53.5%"><span class="k">Model</span><span class="n">Personal intelligence</span></div>
-        <div class="bp-l" style="--x:66.5%"><span class="k">App + voice</span><span class="n">Multi-player surfaces</span></div>
-        <div class="bp-l" style="--x:88%"><span class="k">Model factory</span><span class="n">Training &amp; evaluation</span></div>
+        <div class="bp-l"><span class="k">Shared context</span><span class="n">One household</span></div>
+        <div class="bp-l"><span class="k">Hardware, app and voice</span><span class="n">Multiplayer surfaces</span></div>
+        <div class="bp-l"><span class="k">Private, trained and evaluated</span><span class="n">Personal intelligence</span></div>
       </div>
     </figure>
   </div>
@@ -474,7 +476,16 @@ body.scrolled .chrome::after{opacity:0}
   <div class="vlt-wrap">
     <h2 class="vlt-title">It protects what matters.</h2>
     <div class="vlt-grid">
-      <img class="vlt-art" src="vault-records.webp" width="1200" height="900"  alt="The household's records held inside a glass enclosure, with the intelligence connecting people, devices and specialists" loading="lazy">
+      <picture>
+        <source media="(max-width:639px)" type="image/webp"
+                srcset="privacy-mobile-480.webp 480w, privacy-mobile-800.webp 800w, privacy-mobile-1122.webp 1122w"
+                sizes="100vw">
+        <source type="image/webp"
+                srcset="privacy-desktop-800.webp 800w, privacy-desktop-1200.webp 1200w, privacy-desktop-1536.webp 1536w"
+                sizes="(min-width:1024px) 50vw, 100vw">
+        <img class="vlt-art" src="privacy-desktop-1200.webp" width="1536" height="1024"
+             alt="Two people&rsquo;s records held in separate locked stores, with one deliberate connection between them and the household device behind" loading="lazy">
+      </picture>
       <div class="vlt-copy">
         <p class="vlt-lede">Inside the house, each person&rsquo;s records are their own. What is shared is shared by choice, for as long as you choose.</p>
         <p class="vlt-muted">Personal intelligence designed with privacy and safety for Indian households.</p>
